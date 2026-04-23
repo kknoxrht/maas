@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Hardware &amp; Platform Prerequisites :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s1-gpu-silo-crisis.html">
+    <link rel="next" href="s3-maas-architecture.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../objectives.html">Learning Objectives</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">1. The Shift to Utility AI</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-model-deployment/index.html">3. Deploying Models to MaaS</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s1-distributed-inference.adoc">3.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s2-publishing-maas-lab.adoc">3.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s3-access-control-lab.adoc">3.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-governance/index.html">4. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s1-governance-tiers.adoc">4.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s2-rate-limits-quotas.adoc">4.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s3-chargeback-lab.adoc">4.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s1-developer-dashboard.adoc">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s2-openai-api-lab.adoc">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="#s3-error-handling-lab.adoc">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">1. The Shift to Utility AI</a></li>
+    <li><a href="s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Hardware &amp; Platform Prerequisites</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated reading time: <strong>15 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>MaaS is the wiring, but generic GPU enablement is the foundation—without certified accelerators and proper drivers, the entire stack fails.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_objective"><a class="anchor" href="#_learning_objective"></a>Learning Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Identify the hardware and platform requirements needed before enabling Models-as-a-Service on Red Hat OpenShift AI.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_foundation_generic_gpu_enablement"><a class="anchor" href="#_the_foundation_generic_gpu_enablement"></a>The Foundation: Generic GPU Enablement</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before configuring MaaS, your OpenShift cluster must have:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Certified Accelerators</dt>
+<dd>
+<p>Data center grade GPUs from NVIDIA (Turing/Ampere/Hopper/Blackwell), AMD (CDNA), or IBM Spyre</p>
+</dd>
+<dt class="hdlist1">GPU Drivers</dt>
+<dd>
+<p>Properly installed and verified CUDA or ROCm drivers</p>
+</dd>
+<dt class="hdlist1">Node Feature Discovery</dt>
+<dd>
+<p>NFD operator to detect and label GPU nodes</p>
+</dd>
+<dt class="hdlist1">GPU Operator</dt>
+<dd>
+<p>NVIDIA GPU Operator (or equivalent) managing driver containers</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>A platform engineer thinking "We&#8217;ll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes GPU infrastructure is already working—it orchestrates <strong>access</strong> to GPUs, not the GPUs themselves.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_required_platform_components"><a class="anchor" href="#_required_platform_components"></a>Required Platform Components</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS requires Red Hat OpenShift AI 3.3 or later with these dependencies:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">Required Operators:
+- Red Hat OpenShift AI operator
+- Red Hat Connectivity Link (Kuadrant)
+- cert-manager operator
+- Gateway API operator
+- LeaderWorkerSet operator
+- Llama Stack operator (for dashboard UI)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Missing any of these causes deployment failures. The error messages can be cryptic:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get datasciencecluster
+NAME    PHASE    AGE
+maas    Failed   2m</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hardware_certification_requirements"><a class="anchor" href="#_hardware_certification_requirements"></a>Hardware Certification Requirements</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Not all GPUs are supported. MaaS requires:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Minimum Tier</dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>NVIDIA: Turing architecture or newer (T4, V100, A100, H100, B200)</p>
+</li>
+<li>
+<p>AMD: CDNA architecture (MI210, MI250, MI300)</p>
+</li>
+<li>
+<p>IBM: Spyre accelerators</p>
+</li>
+</ul>
+</div>
+</dd>
+<dt class="hdlist1">Consumer GPUs Not Supported</dt>
+<dd>
+<p>Gaming cards (RTX 3090, RTX 4090) lack the reliability and driver support needed for production inference</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verification_checklist"><a class="anchor" href="#_verification_checklist"></a>Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before enabling MaaS, verify:</p>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-square-o"></i> GPU nodes are labeled and scheduled properly</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> CUDA/ROCm drivers are working (<code>nvidia-smi</code> or <code>rocm-smi</code> succeeds)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Required operators are installed and healthy</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> OpenShift Container Platform is version 4.20+</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Red Hat OpenShift AI is version 3.3+</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_pitfalls"><a class="anchor" href="#_common_pitfalls"></a>Common Pitfalls</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Problem</strong>: MaaS component fails to start
+<strong>Cause</strong>: cert-manager not installed
+<strong>Solution</strong>: Install cert-manager operator <strong>before</strong> enabling MaaS</p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: Models fail to publish as MaaS endpoints
+<strong>Cause</strong>: Gateway API operator missing
+<strong>Solution</strong>: Verify all dependency operators are present</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you understand the prerequisite hardware and platform requirements, the next section maps the MaaS architecture stack—showing how KServe, Kuadrant, and Gateway API work together to deliver centralized model serving.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a></span>
+  <span class="next"><a href="s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
