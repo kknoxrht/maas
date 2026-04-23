@@ -42,4 +42,4 @@ By completing this course, you have learned to:
 ✓ Implement governance tiers and track consumption for chargeback
 ✓ Integrate MaaS endpoints into applications with proper error handling
 
-Your organization can now transition from GPU silos to a centralized AI utility grid.
+Your organization can now transition from GPU silos to a centralized Centralized Model Hub.

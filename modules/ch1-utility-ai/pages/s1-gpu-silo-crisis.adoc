@@ -1,4 +1,4 @@
-:time_estimate: 20
+:time_estimate: 5
 
 = The GPU Silo Crisis
 
@@ -10,13 +10,12 @@ _Estimated reading time: *{time_estimate} minutes*._
 == Learning Objective
 
 Objective::
-Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "AI Utility Grid" solves them.
+Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "Centralized Model Hub" solves them.
 
-== The Problem: Private Power Generators
+== The Problem: Dedicated Accelerators
 
 Organizations currently face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams. This leads to simultaneous idle capacity and project bottlenecks.
 
-A data scientist wants to run their model training job immediately.
 A platform engineer must allocate $200,000 worth of GPU hardware fairly across multiple teams and projects.
 
 Without centralized orchestration, teams request and manage their own dedicated GPUs. This creates:
@@ -24,17 +23,17 @@ Without centralized orchestration, teams request and manage their own dedicated 
 * **Wasted Resources**: GPU hardware sitting idle in Team A while Team B's projects are queued
 * **Shadow AI**: Multiple teams downloading and deploying the same models independently
 * **Zero Visibility**: No audit logs, no PII filtering, no usage tracking
-* **Debugging Tax**: Data scientists waste time on CUDA drivers and Kubernetes instead of model tuning
+* **Debugging Tax**: Data scientists waste time on model deployment tasks such as managing CUDA drivers and Kubernetes instead of model tuning
 
-== The Solution: Municipal Utility Grid
+== The Solution: Centralized Model Hub
 
-The Models-as-a-Service (MaaS) layer transforms GPU infrastructure from "private generators" to a "utility grid":
+The Models-as-a-Service (MaaS) capability transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane available to the entire enterprise.
 
 Central IT::
 Manages the inference strategy, hardware allocation, and governance policies
 
 Lines of Business::
-Consume AI capabilities via tokens—like consuming electricity from the grid
+Consume AI capabilities via tokens; treating model inference as a metered, on-demand internal service
 
 Platform Engineers::
 Configure tiers, rate limits, and observability dashboards

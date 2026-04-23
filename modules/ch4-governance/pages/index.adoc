@@ -5,7 +5,7 @@
 _Estimated time: *{time_estimate} minutes*._
 
 [.lead]
-*Without tiers and quotas, centralized serving becomes uncontrolled consumption—governance transforms the AI utility grid from free-for-all to fair allocation.*
+*Without tiers and quotas, centralized serving becomes uncontrolled consumption—governance transforms the Centralized Model Hub from free-for-all to fair allocation.*
 
 == Module Goal
 

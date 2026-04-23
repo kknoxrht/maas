@@ -1,4 +1,4 @@
-:time_estimate: 15
+:time_estimate: 5
 
 = Hardware & Platform Prerequisites
 
@@ -12,23 +12,23 @@ _Estimated reading time: *{time_estimate} minutes*._
 Objective::
 Identify the hardware and platform requirements needed before enabling Models-as-a-Service on Red Hat OpenShift AI.
 
-== The Foundation: Generic GPU Enablement
+== The Foundation: GPU Enablement
 
 Before configuring MaaS, your OpenShift cluster must have:
 
 Certified Accelerators::
 Data center grade GPUs from NVIDIA (Turing/Ampere/Hopper/Blackwell), AMD (CDNA), or IBM Spyre
 
-GPU Drivers::
-Properly installed and verified CUDA or ROCm drivers
-
-Node Feature Discovery::
+Node Feature Discovery Operator::
 NFD operator to detect and label GPU nodes
 
 GPU Operator::
 NVIDIA GPU Operator (or equivalent) managing driver containers
 
-A platform engineer thinking "We'll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes GPU infrastructure is already working—it orchestrates *access* to GPUs, not the GPUs themselves.
+GPU Drivers (Policy)::
+Properly installed and verified CUDA or ROCm drivers
+
+A platform engineer thinking "We'll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes the underlying GPU infrastructure is already working; it orchestrates access to the models, not the hardware itself.
 
 == Required Platform Components
 
@@ -58,10 +58,22 @@ maas    Failed   2m
 
 Not all GPUs are supported. MaaS requires:
 
-Minimum Tier::
-* NVIDIA: Turing architecture or newer (T4, V100, A100, H100, B200)
-* AMD: CDNA architecture (MI210, MI250, MI300)
-* IBM: Spyre accelerators
+[options="header"]
+|===
+| Vendor | Accelerator Models | CPU Architecture Support
+| NVIDIA | Turing: T4 +
+Ampere: A2, A10, A16, A30, A40, A100 +
+Ada Lovelace: L4, L20, L40, L40S +
+Hopper: H100, H200, H20, GH200 +
+Blackwell: GB200, GB300, B200, B300, RTX PRO 6000 Blackwell Server Edition, RTX PRO 4500 Blackwell Server Edition | x86, AArch64
+| AMD | Instinct MI210, Instinct MI300X, Instinct MI325X | x86
+| Google | v4, v5e, v5p, v6e (Trillium) | x86
+| IBM | Spyre for Power | IBM Power (ppc64le)
+| IBM | Spyre for Z | IBM Z (s390x)
+| IBM | AIU | x86
+| AWS | Inferentia2 (Inf2), Trainium (Trn1, Trn1n, Trn2) | x86
+|===
+
 
 Consumer GPUs Not Supported::
 Gaming cards (RTX 3090, RTX 4090) lack the reliability and driver support needed for production inference
@@ -70,7 +82,7 @@ Gaming cards (RTX 3090, RTX 4090) lack the reliability and driver support needed
 
 Before enabling MaaS, verify:
 
-- [ ] GPU nodes are labeled and scheduled properly
+- [ ] GPU nodes are labeled and scheduled properly (NFD / GFD)
 - [ ] CUDA/ROCm drivers are working (`nvidia-smi` or `rocm-smi` succeeds)
 - [ ] Required operators are installed and healthy
 - [ ] OpenShift Container Platform is version 4.20+
@@ -78,13 +90,13 @@ Before enabling MaaS, verify:
 
 == Common Pitfalls
 
-**Problem**: MaaS component fails to start
-**Cause**: cert-manager not installed
-**Solution**: Install cert-manager operator *before* enabling MaaS
-
 **Problem**: Models fail to publish as MaaS endpoints
 **Cause**: Gateway API operator missing
 **Solution**: Verify all dependency operators are present
+
+**Problem**: DSC failed to declare MaaS Component ready.
+**Cause**: MaaS Gateway API endpoint must exist. 
+**Solution**: The OpenShift AI Operator looks for a specific Gateway resource (maas-default-gateway). If it doesn’t exist, it halts the MaaS API deployment to prevent unroutable services. Create the gateway.
 
 == What's Next
 

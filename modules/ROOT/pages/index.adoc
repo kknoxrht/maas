@@ -2,38 +2,50 @@
 :navtitle: Home
 
 [.lead]
-*Transform GPU infrastructure from isolated team silos into a centralized AI utility grid with governed token-based consumption.*
+*Transform GPU infrastructure from isolated team silos into a centralized Centralized Model Hub with governed token-based consumption.*
 
 == Course Description
 
-Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks. This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.
+Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks. 
+
+This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.
 
 By the end of this training, you will transition your infrastructure from "Private Power Generators" (siloed hardware) to a centralized "Municipal Utility Grid" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.
 
-**Duration**: 8-12 hours
+**Duration**: 3-4 hours
 
 == What You'll Learn
 
 This course covers:
 
-* **Architecture**: Understanding the MaaS stack (KServe, Kuadrant, Gateway API)
-* **Platform Administration**: Configuring CRDs and troubleshooting component enablement
-* **Model Deployment**: Publishing models to the governed catalog with distributed inference
-* **Governance**: Creating tiers, enforcing rate limits, and tracking token consumption
-* **API Integration**: Consuming OpenAI-compatible endpoints with proper error handling
+ **Architecture**::
+ Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".
 
-== Performance Objectives
+**Platform Administration**::
+Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.
 
-xref:objectives.adoc[View detailed performance objectives] for this course.
+ **Model Deployment**::
+ Publishing models to the governed catalog with distributed inference
+
+ **Governance**::
+ Define tiered service limits, configure group-based rate limiting, track token consumption metrics, and automate chargeback workflows.
+
+ **API Integration**::
+ Navigate the Gen AI studio, generate authentication tokens, implement programmatic retry logic for rate limits, and integrate models into applications via OpenAI-compatible APIs.
 
 == Target Audience
 
-* **Platform Engineers**: Configure MaaS through the OpenShift AI operator
-* **AI/ML Platform Administrators**: Manage governance, user groups, and observability
-* **Developers**: Consume MaaS endpoints and integrate models into applications
-* **DevOps / SREs**: Monitor cluster health, gateway routing, and resource usage
+**Platform Engineers**::
+Configure MaaS through the OpenShift AI operator
+Manage governance, user groups, and observability
+Monitor cluster health, gateway routing, and resource usage
 
-**Target Level**: Tech Level 3 (Internal, Partners, and Customers)
+**Developers**::
+Consume MaaS endpoints and integrate models into applications
+
+
+**Target Level**::
+Tech Level 3 (Internal, Partners, and Customers)
 
 == Prerequisites
 
@@ -73,17 +85,19 @@ This course contains five modules:
 This course addresses critical organizational challenges:
 
 **Without MaaS**:
-* GPU hardware sits idle while projects queue
-* Multiple teams deploy the same models redundantly
-* No audit trail for compliance requirements
-* Cannot track usage or forecast compute needs
+
+ * GPU hardware sits idle while projects queue
+ * Multiple teams deploy the same models redundantly
+ * No audit trail for compliance requirements
+ * Cannot track usage or forecast compute needs
 
 **With MaaS**:
-* Centralized catalog eliminates redundant deployments
-* Fair resource allocation prevents team conflicts
-* Complete audit logs and PII filtering via API gateway
-* Token-based consumption enables accurate chargeback
+
+ * Centralized catalog eliminates redundant deployments
+ * Fair resource allocation prevents team conflicts
+ * Complete audit logs and PII filtering via API gateway
+ * Token-based consumption enables accurate chargeback
 
 == Let's Get Started
 
-Ready to transform your GPU infrastructure? Start with xref:ch1-utility-ai:index.adoc[Module 1: The Shift to Utility AI].
+Ready to transform your GPU infrastructure? Start with Module 1: The Shift to Utility AI.

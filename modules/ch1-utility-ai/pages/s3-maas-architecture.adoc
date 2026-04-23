@@ -1,4 +1,4 @@
-:time_estimate: 25
+:time_estimate: 10
 
 = The MaaS Architecture Stack
 
