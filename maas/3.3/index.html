@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <title>Red Hat OpenShift AI: Solving the GPU Silo with MaaS Enablement :: Red Hat OpenShift AI - Models as a Service</title>
-    <link rel="next" href="objectives.html">
+    <link rel="next" href="LABENV/index.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../_/css/site.css">
     <script>var uiRootPath = '../../_'</script>
@@ -40,9 +40,6 @@
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
     <a class="nav-link" href="index.html">Course Home</a>
-  </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="objectives.html">Learning Objectives</a>
   </li>
 </ul>
   </li>
@@ -197,7 +194,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph lead">
-<p><strong>Transform GPU infrastructure from isolated team silos into a centralized AI utility grid with governed token-based consumption.</strong></p>
+<p><strong>Transform GPU infrastructure from isolated team silos into a centralized Centralized Model Hub with governed token-based consumption.</strong></p>
 </div>
 </div>
 </div>
@@ -205,13 +202,16 @@
 <h2 id="_course_description"><a class="anchor" href="#_course_description"></a>Course Description</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks. This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.</p>
+<p>Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks.</p>
+</div>
+<div class="paragraph">
+<p>This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.</p>
 </div>
 <div class="paragraph">
 <p>By the end of this training, you will transition your infrastructure from "Private Power Generators" (siloed hardware) to a centralized "Municipal Utility Grid" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.</p>
 </div>
 <div class="paragraph">
-<p><strong>Duration</strong>: 8-12 hours</p>
+<p><strong>Duration</strong>: 3-4 hours</p>
 </div>
 </div>
 </div>
@@ -221,56 +221,52 @@
 <div class="paragraph">
 <p>This course covers:</p>
 </div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Architecture</strong>: Understanding the MaaS stack (KServe, Kuadrant, Gateway API)</p>
-</li>
-<li>
-<p><strong>Platform Administration</strong>: Configuring CRDs and troubleshooting component enablement</p>
-</li>
-<li>
-<p><strong>Model Deployment</strong>: Publishing models to the governed catalog with distributed inference</p>
-</li>
-<li>
-<p><strong>Governance</strong>: Creating tiers, enforcing rate limits, and tracking token consumption</p>
-</li>
-<li>
-<p><strong>API Integration</strong>: Consuming OpenAI-compatible endpoints with proper error handling</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_performance_objectives"><a class="anchor" href="#_performance_objectives"></a>Performance Objectives</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><a href="objectives.html" class="xref page">View detailed performance objectives</a> for this course.</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Architecture</strong></dt>
+<dd>
+<p>Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".</p>
+</dd>
+<dt class="hdlist1"><strong>Platform Administration</strong></dt>
+<dd>
+<p>Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.</p>
+</dd>
+<dt class="hdlist1"><strong>Model Deployment</strong></dt>
+<dd>
+<p>Publishing models to the governed catalog with distributed inference</p>
+</dd>
+<dt class="hdlist1"><strong>Governance</strong></dt>
+<dd>
+<p>Define tiered service limits, configure group-based rate limiting, track token consumption metrics, and automate chargeback workflows.</p>
+</dd>
+<dt class="hdlist1"><strong>API Integration</strong></dt>
+<dd>
+<p>Navigate the Gen AI studio, generate authentication tokens, implement programmatic retry logic for rate limits, and integrate models into applications via OpenAI-compatible APIs.</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_target_audience"><a class="anchor" href="#_target_audience"></a>Target Audience</h2>
 <div class="sectionbody">
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Platform Engineers</strong>: Configure MaaS through the OpenShift AI operator</p>
-</li>
-<li>
-<p><strong>AI/ML Platform Administrators</strong>: Manage governance, user groups, and observability</p>
-</li>
-<li>
-<p><strong>Developers</strong>: Consume MaaS endpoints and integrate models into applications</p>
-</li>
-<li>
-<p><strong>DevOps / SREs</strong>: Monitor cluster health, gateway routing, and resource usage</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Target Level</strong>: Tech Level 3 (Internal, Partners, and Customers)</p>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Platform Engineers</strong></dt>
+<dd>
+<p>Configure MaaS through the OpenShift AI operator
+Manage governance, user groups, and observability
+Monitor cluster health, gateway routing, and resource usage</p>
+</dd>
+<dt class="hdlist1"><strong>Developers</strong></dt>
+<dd>
+<p>Consume MaaS endpoints and integrate models into applications</p>
+</dd>
+<dt class="hdlist1"><strong>Target Level</strong></dt>
+<dd>
+<p>Tech Level 3 (Internal, Partners, and Customers)</p>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -347,18 +343,42 @@
 <p>This course addresses critical organizational challenges:</p>
 </div>
 <div class="paragraph">
-<p><strong>Without MaaS</strong>:
-* GPU hardware sits idle while projects queue
-* Multiple teams deploy the same models redundantly
-* No audit trail for compliance requirements
-* Cannot track usage or forecast compute needs</p>
+<p><strong>Without MaaS</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>GPU hardware sits idle while projects queue</p>
+</li>
+<li>
+<p>Multiple teams deploy the same models redundantly</p>
+</li>
+<li>
+<p>No audit trail for compliance requirements</p>
+</li>
+<li>
+<p>Cannot track usage or forecast compute needs</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p><strong>With MaaS</strong>:
-* Centralized catalog eliminates redundant deployments
-* Fair resource allocation prevents team conflicts
-* Complete audit logs and PII filtering via API gateway
-* Token-based consumption enables accurate chargeback</p>
+<p><strong>With MaaS</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Centralized catalog eliminates redundant deployments</p>
+</li>
+<li>
+<p>Fair resource allocation prevents team conflicts</p>
+</li>
+<li>
+<p>Complete audit logs and PII filtering via API gateway</p>
+</li>
+<li>
+<p>Token-based consumption enables accurate chargeback</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -366,12 +386,12 @@
 <h2 id="_lets_get_started"><a class="anchor" href="#_lets_get_started"></a>Let&#8217;s Get Started</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Ready to transform your GPU infrastructure? Start with <a href="ch1-utility-ai/index.html" class="xref page">Module 1: The Shift to Utility AI</a>.</p>
+<p>Ready to transform your GPU infrastructure? Start with Module 1: The Shift to Utility AI.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="objectives.html">Learning Objectives</a></span>
+  <span class="next"><a href="LABENV/index.html">Lab Environment</a></span>
 </nav>
 </article>
   </div>

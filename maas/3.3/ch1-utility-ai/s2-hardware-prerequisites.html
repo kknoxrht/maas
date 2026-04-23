@@ -42,9 +42,6 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../index.html">Course Home</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../objectives.html">Learning Objectives</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
@@ -199,7 +196,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>15 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
 </div>
 <div class="paragraph lead">
 <p><strong>MaaS is the wiring, but generic GPU enablement is the foundation—without certified accelerators and proper drivers, the entire stack fails.</strong></p>
@@ -220,7 +217,7 @@
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_foundation_generic_gpu_enablement"><a class="anchor" href="#_the_foundation_generic_gpu_enablement"></a>The Foundation: Generic GPU Enablement</h2>
+<h2 id="_the_foundation_gpu_enablement"><a class="anchor" href="#_the_foundation_gpu_enablement"></a>The Foundation: GPU Enablement</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Before configuring MaaS, your OpenShift cluster must have:</p>
@@ -231,11 +228,7 @@
 <dd>
 <p>Data center grade GPUs from NVIDIA (Turing/Ampere/Hopper/Blackwell), AMD (CDNA), or IBM Spyre</p>
 </dd>
-<dt class="hdlist1">GPU Drivers</dt>
-<dd>
-<p>Properly installed and verified CUDA or ROCm drivers</p>
-</dd>
-<dt class="hdlist1">Node Feature Discovery</dt>
+<dt class="hdlist1">Node Feature Discovery Operator</dt>
 <dd>
 <p>NFD operator to detect and label GPU nodes</p>
 </dd>
@@ -243,10 +236,14 @@
 <dd>
 <p>NVIDIA GPU Operator (or equivalent) managing driver containers</p>
 </dd>
+<dt class="hdlist1">GPU Drivers (Policy)</dt>
+<dd>
+<p>Properly installed and verified CUDA or ROCm drivers</p>
+</dd>
 </dl>
 </div>
 <div class="paragraph">
-<p>A platform engineer thinking "We&#8217;ll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes GPU infrastructure is already working—it orchestrates <strong>access</strong> to GPUs, not the GPUs themselves.</p>
+<p>A platform engineer thinking "We&#8217;ll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes the underlying GPU infrastructure is already working; it orchestrates access to the models, not the hardware itself.</p>
 </div>
 </div>
 </div>
@@ -285,24 +282,63 @@ maas    Failed   2m</code></pre>
 <div class="paragraph">
 <p>Not all GPUs are supported. MaaS requires:</p>
 </div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Vendor</th>
+<th class="tableblock halign-left valign-top">Accelerator Models</th>
+<th class="tableblock halign-left valign-top">CPU Architecture Support</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">NVIDIA</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Turing: T4<br>
+Ampere: A2, A10, A16, A30, A40, A100<br>
+Ada Lovelace: L4, L20, L40, L40S<br>
+Hopper: H100, H200, H20, GH200<br>
+Blackwell: GB200, GB300, B200, B300, RTX PRO 6000 Blackwell Server Edition, RTX PRO 4500 Blackwell Server Edition</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x86, AArch64</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AMD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Instinct MI210, Instinct MI300X, Instinct MI325X</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x86</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Google</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">v4, v5e, v5p, v6e (Trillium)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x86</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IBM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spyre for Power</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IBM Power (ppc64le)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IBM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Spyre for Z</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IBM Z (s390x)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">IBM</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AIU</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x86</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AWS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inferentia2 (Inf2), Trainium (Trn1, Trn1n, Trn2)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">x86</p></td>
+</tr>
+</tbody>
+</table>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Minimum Tier</dt>
-<dd>
-<div class="ulist">
-<ul>
-<li>
-<p>NVIDIA: Turing architecture or newer (T4, V100, A100, H100, B200)</p>
-</li>
-<li>
-<p>AMD: CDNA architecture (MI210, MI250, MI300)</p>
-</li>
-<li>
-<p>IBM: Spyre accelerators</p>
-</li>
-</ul>
-</div>
-</dd>
 <dt class="hdlist1">Consumer GPUs Not Supported</dt>
 <dd>
 <p>Gaming cards (RTX 3090, RTX 4090) lack the reliability and driver support needed for production inference</p>
@@ -320,7 +356,7 @@ maas    Failed   2m</code></pre>
 <div class="ulist checklist">
 <ul class="checklist">
 <li>
-<p><i class="fa fa-square-o"></i> GPU nodes are labeled and scheduled properly</p>
+<p><i class="fa fa-square-o"></i> GPU nodes are labeled and scheduled properly (NFD / GFD)</p>
 </li>
 <li>
 <p><i class="fa fa-square-o"></i> CUDA/ROCm drivers are working (<code>nvidia-smi</code> or <code>rocm-smi</code> succeeds)</p>
@@ -342,14 +378,14 @@ maas    Failed   2m</code></pre>
 <h2 id="_common_pitfalls"><a class="anchor" href="#_common_pitfalls"></a>Common Pitfalls</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>Problem</strong>: MaaS component fails to start
-<strong>Cause</strong>: cert-manager not installed
-<strong>Solution</strong>: Install cert-manager operator <strong>before</strong> enabling MaaS</p>
-</div>
-<div class="paragraph">
 <p><strong>Problem</strong>: Models fail to publish as MaaS endpoints
 <strong>Cause</strong>: Gateway API operator missing
 <strong>Solution</strong>: Verify all dependency operators are present</p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: DSC failed to declare MaaS Component ready.
+<strong>Cause</strong>: MaaS Gateway API endpoint must exist.
+<strong>Solution</strong>: The OpenShift AI Operator looks for a specific Gateway resource (maas-default-gateway). If it doesn’t exist, it halts the MaaS API deployment to prevent unroutable services. Create the gateway.</p>
 </div>
 </div>
 </div>

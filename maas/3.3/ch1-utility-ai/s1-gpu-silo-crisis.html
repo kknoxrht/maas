@@ -42,9 +42,6 @@
   <li class="nav-item" data-depth="1">
     <a class="nav-link" href="../index.html">Course Home</a>
   </li>
-  <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../objectives.html">Learning Objectives</a>
-  </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
@@ -199,7 +196,7 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>20 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>5 minutes</strong>.</em></p>
 </div>
 <div class="paragraph lead">
 <p><strong>Expensive GPU hardware trapped in team silos creates idle capacity in some departments while high-priority projects stall in others.</strong></p>
@@ -213,21 +210,20 @@
 <dl>
 <dt class="hdlist1">Objective</dt>
 <dd>
-<p>Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "AI Utility Grid" solves them.</p>
+<p>Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "Centralized Model Hub" solves them.</p>
 </dd>
 </dl>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_problem_private_power_generators"><a class="anchor" href="#_the_problem_private_power_generators"></a>The Problem: Private Power Generators</h2>
+<h2 id="_the_problem_dedicated_accelerators"><a class="anchor" href="#_the_problem_dedicated_accelerators"></a>The Problem: Dedicated Accelerators</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Organizations currently face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams. This leads to simultaneous idle capacity and project bottlenecks.</p>
 </div>
 <div class="paragraph">
-<p>A data scientist wants to run their model training job immediately.
-A platform engineer must allocate $200,000 worth of GPU hardware fairly across multiple teams and projects.</p>
+<p>A platform engineer must allocate $200,000 worth of GPU hardware fairly across multiple teams and projects.</p>
 </div>
 <div class="paragraph">
 <p>Without centralized orchestration, teams request and manage their own dedicated GPUs. This creates:</p>
@@ -244,17 +240,17 @@ A platform engineer must allocate $200,000 worth of GPU hardware fairly across m
 <p><strong>Zero Visibility</strong>: No audit logs, no PII filtering, no usage tracking</p>
 </li>
 <li>
-<p><strong>Debugging Tax</strong>: Data scientists waste time on CUDA drivers and Kubernetes instead of model tuning</p>
+<p><strong>Debugging Tax</strong>: Data scientists waste time on model deployment tasks such as managing CUDA drivers and Kubernetes instead of model tuning</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_the_solution_municipal_utility_grid"><a class="anchor" href="#_the_solution_municipal_utility_grid"></a>The Solution: Municipal Utility Grid</h2>
+<h2 id="_the_solution_centralized_model_hub"><a class="anchor" href="#_the_solution_centralized_model_hub"></a>The Solution: Centralized Model Hub</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Models-as-a-Service (MaaS) layer transforms GPU infrastructure from "private generators" to a "utility grid":</p>
+<p>The Models-as-a-Service (MaaS) capability transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane available to the entire enterprise.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -264,7 +260,7 @@ A platform engineer must allocate $200,000 worth of GPU hardware fairly across m
 </dd>
 <dt class="hdlist1">Lines of Business</dt>
 <dd>
-<p>Consume AI capabilities via tokens—like consuming electricity from the grid</p>
+<p>Consume AI capabilities via tokens; treating model inference as a metered, on-demand internal service</p>
 </dd>
 <dt class="hdlist1">Platform Engineers</dt>
 <dd>
