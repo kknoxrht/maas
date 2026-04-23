@@ -1,0 +1,4 @@
+* xref:index.adoc[2. Administering the MaaS Platform]
+** xref:s1-enabling-maas-crds.adoc[2.1: Enabling the Grid (CRD Configuration)]
+** xref:s2-deployment-workflows.adoc[2.2: Deployment Workflows]
+** xref:s3-troubleshooting-lab.adoc[2.3: Troubleshooting Component Enablement Lab]

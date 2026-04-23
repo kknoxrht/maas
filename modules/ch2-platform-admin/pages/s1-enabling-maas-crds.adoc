@@ -1,0 +1,179 @@
+:time_estimate: 30
+
+= Enabling the Grid (CRD Configuration)
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+[.lead]
+*A single field change in the DataScienceCluster CRD—`managementState: Managed`—triggers the deployment of the entire MaaS infrastructure.*
+
+== Learning Objective
+
+Objective::
+Configure the OpenShift AI Custom Resource Definitions (CRDs) to enable the Models-as-a-Service component and activate the Gen AI Studio dashboard.
+
+== The Configuration Pattern
+
+OpenShift AI uses a declarative configuration model:
+
+Operator Watches CRDs::
+The OpenShift AI operator continuously monitors `DataScienceCluster` and `OdhDashboardConfig` resources
+
+Changes Trigger Reconciliation::
+When you edit these CRDs, the operator deploys or updates components automatically
+
+MaaS Enablement::
+Setting `modelsAsService.managementState: Managed` tells the operator to deploy KServe, Kuadrant, and Gateway API integrations
+
+A developer might deploy resources imperatively with `kubectl apply`. A platform engineer declares desired state in CRDs and lets the operator handle implementation.
+
+== Step 1: Enable MaaS in DataScienceCluster
+
+The `DataScienceCluster` CRD controls which components are active:
+
+[source,yaml]
+----
+apiVersion: datasciencecluster.opendatahub.io/v1
+kind: DataScienceCluster
+metadata:
+  name: default-dsc
+spec:
+  components:
+    modelsAsService:
+      managementState: Managed  # <1>
+    kserve:
+      managementState: Managed   # <2>
+    dashboard:
+      managementState: Managed
+----
+<1> Enables the MaaS API and governance layer
+<2> KServe must also be enabled (MaaS builds on top of it)
+
+To update this CRD:
+
+[source,bash]
+----
+$ oc edit datasciencecluster default-dsc
+# Change modelsAsService.managementState to "Managed"
+# Save and exit
+----
+
+After saving, the operator begins deploying:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep maas
+maas-api-7c8f9d5b-xxx         0/1   ContainerCreating
+maas-default-gateway-xxx      0/1   Init:0/1
+----
+
+This takes 2-5 minutes. Don't proceed until pods are `Running`.
+
+== Step 2: Enable Gen AI Studio Dashboard
+
+The dashboard provides the user interface for discovering models and generating API tokens:
+
+[source,yaml]
+----
+apiVersion: opendatahub.io/v1alpha
+kind: OdhDashboardConfig
+metadata:
+  name: odh-dashboard-config
+spec:
+  dashboardConfig:
+    genAiStudio: true          # <1>
+    modelAsService: true        # <2>
+----
+<1> Enables the Gen AI Studio menu item
+<2> Exposes MaaS model catalog and tier management UI
+
+To update:
+
+[source,bash]
+----
+$ oc edit odhdashboardconfig odh-dashboard-config
+# Set genAiStudio: true
+# Set modelAsService: true
+# Save and exit
+----
+
+Verify the dashboard pod restarts:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep dashboard
+odh-dashboard-xxx   1/1   Running   1   2m
+----
+
+The `1` under `RESTARTS` indicates it picked up the config change.
+
+== Step 3: Verify Gateway API Deployment
+
+MaaS automatically creates a Gateway resource:
+
+[source,bash]
+----
+$ oc get gateway -n redhat-ods-applications
+NAME                   CLASS   ADDRESS
+maas-default-gateway   istio   maas.apps.cluster.example.com
+----
+
+The `ADDRESS` field shows the external URL where MaaS endpoints will be accessible.
+
+If this gateway is missing, check:
+
+[source,bash]
+----
+$ oc get datasciencecluster default-dsc -o yaml | grep -A 5 modelsAsService
+  modelsAsService:
+    managementState: Managed  # Must be "Managed", not "Removed"
+----
+
+== Common Configuration Errors
+
+**Problem**: `maas-api` pod stuck in `CrashLoopBackOff`
+
+[source,text]
+----
+Cause: cert-manager operator not installed
+Solution: Install cert-manager before enabling MaaS
+----
+
+**Problem**: Gateway shows no ADDRESS
+
+[source,text]
+----
+Cause: Gateway API operator missing
+Solution: Verify Gateway API operator is installed and healthy
+----
+
+**Problem**: Dashboard doesn't show Gen AI Studio menu
+
+[source,text]
+----
+Cause: OdhDashboardConfig not updated
+Solution: Check genAiStudio: true and modelAsService: true are set
+----
+
+== Verification Checklist
+
+Before proceeding to model deployment, confirm:
+
+- [ ] `oc get datasciencecluster` shows MaaS management state as "Managed"
+- [ ] `maas-api` pod is Running
+- [ ] `maas-default-gateway` has an ADDRESS
+- [ ] Dashboard shows "Gen AI Studio" in the left navigation
+- [ ] No pods in `CrashLoopBackOff` or `Error` state
+
+== What's Next
+
+Now that the MaaS platform is enabled and healthy, the next section explores the two deployment workflows: platform-first (creating new models) vs model retrofit (enrolling existing models).
+
+////
+Section Notes:
+- Based on design doc Module 2, Section 2.1
+- Hands-on lab content with actual YAML
+- Clear step-by-step instructions
+- Verification commands after each step
+- Troubleshooting section for common issues
+////

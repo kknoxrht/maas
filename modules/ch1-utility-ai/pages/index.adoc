@@ -1,0 +1,36 @@
+:time_estimate: 5
+
+= Module 1: The Shift to Utility AI & Architecture Foundation
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*GPU infrastructure trapped in team silos creates the worst outcome: idle capacity and project bottlenecks simultaneously.*
+
+== Module Goal
+
+Evaluate MaaS concepts, define the business value of centralized orchestration, and map the foundational architecture.
+
+== Performance Objective
+
+**[PO 1] Evaluate MaaS Architecture**: Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".
+
+== What You'll Learn
+
+In this module, you will:
+
+* Understand the "GPU Silo Crisis" and its business impact
+* Learn the hardware and platform prerequisites for MaaS
+* Map the MaaS architecture stack (KServe, Kuadrant, Gateway API)
+
+== Module Sections
+
+This module contains three sections:
+
+* **1.1: The GPU Silo Crisis** - Problem analysis and the "AI Utility Grid" solution
+* **1.2: Hardware & Platform Prerequisites** - Generic GPU enablement and certified accelerators
+* **1.3: The MaaS Architecture Stack** - Understanding KServe, Kuadrant, and Gateway API
+
+== What's Next
+
+Now that you understand why organizations need centralized model serving, the next module shows how to configure the OpenShift AI platform to enable the MaaS infrastructure.

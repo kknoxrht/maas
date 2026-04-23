@@ -1,0 +1,45 @@
+:time_estimate: 5
+
+= Module 5: API Integration & Consumer Experience
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*The utility grid succeeds when consumption is autonomous—developers discover models, generate tokens, and integrate endpoints without waiting for platform teams.*
+
+== Module Goal
+
+Enable developers to autonomously discover models, generate authentication, and integrate endpoints into applications.
+
+== Performance Objective
+
+**[PO 4] Consume Endpoints & Agentic Integrations**: Navigate the Gen AI studio, generate authentication tokens, implement programmatic retry logic for rate limits, and integrate models into applications via OpenAI-compatible APIs.
+
+== What You'll Learn
+
+In this module, you will:
+
+* Navigate the Gen AI Studio to discover models and view tier limits
+* Generate Bearer tokens (API keys) for authentication
+* Make REST calls to `/v1/models` and `/v1/chat/completions`
+* Handle 401, 403, and 429 errors with proper retry logic
+
+== Module Sections
+
+This module contains three sections:
+
+* **5.1: The Developer Dashboard** - Navigating Gen AI Studio and generating tokens
+* **5.2: Lab - Consuming the OpenAI-Compatible API** - Making REST calls and testing in the playground
+* **5.3: Lab - Error Handling & Application Patterns** - Python retry logic with exponential backoff
+
+== Course Summary
+
+By completing this course, you have learned to:
+
+✓ Evaluate the MaaS architecture and understand its business value
+✓ Configure OpenShift AI CRDs to enable the MaaS platform
+✓ Deploy models and publish them to the governed catalog
+✓ Implement governance tiers and track consumption for chargeback
+✓ Integrate MaaS endpoints into applications with proper error handling
+
+Your organization can now transition from GPU silos to a centralized AI utility grid.

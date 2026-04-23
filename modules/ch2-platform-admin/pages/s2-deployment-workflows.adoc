@@ -1,0 +1,137 @@
+:time_estimate: 15
+
+= Deployment Workflows
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+[.lead]
+*Two paths to MaaS: build the platform first then add models, or retrofit existing models with MaaS annotations.*
+
+== Learning Objective
+
+Objective::
+Understand the platform-first vs model-retrofit deployment workflows and when to use each approach.
+
+== Platform-First Deployment
+
+The platform-first approach enables MaaS infrastructure *before* deploying any models:
+
+[source,text]
+----
+1. Enable MaaS (DataScienceCluster CRD)
+2. Verify platform components are healthy
+3. Deploy new models with "Publish as MaaS endpoint" enabled
+4. Models automatically appear in catalog with governance
+----
+
+This is the recommended approach for new deployments.
+
+**When to Use**:
+* Starting a new OpenShift AI implementation
+* No existing KServe models in production
+* Want to establish governance before enabling inference
+
+**Advantages**:
+* Clean implementation—all models governed from day one
+* Platform team sets policies before developers consume
+* No migration complexity
+
+== Model-Retrofit Deployment
+
+The retrofit approach enrolls existing KServe models into MaaS:
+
+[source,text]
+----
+1. Existing KServe InferenceServices already deployed
+2. Enable MaaS platform components
+3. Annotate existing models to enroll them in MaaS
+4. Models become available through MaaS gateway
+----
+
+**When to Use**:
+* OpenShift AI cluster already running KServe models
+* Need to add governance to existing inference workloads
+* Migrating from standalone KServe to centralized MaaS
+
+**Enrollment Process**:
+
+Add this annotation to existing `InferenceService` resources:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1beta1
+kind: InferenceService
+metadata:
+  name: existing-model
+  annotations:
+    serving.kserve.io/models-as-service: "true"  # <1>
+spec:
+  # ... existing model configuration
+----
+<1> This annotation enrolls the model in MaaS catalog
+
+After annotation, the model appears in the Gen AI Studio dashboard and becomes accessible through the MaaS gateway.
+
+== The Decision Matrix
+
+[cols="1,2,2"]
+|===
+|Scenario |Recommended Workflow |Rationale
+
+|New deployment
+|Platform-First
+|Clean slate, establish governance upfront
+
+|Existing models in production
+|Model-Retrofit
+|Can't interrupt running workloads
+
+|Mixed environment
+|Platform-First + Retrofit
+|New models platform-first, legacy models retrofitted
+
+|Proof of concept
+|Platform-First
+|Simpler to validate MaaS benefits
+|===
+
+== Migration Considerations
+
+When retrofitting existing models:
+
+Downtime::
+Adding the annotation triggers a rolling update of the InferenceService. Expect 30-60 seconds of unavailability per model.
+
+Client Changes::
+Applications consuming the old KServe endpoint must migrate to the MaaS gateway URL and use Bearer token authentication.
+
+Tier Assignment::
+Retrofitted models default to "All tiers" access. You may want to restrict access after enrollment.
+
+Rate Limits::
+Models immediately subject to MaaS rate limits. Monitor for 429 errors from existing clients.
+
+== Best Practices
+
+**For Platform-First**:
+* Enable MaaS during initial OpenShift AI setup
+* Document deployment workflows before onboarding teams
+* Create default tiers aligned with organizational structure
+
+**For Model-Retrofit**:
+* Test enrollment on non-production models first
+* Communicate gateway URL changes to application teams
+* Migrate models gradually (not all at once)
+* Monitor for client 401/403/429 errors after migration
+
+== What's Next
+
+Now that you understand the two deployment workflows, the next lab section walks through troubleshooting common component enablement issues—ensuring all MaaS pieces are healthy before deploying models.
+
+////
+Section Notes:
+- Based on design doc Module 2, Section 2.2
+- Two clear paths presented
+- Decision matrix helps readers choose
+- Migration considerations for enterprise reality
+////

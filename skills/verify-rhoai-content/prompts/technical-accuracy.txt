@@ -1,0 +1,409 @@
+# RHOAI Technical Accuracy Validation
+
+This prompt validates technical content for accuracy and completeness.
+
+## Validation Areas
+
+### 1. Code Block Verification
+
+For any code blocks in the content:
+
+#### Source Type Validation
+```
+[source,bash]        ✓ Commands, scripts
+[source,console]     ✓ Output, console interaction
+[source,yaml]        ✓ YAML configuration
+[source,json]        ✓ JSON configuration
+[source,python]      ✓ Python scripts
+[source,xml]         ✓ XML files
+[source,properties]  ✓ Properties files
+[no type]            ✓ Text output (expected output)
+```
+
+**Check**:
+- Does the source type match the content?
+- Is bash used for commands? (not console unless showing interaction)
+- Is output shown without a source type?
+- Are YAML files marked as [source,yaml]?
+
+#### Command Accuracy
+For bash/shell commands:
+
+- [ ] Commands are valid syntax for the shell
+- [ ] Product commands match versions mentioned
+  - `oc` commands must be valid for OpenShift version
+  - `kubectl` must be valid Kubernetes syntax
+  - `oc get llminferenceservice` for RHOAI (not generic Kubernetes)
+- [ ] Namespaces are realistic (openshift-ai, user's namespace, etc.)
+- [ ] Flag order is correct
+- [ ] Placeholder values are clearly marked or have examples
+  - ❌ `oc apply -f deployment.yaml` (unclear what file)
+  - ✅ `oc apply -f deployment.yaml` (with explanation above)
+  - ✅ `oc apply -f $(YOUR_DEPLOYMENT_YAML)` (placeholder marked)
+
+**Red Flags**:
+- Commands that won't parse
+- Wrong product versions for commands
+- Missing required flags
+- Non-existent resources (e.g., `oc get fakeresource`)
+
+#### Verification Steps
+For labs, check that verification steps follow this pattern:
+
+```
+[Command to verify]
+
+✓ Expected Output Description
+
+[Next task]
+```
+
+**Check**:
+- [ ] Verification command provided after major task
+- [ ] Expected output shown
+- [ ] Success criterion clear
+- [ ] Checkmark (✓) used to mark success
+
+**Example (Good)**:
+```
+Now verify the model is deployed:
+
+[source,bash]
+----
+$ oc get llminferenceservice -n openshift-ai my-model
+NAME      STATUS    REPLICAS   AGE
+my-model  Ready     1          30s
+----
+
+✓ When you see "Ready" in the STATUS column, the model is deployed.
+```
+
+**Example (Bad)**:
+```
+[source,bash]
+----
+$ oc get llminferenceservice
+----
+```
+Missing: expected output, success criterion
+
+#### Configuration Files
+For YAML, JSON, or other config:
+
+- [ ] Syntax is valid (can be parsed)
+- [ ] Indentation is correct (YAML is indent-sensitive)
+- [ ] Required fields are present
+- [ ] Example values match context
+- [ ] Comments explain non-obvious sections
+
+---
+
+### 2. Product & Version Accuracy
+
+#### Red Hat OpenShift AI
+- [ ] Referred to as "Red Hat OpenShift AI" (first use), then "OpenShift AI" or "RHOAI"
+- [ ] Version specified (3.x for current series, not generic)
+- [ ] Operator channel mentioned if relevant (e.g., "fast-3.x")
+- [ ] Product features accurate for stated version
+  - Does this feature exist in RHOAI 3.x?
+  - Has the API changed?
+  - Is this the current recommended approach?
+
+#### OpenShift
+- [ ] Version matches context (4.12+, 4.14, etc.)
+- [ ] Commands valid for stated version
+- [ ] Operator behaviors match version
+
+#### Kubernetes / kubectl
+- [ ] Version compatibility mentioned if relevant
+- [ ] Commands match Kubernetes version assumptions
+- [ ] Resource types are valid
+
+#### Related Technologies
+- [ ] vLLM features match version discussed
+- [ ] KServe features match version
+- [ ] Model names (Llama 2, Nemotron, etc.) are correctly referenced
+- [ ] Inference engine references accurate
+
+**Red Flags**:
+- Feature that was added in v4.14 mentioned without version context for v4.12
+- Command that changed between versions without noting the change
+- Generic advice that doesn't apply to RHOAI specifically
+
+---
+
+### 3. Environment & Setup Assumptions
+
+#### Clarity of Prerequisites
+Check that prerequisites are clear:
+
+- [ ] Cluster version assumed
+- [ ] Namespaces used are realistic
+- [ ] Access levels required are stated
+- [ ] Dependencies (operators installed, etc.) are assumed or stated
+- [ ] GPU requirements (if relevant) are specified
+
+**Example (Clear)**:
+```
+Prerequisites:
+- OpenShift 4.14+ cluster
+- Red Hat OpenShift AI 3.3 operator (channel: fast-3.x)
+- NVIDIA GPU node with 24GB VRAM minimum
+- kubectl or oc CLI configured for your cluster
+```
+
+**Example (Unclear)**:
+```
+Prerequisites:
+- Kubernetes cluster
+- A model
+```
+
+#### Namespace Consistency
+- [ ] Same namespaces used throughout
+- [ ] Namespace names are realistic (not "magic-namespace-1")
+- [ ] Default namespace (openshift-ai) used unless otherwise specified
+
+---
+
+### 4. Cost & Performance Claims
+
+#### Specificity
+If cost or performance numbers are mentioned:
+
+- [ ] Numbers are realistic and cited/sourced
+  - "$50K/month GPU cost" — reasonable for enterprise cluster
+  - "40% faster inference with vLLM" — citable improvement
+- [ ] Not vague ("faster", "cheaper")
+- [ ] Units are clear ($K/month, %, ms, etc.)
+- [ ] Assumptions stated (cluster size, utilization, etc.)
+
+**Good**:
+- "Fine-tuning requires X GPU hours, which costs $Y on NVIDIA GPUs"
+- "vLLM improves throughput by 3x due to paged attention"
+- "Storage cost ~$X per TB/month for S3"
+
+**Bad**:
+- "It's much faster"
+- "Significantly cheaper"
+- "$500" (without time scale: per month? per hour?)
+
+---
+
+### 5. Diagrams & Images
+
+If images/diagrams are referenced:
+
+- [ ] All images exist (or marked as TBD)
+- [ ] Image references in code are correct paths
+  - `image::/path/to/image.svg[]` — path exists
+  - `image::images/my-diagram.png[]` — file exists
+- [ ] Alt text provided
+- [ ] Image is relevant to content
+- [ ] SVG preferred over PNG (scalable, version control friendly)
+
+**Example (Good)**:
+```asciidoc
+image::../../../images/gpu-architecture-overview.svg[alt="GPU cluster showing 4 A100s shared by 3 teams with scheduler",align="center"]
+```
+
+**Example (Bad)**:
+```asciidoc
+image::diagram.png[]
+```
+Missing: alt text, relative path unclear, PNG not SVG
+
+---
+
+### 6. API & CLI References
+
+#### Consistency
+- [ ] Same CLI tool used throughout (mostly `oc`, some `kubectl`)
+- [ ] API versions match (e.g., `v1alpha1` vs `v1beta1`)
+- [ ] Resource types are consistent (LLMInferenceService, not LLMService)
+- [ ] Field names consistent (spec.model, not spec.modelName)
+
+#### Realism
+- [ ] Custom resources exist (LLMInferenceService exists in RHOAI)
+- [ ] Field names are real (serviceName, not serviceTitle)
+- [ ] Examples match actual YAML structure
+
+**Red Flag**:
+- Referencing a custom resource that doesn't exist
+- Fields that don't actually exist in the resource
+
+---
+
+### 7. Troubleshooting Accuracy
+
+If troubleshooting section included:
+
+- [ ] Problems are realistic (actual failure modes)
+- [ ] Diagnosis steps work
+- [ ] Solutions actually solve the problem
+- [ ] Not generic advice ("check logs") without specifics
+
+**Good**:
+```
+Problem: "CrashLoopBackOff" in model pod
+Diagnosis: oc logs -f <pod-name>
+Solution: Increase memory limit in deployment YAML
+```
+
+**Bad**:
+```
+Problem: "Things aren't working"
+Solution: "Check your configuration"
+```
+
+---
+
+### 8. Date & Deprecation
+
+- [ ] Content doesn't reference deprecated features as current
+- [ ] Feature roadmap not presented as current reality
+- [ ] Dates in examples are realistic or marked as examples
+- [ ] Links to external docs are current (not 404 or moved)
+
+---
+
+### 9. Numerical Accuracy
+
+For any numbers, metrics, or calculations:
+
+- [ ] Math is correct (batch_size × epochs ÷ tokens/sec = GPU hours)
+- [ ] Units match (hours, not minutes where stated as hours)
+- [ ] Ranges are realistic
+  - "Fine-tuning requires 1000-10000 examples" — realistic
+  - "Fine-tuning requires 1 example" — not realistic
+- [ ] Percentages and ratios make sense
+
+---
+
+### 10. Completeness for Lab Tasks
+
+For each numbered lab task:
+
+- [ ] Task is clear and specific
+- [ ] Commands provided are complete (not incomplete snippets)
+- [ ] Output shown or expected state described
+- [ ] Verification step included
+- [ ] Success criteria clear
+- [ ] Where next? (transitions to next task)
+
+**Example (Complete)**:
+```
+1. Create a model namespace:
+
+[source,bash]
+----
+$ oc new-project my-models
+Now using project "my-models" on server "..."
+----
+
+✓ When you see "Now using project", you've successfully created the namespace.
+
+2. Next, deploy the model...
+```
+
+**Example (Incomplete)**:
+```
+1. Create a namespace with oc new-project
+
+2. Deploy the model
+```
+Missing: actual commands, expected output, verification
+
+---
+
+## Scoring Technical Accuracy
+
+Use this breakdown:
+
+### Code Blocks (40%)
+- Source types correct: 10 points
+- Commands/syntax valid: 15 points
+- Verification steps complete: 15 points
+
+### Product Accuracy (30%)
+- Product versions correct: 10 points
+- Features accurate for versions: 10 points
+- API/CLI references valid: 10 points
+
+### Assumptions & Setup (15%)
+- Prerequisites clear: 5 points
+- Namespace/environment consistent: 5 points
+- Realistic configurations: 5 points
+
+### Claims & Numbers (10%)
+- Cost/performance claims specific: 5 points
+- Math/calculations correct: 5 points
+
+### Completeness (5%)
+- All lab tasks complete: 5 points
+
+**Total**: 100 points
+
+---
+
+## Red Flags (Automatic Issues)
+
+Any of these should trigger an error:
+
+- [ ] Code block with no source type (unless it's expected output)
+- [ ] Commands that reference non-existent RHOAI resources
+- [ ] Version claims that don't match reality
+- [ ] Verification steps with no expected output
+- [ ] Images referenced but missing
+- [ ] Links to docs that return 404
+- [ ] Mathematical errors in calculations
+- [ ] Incomplete task steps (command shown, but no expected output)
+
+---
+
+## Yellow Flags (Warnings)
+
+These should be flagged as improvements:
+
+- [ ] Generic advice ("check logs") without specific command
+- [ ] Cost claims without specificity or citation
+- [ ] Performance numbers without context or source
+- [ ] Assumptions not explicitly stated
+- [ ] Deprecated approaches presented as current (but with note)
+- [ ] Multiple kubectl/oc mixing without explanation
+
+---
+
+## Output
+
+Report technical accuracy findings:
+
+```
+TECHNICAL ACCURACY SCORE: [X]/100
+
+Code Blocks: [X]/40
+Product Accuracy: [X]/30
+Setup Clarity: [X]/15
+Claims Specificity: [X]/10
+Completeness: [X]/5
+
+ERRORS FOUND:
+  [Line X]: [Error description]
+  ...
+
+WARNINGS:
+  [Line X]: [Warning description]
+  ...
+
+SUGGESTIONS:
+  [Line X]: [Suggestion]
+  ...
+
+VERIFIED ELEMENTS:
+  ✓ [Element that was verified as correct]
+  ...
+```
+
+---
+
+*Technical Accuracy Validation Version 1.0*

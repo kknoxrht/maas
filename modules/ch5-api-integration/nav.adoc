@@ -1,0 +1,4 @@
+* xref:index.adoc[5. API Integration & Consumer Experience]
+** xref:s1-developer-dashboard.adoc[5.1: The Developer Dashboard]
+** xref:s2-openai-api-lab.adoc[5.2: Lab - Consuming the OpenAI-Compatible API]
+** xref:s3-error-handling-lab.adoc[5.3: Lab - Error Handling & Application Patterns]

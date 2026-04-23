@@ -1,0 +1,157 @@
+:time_estimate: 25
+
+= The MaaS Architecture Stack
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+[.lead]
+*Three layers make MaaS work: KServe serves models, Kuadrant enforces policies, and Gateway API routes traffic—each solves a distinct problem.*
+
+== Learning Objective
+
+Objective::
+Map the MaaS architecture stack and understand how KServe (serving), Kuadrant (governance), and Gateway API (routing) integrate to deliver centralized model inference.
+
+== The Three-Layer Architecture
+
+A user request for model inference passes through three distinct layers:
+
+[source,text]
+----
+User Request → Gateway API → Kuadrant → KServe → Model
+             (Routing)     (Policy)   (Serving)
+----
+
+Each layer has a specific responsibility:
+
+Gateway API::
+Network traffic routing and ingress control. Exposes a single API endpoint that routes to multiple backend models.
+
+Kuadrant::
+Authorization (Authorino) and rate limiting (Limitador). Enforces tier-based access control and token quotas.
+
+KServe::
+Model serving infrastructure. Manages model lifecycle, distributed inference, and autoscaling.
+
+== Layer 1: KServe (Model Serving)
+
+KServe provides the foundation for serving generative AI models:
+
+Model Deployment::
+Packages models in containers with serving runtimes (vLLM, llm-d)
+
+Distributed Inference::
+Splits large models across multiple GPUs using LeaderWorkerSet
+
+Autoscaling::
+Scales replicas based on request load
+
+Health Checks::
+Monitors model readiness and liveness
+
+A developer deploys a model. KServe ensures it's running, healthy, and can handle inference requests. But KServe alone doesn't handle *who can access the model* or *how often*—that's where Kuadrant comes in.
+
+== Layer 2: Kuadrant (Policy Enforcement)
+
+Kuadrant adds governance on top of KServe:
+
+Authorino (Authentication & Authorization)::
+* Validates Bearer tokens
+* Maps OpenShift users to tier levels
+* Returns 401 Unauthorized for invalid tokens
+* Returns 403 Forbidden when user's tier cannot access a model
+
+Limitador (Rate Limiting)::
+* Enforces requests-per-minute limits
+* Tracks token consumption quotas
+* Returns 429 Rate Limit Exceeded when limits are hit
+* Includes `Retry-After` header for client backoff
+
+A platform engineer configures policies. Kuadrant enforces them automatically for every request.
+
+== Layer 3: Gateway API (Traffic Routing)
+
+Gateway API exposes MaaS to external clients:
+
+Single Endpoint::
+One URL (`https://maas.apps.cluster.example.com`) for all models
+
+Path-Based Routing::
+`/v1/models` lists available models, `/v1/chat/completions` routes to specific models
+
+TLS Termination::
+Handles HTTPS certificates (via cert-manager integration)
+
+Request Forwarding::
+Routes validated requests from Gateway → Kuadrant → KServe
+
+A developer makes an HTTP request. Gateway API receives it, Kuadrant validates and checks limits, then KServe processes the inference.
+
+== The Complete Request Flow
+
+Here's what happens when a user queries a model:
+
+[source,text]
+----
+1. User sends: POST /v1/chat/completions with Bearer token
+2. Gateway API receives the request
+3. Kuadrant/Authorino validates the token
+   - Invalid? Return 401 Unauthorized
+4. Kuadrant checks user's tier and model access
+   - Forbidden tier? Return 403 Forbidden
+5. Kuadrant/Limitador checks rate limits
+   - Exceeded? Return 429 Rate Limit Exceeded
+6. Request forwarded to KServe
+7. KServe routes to appropriate model pod
+8. Model generates inference response
+9. Response flows back: KServe → Gateway → User
+10. Kuadrant logs token consumption for chargeback
+----
+
+== Why This Layered Architecture Matters
+
+Separation of Concerns::
+Each component has one job. KServe doesn't do auth. Kuadrant doesn't do serving. Gateway doesn't enforce quotas.
+
+Flexibility::
+Replace Gateway API implementation without changing KServe. Adjust rate limits without redeploying models.
+
+Auditability::
+Every request passes through Kuadrant, creating a complete audit trail.
+
+Chargeback Accuracy::
+Kuadrant's token tracking enables precise cross-department billing.
+
+== Component Health Verification
+
+After enabling MaaS, verify all three layers are healthy:
+
+[source,bash]
+----
+# Check KServe components
+$ oc get pods -n redhat-ods-applications | grep maas
+maas-api-xxx                  Running
+
+# Check Kuadrant components
+$ oc get pods -n kuadrant-system
+authorino-xxx                 Running
+limitador-xxx                 Running
+
+# Check Gateway
+$ oc get gateway -n redhat-ods-applications
+NAME                  CLASS
+maas-default-gateway  istio
+----
+
+== What's Next
+
+Now that you understand the MaaS architecture stack, the next module shows you how to actually *configure* these components by updating OpenShift AI Custom Resource Definitions (CRDs) to enable the MaaS platform.
+
+////
+Section Notes:
+- Based on design doc Module 1, Section 1.3
+- Three-layer architecture mapped clearly
+- Request flow shows integration
+- Emphasizes separation of concerns
+- Includes verification commands
+////

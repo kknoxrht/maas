@@ -1,6 +1,6 @@
 site:
-  title: FIXME Course Title
-  start_page: REPLACEREPONAME::index.adoc
+  title: Red Hat OpenShift AI - Models as a Service
+  start_page: maas::index.adoc
 
 content:
   sources:

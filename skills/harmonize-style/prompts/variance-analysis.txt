@@ -1,0 +1,391 @@
+# RHOAI Style Variance Analysis
+
+Analyze existing RHOAI course content for deviation from established style patterns.
+
+## Analysis Components
+
+Measure variance in these areas:
+
+### 1. Lead Opener Quality (25% weight)
+
+**Look for**:
+- [ ] [.lead] block present
+- [ ] Bold italic formatting (*text*)
+- [ ] Single declarative sentence
+- [ ] Engineering authority (not "learn about", not vague)
+- [ ] Not a question
+- [ ] Different from section title
+
+**Scoring**:
+- ✓ Present, strong, declarative, authoritative: 0/25 (perfect)
+- ⚠ Present but weak/vague: 12/25 (needs strengthening)
+- ✗ Missing or very weak: 25/25 (variance maximum)
+
+**Examples**:
+- ✅ "GPU sharing requires fairness, not hope." (strong)
+- ❌ "This section covers GPU sharing." (vague)
+- ❌ "Have you thought about GPU sharing?" (question)
+
+### 2. Business Narrative (30% weight)
+
+**Look for**:
+- [ ] Business context paragraph present
+- [ ] Within first 100 words
+- [ ] Platform engineer perspective ("A platform engineer...")
+- [ ] Specific business concern (cost, compliance, efficiency, reliability)
+- [ ] Numbers/percentages where relevant
+- [ ] Developer vs. platform contrast (Shadow vs. Factory pattern)
+- [ ] Natural integration of business scenario
+- [ ] Not just feature description
+
+**Scoring**:
+- ✓ Clear, specific, platform POV, good narrative: 0/30 (perfect)
+- ⚠ Business mentioned but weak/generic: 15/30 (needs strengthening)
+- ✗ Missing or no business context: 30/30 (variance maximum)
+
+**Examples**:
+- ✅ "A developer downloads models freely. A platform engineer sees cost, governance, and compliance risks." (strong platform perspective with specificity)
+- ⚠ "Fine-tuning is important for enterprises." (vague, no platform POV)
+- ❌ "This section teaches fine-tuning." (no business context)
+
+### 3. Structure & Organization (20% weight)
+
+**Look for**:
+- [ ] Business Value → Architecture → Implementation flow
+- [ ] Definition lists (::) for objectives and key concepts
+- [ ] Proper heading hierarchy (no skipped levels)
+- [ ] Logical section progression
+- [ ] For labs: Numbered tasks with verification steps
+- [ ] For presentations: Trade-off analysis, key concepts
+
+**Scoring**:
+- ✓ Clear flow with definition lists and proper structure: 0/20 (perfect)
+- ⚠ Some structure present, missing elements: 10/20 (needs improvement)
+- ✗ No clear structure or organization: 20/20 (variance maximum)
+
+**Examples**:
+- ✅ Objective:: [text], Key Concepts:: [definitions] in proper order
+- ⚠ Has objectives but uses bullets instead of definition lists
+- ❌ No clear structure, sections in random order
+
+### 4. What's Next Section (15% weight)
+
+**Look for**:
+- [ ] Dedicated "== What's Next" section
+- [ ] Not just previewing next topic ("In the next section...")
+- [ ] Explains what capability is enabled
+- [ ] Business-focused transition
+- [ ] Logical flow to next section
+- [ ] Motivates next section
+
+**Scoring**:
+- ✓ Business-focused, explains capability: 0/15 (perfect)
+- ⚠ Present but generic/preview-only: 8/15 (needs strengthening)
+- ✗ Missing or very generic: 15/15 (variance maximum)
+
+**Examples**:
+- ✅ "Now that you've deployed safely, the next section shows how to monitor accuracy in real time." (explains capability and business value)
+- ⚠ "In the next section, you'll learn about monitoring." (just preview)
+- ❌ "The next topic is monitoring." (very generic)
+
+### 5. Technical Authority & Specificity (10% weight)
+
+**Look for**:
+- [ ] Specific numbers, percentages, formulas
+- [ ] Exact commands (not pseudo-code)
+- [ ] Named tools and versions
+- [ ] Real examples, not generic descriptions
+- [ ] For cost claims: realistic numbers
+- [ ] For performance: measurable improvements
+
+**Scoring**:
+- ✓ Specific numbers, formulas, exact commands: 0/10 (perfect)
+- ⚠ Some specificity, could be more detailed: 5/10 (needs more precision)
+- ✗ Vague, generic, no specific details: 10/10 (variance maximum)
+
+**Examples**:
+- ✅ "Fine-tuning a 7B model on 5000 examples requires ~40 GPU hours on A100s"
+- ⚠ "Fine-tuning requires several GPU hours"
+- ❌ "Fine-tuning uses GPUs"
+
+---
+
+## Variance Calculation
+
+**Formula**:
+```
+Total Variance = sum of component variance scores (0-100)
+```
+
+**Interpretation**:
+```
+0-20:   Excellent match (no changes needed)
+20-40:  Good match (minor variance)
+40-60:  Moderate variance (optional improvements)
+60-80:  High variance (consider improvements)
+80-100: Extreme variance (significant rewriting needed)
+```
+
+---
+
+## Impact Assessment
+
+**Content Type Base Scores**:
+```
+Chapter index/intro:              80 (high-impact, sets tone)
+First section of first chapter:   75 (learner entry point)
+Mid-chapter presentation:         50 (good to have, not critical)
+Lab section:                      40 (technical content > style)
+Quiz/assessment:                  30 (correctness > style)
+Reference material:               20 (style matters least)
+```
+
+**Position Modifiers** (add to base):
+```
+Architecture/strategy topic:      +20 (frames thinking)
+Intro/overview section:           +20 (shapes experience)
+First 3 sections (user journey):  +15 (high visibility)
+Mid-course sections:              +5  (context already set)
+Final sections:                   -10 (less impact on users)
+```
+
+**Calculation**:
+```
+Impact = Base Score + Position Modifiers (capped 0-100)
+```
+
+**Examples**:
+```
+First chapter opening:    75 (first) + 15 (user journey) + 0 = 90/100
+Mid-course lab:           40 (lab) + 5 (mid-course) + 0 = 45/100
+Chapter 2 architecture:   50 (presentation) + 20 (architecture) = 70/100
+Final quiz:               30 (quiz) - 10 (final) = 20/100
+```
+
+---
+
+## Decision Matrix
+
+**Step 1**: Calculate variance (0-100) and impact (0-100)
+
+**Step 2**: Apply decision rules:
+
+```
+IF Variance < 30:
+  → Decision: NO ACTION NEEDED
+  → Reason: Excellent style match already
+  → Action: Keep as-is
+  → Confidence: Very high
+
+ELIF Variance >= 30 AND Variance < 60:
+  IF Impact < 50:
+    → Decision: OPTIONAL IMPROVEMENTS
+    → Reason: Minor variance, low business impact
+    → Action: Update if polishing, otherwise skip
+    → Confidence: High
+  ELSE (Impact >= 50):
+    → Decision: CONSIDER IMPROVEMENTS
+    → Reason: Moderate variance in meaningful section
+    → Action: Worth considering if editing anyway
+    → Confidence: Medium
+
+ELIF Variance >= 60:
+  IF Impact < 50:
+    → Decision: CONSIDER IMPROVEMENTS
+    → Reason: High variance but low business impact
+    → Action: Lower priority; focus elsewhere
+    → Confidence: Medium
+  ELSE (Impact >= 50):
+    → Decision: REWRITE RECOMMENDED
+    → Reason: High variance in high-impact section
+    → Action: Worth improving for user experience
+    → Confidence: High
+
+ELSE (Unclear):
+  → Decision: ESCALATE TO HUMAN
+  → Reason: Decision boundary or special case
+  → Action: Show preview, let user decide
+  → Confidence: Uncertain
+```
+
+---
+
+## Output Format
+
+Generate analysis report:
+
+```
+[RECOMMENDATION SYMBOL] [RECOMMENDATION NAME]
+
+Variance: X/100 ([Component breakdown])
+Impact: Y/100 ([Reason])
+
+Summary:
+[1-2 sentences explaining the recommendation]
+
+Current State:
+[What the content does well]
+[What could be improved]
+
+Proposed Changes (if applicable):
+[Before/after examples of key changes]
+[Why these changes matter]
+
+Score Impact:
+Current: X/100 (Readiness level)
+Potential: Y/100 (After rewrite if applicable)
+
+Confidence: [Very High / High / Medium / Uncertain]
+
+Next Steps:
+[Action based on recommendation]
+```
+
+---
+
+## Variance Components Display
+
+Show breakdown in analysis output:
+
+```
+Variance Breakdown:
+  Lead Opener:      X/25 (component details)
+  Business Narrative: X/30 (component details)
+  Structure:        X/20 (component details)
+  What's Next:      X/15 (component details)
+  Technical Authority: X/10 (component details)
+  ─────────────────────────
+  Total:            X/100
+```
+
+---
+
+## Recommendation Symbols & Language
+
+Use consistent symbols:
+
+```
+✓ NO ACTION NEEDED
+  → Content excellent; no changes recommended
+  → Confidence: Very High
+  → Action: Keep as-is
+
+⚠ OPTIONAL IMPROVEMENTS
+  → Minor variance, low impact
+  → Confidence: High
+  → Action: Update if time available
+
+→ CONSIDER IMPROVEMENTS
+  → Variance present, low-moderate impact
+  → Confidence: Medium
+  → Action: Lower priority
+
+✗ REWRITE RECOMMENDED
+  → High variance, high impact
+  → Confidence: High
+  → Action: Worth improving
+```
+
+---
+
+## Edge Cases
+
+### Content that's non-RHOAI but effective
+
+**Scenario**: Content doesn't follow RHOAI patterns but works well (high score on verify-rhoai-content despite low style match)
+
+**Analysis**:
+```
+Variance: 75 (high from RHOAI perspective)
+Score: 82/100 (verify-rhoai-content)
+Impact: 40 (lab section, lower style impact)
+
+Decision: CONSIDER IMPROVEMENTS
+Reason: Unconventional approach that works. Variance exists
+        but effectiveness is proven.
+Action: Optional update; not critical.
+```
+
+### Content with excellent lead but weak business narrative
+
+**Scenario**: Lead opener is perfect, but business narrative missing
+
+**Analysis**:
+```
+Lead Opener: 0/25 (excellent)
+Business: 30/30 (missing entirely)
+Total Variance: 30/100 (moderate)
+
+Decision: Depends on impact
+Action: Focus on business narrative as primary improvement
+```
+
+### Labs with perfect code but weak style
+
+**Scenario**: Code is verified, examples work, but narrative is generic
+
+**Analysis**:
+```
+Variance: 65 (style issues)
+Impact: 40 (lab type = lower style weight)
+Decision: CONSIDER IMPROVEMENTS
+Reason: Code is excellent (don't change). Style improvements optional.
+Action: Update narrative elements only if time available.
+```
+
+---
+
+## Special Handling: Code Blocks
+
+**NEVER** rewrite code blocks:
+
+```
+Current (working):
+  [source,bash]
+  $ oc get llminferenceservice
+
+Proposed (WRONG):
+  [source,bash]
+  $ oc get llminferenceservice --all-namespaces
+
+✗ STOP: Don't change code examples.
+```
+
+Preserve all code as-is. Only update narrative around it.
+
+---
+
+## Batch Analysis Aggregation
+
+When analyzing multiple files:
+
+1. Analyze each file individually
+2. Calculate variance and impact for each
+3. Categorize by recommendation level
+4. Generate summary showing distribution:
+   ```
+   NO ACTION NEEDED:      7 files (47%)
+   OPTIONAL:              5 files (33%)
+   CONSIDER:              2 files (13%)
+   RECOMMENDED:           1 file  (7%)
+   ```
+5. Rank recommended rewrites by impact score
+6. Suggest prioritization (high impact first)
+
+---
+
+## Quality Checks
+
+Before output, verify:
+
+- [ ] Variance calculated correctly across all components
+- [ ] Impact assessment matches content type and position
+- [ ] Decision follows matrix rules consistently
+- [ ] Before/after examples are accurate (show actual content)
+- [ ] Score improvements realistic (not inflated)
+- [ ] Recommendation is justifiable to user
+- [ ] Confidence level appropriate
+
+---
+
+*Variance Analysis Prompt Version 1.0*

@@ -1,0 +1,379 @@
+# RHOAI Quality Verification Checklist
+
+This prompt is used to validate RHOAI course content against quality standards.
+
+## Content Analysis Task
+
+Analyze the provided AsciiDoc content against RHOAI standards. Provide:
+
+1. **Overall Readiness Score** (0-100)
+   - STRONG (90-100): Ready for publication
+   - GOOD (75-89): Minor revisions (1-2 hours)
+   - ADEQUATE (60-74): Significant improvements needed
+   - WEAK (<60): Major revisions required
+
+2. **Category Scores** (breakdown by component)
+3. **Issue List** (line numbers, severity, specific feedback)
+4. **Suggestions** (actionable improvements)
+5. **Estimated Effort** (hours to reach GOOD/STRONG)
+
+---
+
+## Scoring Categories
+
+### 1. Structure (25%)
+
+Check for required document structure:
+
+- [ ] Document attributes present (:time_estimate:, :imagesdir:, etc.)
+- [ ] Title present (= format)
+- [ ] Reading time estimate shown
+- [ ] Lead paragraph [.lead] present
+- [ ] Objective:: definition present (or equivalent for content type)
+- [ ] Main content sections present
+- [ ] "What's Next" section present (dedicated == heading)
+- [ ] Proper heading hierarchy (no skipped levels: h1→h3)
+- [ ] Navigation references valid (if cross-references)
+
+**Scoring**:
+- All present and correct: 100
+- Minor issues (1-2 missing/wrong): 80
+- Multiple issues (3+ missing): 50
+- Major structural problems: < 50
+
+---
+
+### 2. RHOAI Style (35%)
+
+This is the core of RHOAI identity. Score each component:
+
+#### A. Lead Opener (30% of style subscore = 10.5% of overall)
+
+The [.lead] paragraph must:
+- [ ] Be present ([.lead] block)
+- [ ] Use bold (*text*)
+- [ ] Be italic (included in bold: *text*)
+- [ ] Contain single declarative sentence
+- [ ] Establish engineering authority (not "learn about", not vague)
+- [ ] Not be a question
+- [ ] Differ from section title
+- [ ] Connect to content without previewing it
+
+**Examples**:
+- ✅ "Production deployment requires governance, not just kubectl apply."
+- ✅ "GPU sharing requires fairness enforced by schedulers, not hope."
+- ❌ "This section covers production deployment."
+- ❌ "Have you thought about governance?"
+- ❌ "We will learn about deployment."
+
+**Scoring**:
+- Strong (all criteria met): 28-30
+- Good (meets most, minor issues): 24-27
+- Adequate (present but weak): 18-23
+- Poor (missing or very weak): <18
+
+#### B. Business Narrative (30% of style subscore = 10.5% of overall)
+
+Check for clear business value connection:
+
+- [ ] Business context paragraph present
+- [ ] Located within first 100 words of content
+- [ ] Mentions specific business concern:
+  - [ ] Cost/ROI
+  - [ ] Compliance/governance
+  - [ ] Efficiency/speed
+  - [ ] Reliability/errors
+- [ ] Includes specific numbers where relevant ($X, Y% improvement, etc.)
+- [ ] Uses platform engineer perspective ("A platform engineer must...")
+- [ ] Uses contrast pattern (developer vs. platform, shadow vs. factory)
+- [ ] Business scenario (if provided) integrated naturally
+- [ ] Doesn't just describe features (must explain WHY)
+
+**Examples**:
+- ✅ "A developer deploys models with kubectl. A platform engineer ensures that deployment follows approval gates, leaves audit trails, and integrates with cost tracking."
+- ✅ "GPU costs are $50K/month. Without governance, one team monopolizes the cluster, and others wait in queues."
+- ❌ "In this section, you will learn about governance."
+- ❌ "Governance is important for enterprises."
+
+**Scoring**:
+- Strong (clear business value, platform perspective, specificity): 28-30
+- Good (business value clear, mostly specific): 24-27
+- Adequate (business mentioned but weak): 18-23
+- Poor (missing or vague): <18
+
+#### C. Definition Lists (20% of style subscore = 7% of overall)
+
+Check for proper use of definition list syntax (::):
+
+- [ ] Objective:: used correctly
+- [ ] Key concepts use :: format where appropriate
+- [ ] Not using bullets when :: format should apply
+- [ ] At least 3-5 definitions in presentation/lab
+- [ ] Proper syntax throughout
+
+**Scoring**:
+- Excellent (multiple, proper syntax): 18-20
+- Good (several present, mostly correct): 14-17
+- Adequate (some present, minor syntax issues): 10-13
+- Poor (missing or incorrect): <10
+
+#### D. What's Next Section (20% of style subscore = 7% of overall)
+
+Check the "What's Next" section:
+
+- [ ] Present (dedicated == section)
+- [ ] Not generic ("Next we'll learn..." ❌)
+- [ ] Explains what capability is enabled by completing this section
+- [ ] Shows business connection to next topic
+- [ ] Motivates progression without just previewing content
+- [ ] Flows logically from this section to next
+
+**Examples**:
+- ✅ "Now that you've deployed safely, the next section shows how to monitor cost and catch errors before users do."
+- ❌ "In the next section, you will learn about monitoring."
+- ❌ "The next topic is monitoring models."
+
+**Scoring**:
+- Strong (enables thinking, business connection): 18-20
+- Good (forward-looking, mostly business-focused): 14-17
+- Adequate (present but generic): 10-13
+- Poor (missing or very generic): <10
+
+---
+
+### 3. Style Guide (20%)
+
+Check for adherence to RHOAI style rules:
+
+#### Prohibited Terms
+Search and flag these words:
+- "robust" → Too generic, be specific
+- "powerful" → Show capability instead
+- "leverage" → Use "use" or "apply"
+- "synergy" → Find the actual benefit
+- "game-changer" → Describe the change
+- "cutting-edge" → Be specific about what's new
+- "best-in-class" → Compared to what?
+- "innovative" → What specifically is new?
+
+#### Capitalization & Grammar
+- [ ] Headlines in sentence case (not Title Case)
+  - ✅ "Understanding GPU memory requirements"
+  - ❌ "Understanding GPU Memory Requirements"
+- [ ] Product names correct: "Red Hat OpenShift AI" (first), then "OpenShift AI" or "RHOAI"
+- [ ] No "the" before product names ("OpenShift AI" not "the OpenShift AI")
+- [ ] Oxford commas in lists ("models, inference, and deployment")
+- [ ] Numbers < 10 spelled out ("five nodes"), >= 10 as numerals ("12 instances")
+- [ ] No unnecessary capitalization
+
+#### Language Quality
+- [ ] Active voice (avoid passive)
+  - ✅ "You deploy" not "It is deployed"
+- [ ] Direct address (use "you")
+- [ ] Specific language (numbers, concrete examples)
+- [ ] Inclusive language (no gendered pronouns, accessible examples)
+- [ ] Proper punctuation and grammar
+
+**Scoring**:
+- Clean (no issues): 20
+- Minor issues (1-2): 16-19
+- Several issues (3-5): 10-15
+- Major issues (6+): <10
+
+---
+
+### 4. Technical Accuracy (15%)
+
+For code-heavy content (labs, technical presentations):
+
+#### Code Blocks
+- [ ] Source type specified ([source,bash], [source,yaml], etc.)
+- [ ] Correct type used:
+  - [ ] Commands: [source,bash] or [source,console]
+  - [ ] Configuration: [source,yaml]
+  - [ ] Scripts: [source,python], [source,bash], etc.
+  - [ ] Output: plain text (no source type)
+- [ ] Syntax is correct (would parse/run)
+- [ ] Copy-paste ready (no placeholders without context)
+
+#### For Labs Specifically
+- [ ] Verification steps included after major tasks
+- [ ] Expected output shown (not just commands)
+- [ ] Success criteria clear (✓ checks, "ready", "success")
+- [ ] Commands tested in target environment (assumption validation)
+- [ ] Prerequisites clearly stated
+- [ ] Troubleshooting present (if --include-troubleshooting)
+
+#### General Technical
+- [ ] Product names and versions accurate
+- [ ] No misleading or wrong technical claims
+- [ ] API references and command syntax match current version
+- [ ] Assumptions about environment clearly stated
+
+**Scoring**:
+- All accurate and complete: 15
+- Minor issues (1-2 gaps, small errors): 11-14
+- Several issues (3-5, some incomplete): 6-10
+- Major issues (wrong commands, missing output): <6
+
+---
+
+### 5. Accessibility (5%)
+
+- [ ] Images have alt text (if present)
+- [ ] Links are descriptive (not "click here")
+- [ ] Heading hierarchy is correct
+- [ ] Content structure clear for screen readers
+- [ ] Code examples have context
+- [ ] Tables have headers and summaries
+
+**Scoring**:
+- All present: 5
+- Minor issues (1 missing): 4
+- Several issues (2-3): 2-3
+- Major issues: <2
+
+---
+
+## Calculation Formula
+
+```
+Overall Score = (Structure × 0.25) + (RHOAI_Style × 0.35) +
+                (Style_Guide × 0.20) + (Technical × 0.15) +
+                (Accessibility × 0.05)
+
+Where:
+- Structure: 0-100
+- RHOAI_Style: 0-100 (comprised of 4 weighted components)
+- Style_Guide: 0-100
+- Technical: 0-100
+- Accessibility: 0-100
+```
+
+---
+
+## Issue Classification
+
+For each issue found:
+
+**Line Number**: Where in the document
+
+**Issue Description**: What's wrong
+
+**Context**: 1-2 sentence explanation of why this matters
+
+**Suggestion**: How to fix it, with example if helpful
+
+**Severity**:
+- **ERROR**: Blocks publication (missing critical element, broken code)
+- **WARNING**: Should fix before publishing (quality issue, affects readiness)
+- **SUGGESTION**: Optional improvement (nice-to-have, doesn't block)
+
+---
+
+## Readiness Assessment
+
+Based on overall score:
+
+### STRONG (90-100)
+- Lead opener excellent
+- Business narrative clear and specific
+- Structure complete and well-organized
+- Code examples verified
+- What's Next is business-focused
+- **Action**: Ready for publication
+
+### GOOD (75-89)
+- Core elements present
+- Minor style inconsistencies
+- Business connection could be stronger
+- Code examples mostly verified
+- **Action**: Minor revisions (1-2 hours), then publish
+
+### ADEQUATE (60-74)
+- Structure present but weak
+- Business narrative missing or vague
+- Code examples need verification
+- What's Next is too generic
+- **Action**: Significant improvements needed (2-4 hours)
+
+### WEAK (<60)
+- Missing critical elements
+- Little or no business narrative
+- Code may have errors
+- Structure is incomplete
+- **Action**: Major revision required (4+ hours)
+
+---
+
+## Output Format
+
+Generate a structured validation report:
+
+```
+OVERALL SCORE: [X]/100
+READINESS: [STRONG/GOOD/ADEQUATE/WEAK]
+
+CATEGORY BREAKDOWN:
+  Structure: [X]/100
+  RHOAI Style: [X]/100
+    - Lead Opener: [X]/30
+    - Business Narrative: [X]/30
+    - Definition Lists: [X]/20
+    - What's Next: [X]/20
+  Style Guide: [X]/100
+  Technical: [X]/100
+  Accessibility: [X]/100
+
+ISSUES ([N] found):
+  1. Line [X]: [Issue]
+     Context: [Why this matters]
+     Suggestion: [How to fix]
+     Severity: [ERROR/WARNING/SUGGESTION]
+  2. ...
+
+STRENGTHS:
+  [What this content does well]
+
+AREAS FOR IMPROVEMENT:
+  [What needs work]
+
+ESTIMATED EFFORT:
+  [Hours to reach GOOD/STRONG if ADEQUATE/WEAK]
+
+NEXT STEPS:
+  1. [Action 1]
+  2. [Action 2]
+  ...
+```
+
+---
+
+## Special Cases
+
+### For Presentations
+- Should have 2-3 major sections (== headings)
+- Should discuss trade-offs
+- Should include "Common Mistakes" section
+- Should have 4-6 key concepts
+- Time estimate should be 15-20 minutes
+
+### For Labs
+- Should have 2-4 numbered tasks
+- Each task should have verification steps
+- Prerequisites should be clearly listed
+- Troubleshooting section is expected
+- Should have learning outcomes checklist
+- Time estimate should be 30-60 minutes
+
+### For Quizzes
+- Should have 5 scenario-based questions
+- Each question should have 3-4 multiple choice options
+- Should include explanations for correct answers
+- Should provide scoring guidance
+- Time estimate should be 10-15 minutes
+
+---
+
+*Quality Checklist Version 1.0*
+*Use for every content validation*

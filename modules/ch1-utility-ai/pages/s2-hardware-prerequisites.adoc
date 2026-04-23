@@ -1,0 +1,99 @@
+:time_estimate: 15
+
+= Hardware & Platform Prerequisites
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+[.lead]
+*MaaS is the wiring, but generic GPU enablement is the foundation—without certified accelerators and proper drivers, the entire stack fails.*
+
+== Learning Objective
+
+Objective::
+Identify the hardware and platform requirements needed before enabling Models-as-a-Service on Red Hat OpenShift AI.
+
+== The Foundation: Generic GPU Enablement
+
+Before configuring MaaS, your OpenShift cluster must have:
+
+Certified Accelerators::
+Data center grade GPUs from NVIDIA (Turing/Ampere/Hopper/Blackwell), AMD (CDNA), or IBM Spyre
+
+GPU Drivers::
+Properly installed and verified CUDA or ROCm drivers
+
+Node Feature Discovery::
+NFD operator to detect and label GPU nodes
+
+GPU Operator::
+NVIDIA GPU Operator (or equivalent) managing driver containers
+
+A platform engineer thinking "We'll just enable MaaS" faces a hard stop without this foundation. The MaaS layer assumes GPU infrastructure is already working—it orchestrates *access* to GPUs, not the GPUs themselves.
+
+== Required Platform Components
+
+MaaS requires Red Hat OpenShift AI 3.3 or later with these dependencies:
+
+[source,yaml]
+----
+Required Operators:
+- Red Hat OpenShift AI operator
+- Red Hat Connectivity Link (Kuadrant)
+- cert-manager operator
+- Gateway API operator
+- LeaderWorkerSet operator
+- Llama Stack operator (for dashboard UI)
+----
+
+Missing any of these causes deployment failures. The error messages can be cryptic:
+
+[source,bash]
+----
+$ oc get datasciencecluster
+NAME    PHASE    AGE
+maas    Failed   2m
+----
+
+== Hardware Certification Requirements
+
+Not all GPUs are supported. MaaS requires:
+
+Minimum Tier::
+* NVIDIA: Turing architecture or newer (T4, V100, A100, H100, B200)
+* AMD: CDNA architecture (MI210, MI250, MI300)
+* IBM: Spyre accelerators
+
+Consumer GPUs Not Supported::
+Gaming cards (RTX 3090, RTX 4090) lack the reliability and driver support needed for production inference
+
+== Verification Checklist
+
+Before enabling MaaS, verify:
+
+- [ ] GPU nodes are labeled and scheduled properly
+- [ ] CUDA/ROCm drivers are working (`nvidia-smi` or `rocm-smi` succeeds)
+- [ ] Required operators are installed and healthy
+- [ ] OpenShift Container Platform is version 4.20+
+- [ ] Red Hat OpenShift AI is version 3.3+
+
+== Common Pitfalls
+
+**Problem**: MaaS component fails to start
+**Cause**: cert-manager not installed
+**Solution**: Install cert-manager operator *before* enabling MaaS
+
+**Problem**: Models fail to publish as MaaS endpoints
+**Cause**: Gateway API operator missing
+**Solution**: Verify all dependency operators are present
+
+== What's Next
+
+Now that you understand the prerequisite hardware and platform requirements, the next section maps the MaaS architecture stack—showing how KServe, Kuadrant, and Gateway API work together to deliver centralized model serving.
+
+////
+Section Notes:
+- Based on design doc Module 1, Section 1.2
+- Emphasizes foundation vs wiring metaphor
+- Specific hardware requirements with examples
+- Common failure modes and solutions
+////

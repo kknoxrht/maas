@@ -1,0 +1,78 @@
+:time_estimate: 20
+
+= The GPU Silo Crisis
+
+_Estimated reading time: *{time_estimate} minutes*._
+
+[.lead]
+*Expensive GPU hardware trapped in team silos creates idle capacity in some departments while high-priority projects stall in others.*
+
+== Learning Objective
+
+Objective::
+Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "AI Utility Grid" solves them.
+
+== The Problem: Private Power Generators
+
+Organizations currently face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams. This leads to simultaneous idle capacity and project bottlenecks.
+
+A data scientist wants to run their model training job immediately.
+A platform engineer must allocate $200,000 worth of GPU hardware fairly across multiple teams and projects.
+
+Without centralized orchestration, teams request and manage their own dedicated GPUs. This creates:
+
+* **Wasted Resources**: GPU hardware sitting idle in Team A while Team B's projects are queued
+* **Shadow AI**: Multiple teams downloading and deploying the same models independently
+* **Zero Visibility**: No audit logs, no PII filtering, no usage tracking
+* **Debugging Tax**: Data scientists waste time on CUDA drivers and Kubernetes instead of model tuning
+
+== The Solution: Municipal Utility Grid
+
+The Models-as-a-Service (MaaS) layer transforms GPU infrastructure from "private generators" to a "utility grid":
+
+Central IT::
+Manages the inference strategy, hardware allocation, and governance policies
+
+Lines of Business::
+Consume AI capabilities via tokens—like consuming electricity from the grid
+
+Platform Engineers::
+Configure tiers, rate limits, and observability dashboards
+
+Developers::
+Focus on applications, not infrastructure
+
+== Business Impact
+
+Without MaaS::
+* Redundant model deployments waste storage and compute
+* No audit trail for compliance requirements
+* Cannot track usage or forecast future needs
+* Teams compete for scarce GPU resources
+
+With MaaS::
+* Centralized model catalog eliminates redundancy
+* Complete audit logs and PII filtering via API gateway
+* Token-based consumption enables accurate chargeback
+* Fair resource allocation prevents team conflicts
+
+== The Transition Framework
+
+Moving from silos to centralized serving requires:
+
+1. **Generic GPU Enablement** - The foundation (drivers, operators, hardware certification)
+2. **MaaS Layer** - The wiring (KServe, Kuadrant, Gateway API)
+3. **Governance Framework** - The controls (tiers, rate limits, quotas)
+4. **Token Delivery Model** - The consumption interface (OpenAI-compatible APIs)
+
+== What's Next
+
+Now that you understand the business problem that MaaS solves, the next section covers the hardware and platform prerequisites needed before enabling the MaaS layer.
+
+////
+Section Notes:
+- Based on design doc Module 1, Section 1.1
+- Problem-solution structure following RHOAI "Shadow vs Factory" pattern
+- Specific business impacts with concrete examples
+- Developer vs Platform Engineer tension highlighted
+////

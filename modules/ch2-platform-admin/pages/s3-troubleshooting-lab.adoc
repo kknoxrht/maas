@@ -1,0 +1,265 @@
+:time_estimate: 45
+
+= Lab: Troubleshooting Component Enablement
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*When MaaS components fail to start, systematic verification reveals whether the problem is configuration, dependencies, or resource constraints.*
+
+== Lab Objective
+
+Objective::
+Diagnose and resolve common MaaS component enablement issues using `oc` commands and log analysis.
+
+== Prerequisites
+
+* OpenShift CLI (`oc`) installed and authenticated
+* Cluster administrator access
+* MaaS enablement attempted (DataScienceCluster updated)
+
+== Lab Overview
+
+You will:
+
+1. Verify the health of all MaaS components
+2. Troubleshoot a `maas-api` pod failure
+3. Resolve a missing Gateway issue
+4. Fix a dashboard configuration problem
+
+== Task 1: Verify MaaS Component Health
+
+Check the status of the DataScienceCluster:
+
+[source,bash]
+----
+$ oc get datasciencecluster default-dsc
+NAME          PHASE   AGE
+default-dsc   Ready   15m
+----
+
+If `PHASE` shows `Failed` or `Progressing` for more than 5 minutes, investigate:
+
+[source,bash]
+----
+$ oc describe datasciencecluster default-dsc
+# Look for error messages in Events section
+----
+
+**Expected Output**: `PHASE: Ready` indicates MaaS components should be deploying.
+
+Check MaaS-specific pods:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep -E 'maas|gateway'
+maas-api-7c8f9d5b-xxx                1/1   Running   0   10m
+maas-default-gateway-xxx             1/1   Running   0   10m
+----
+
+**Expected Output**: Both pods in `Running` state with `1/1` ready containers.
+
+== Task 2: Troubleshoot maas-api Pod Failure
+
+Scenario: The `maas-api` pod is stuck in `CrashLoopBackOff`:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep maas-api
+maas-api-7c8f9d5b-xxx   0/1   CrashLoopBackOff   5   10m
+----
+
+**Step 1**: Check pod logs:
+
+[source,bash]
+----
+$ oc logs -n redhat-ods-applications deployment/maas-api
+Error: unable to load certificates: secret "maas-tls" not found
+----
+
+**Diagnosis**: Missing TLS certificates—cert-manager not installed.
+
+**Step 2**: Verify cert-manager:
+
+[source,bash]
+----
+$ oc get pods -n cert-manager
+No resources found in cert-manager namespace.
+----
+
+**Solution**: Install cert-manager operator:
+
+[source,bash]
+----
+$ oc apply -f - <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: cert-manager
+  namespace: openshift-operators
+spec:
+  channel: stable
+  name: cert-manager
+  source: redhat-operators
+  sourceNamespace: openshift-marketplace
+EOF
+----
+
+**Step 3**: Wait for cert-manager to be ready:
+
+[source,bash]
+----
+$ oc get pods -n cert-manager
+NAME                          READY   STATUS
+cert-manager-xxx              1/1     Running
+cert-manager-cainjector-xxx   1/1     Running
+cert-manager-webhook-xxx      1/1     Running
+----
+
+**Step 4**: Delete the failing pod (operator recreates it):
+
+[source,bash]
+----
+$ oc delete pod -n redhat-ods-applications -l app=maas-api
+pod "maas-api-7c8f9d5b-xxx" deleted
+----
+
+**Verification**:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep maas-api
+maas-api-7c8f9d5b-yyy   1/1   Running   0   30s
+----
+
+✓ Pod should now be `Running`.
+
+== Task 3: Resolve Missing Gateway
+
+Scenario: No Gateway resource exists:
+
+[source,bash]
+----
+$ oc get gateway -n redhat-ods-applications
+No resources found in redhat-ods-applications namespace.
+----
+
+**Step 1**: Verify Gateway API operator installed:
+
+[source,bash]
+----
+$ oc get crd gateways.gateway.networking.k8s.io
+Error from server (NotFound): customresourcedefinitions.apiextensions.k8s.io "gateways.gateway.networking.k8s.io" not found
+----
+
+**Diagnosis**: Gateway API CRDs missing—operator not installed.
+
+**Solution**: Install Gateway API operator (if using OpenShift Service Mesh):
+
+[source,bash]
+----
+$ oc apply -k "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0"
+customresourcedefinition.apiextensions.k8s.io/gatewayclasses.gateway.networking.k8s.io created
+customresourcedefinition.apiextensions.k8s.io/gateways.gateway.networking.k8s.io created
+----
+
+**Verification**:
+
+[source,bash]
+----
+$ oc get gateway -n redhat-ods-applications
+NAME                   CLASS   ADDRESS
+maas-default-gateway   istio   maas.apps.ocp.example.com
+----
+
+✓ Gateway appears with an assigned ADDRESS.
+
+== Task 4: Fix Dashboard Configuration
+
+Scenario: Gen AI Studio menu not visible in dashboard:
+
+**Step 1**: Check dashboard configuration:
+
+[source,bash]
+----
+$ oc get odhdashboardconfig odh-dashboard-config -o yaml | grep -A 2 dashboardConfig
+dashboardConfig:
+  genAiStudio: false
+  modelAsService: false
+----
+
+**Diagnosis**: Features not enabled in config.
+
+**Solution**: Enable both features:
+
+[source,bash]
+----
+$ oc patch odhdashboardconfig odh-dashboard-config --type=merge -p '{
+  "spec": {
+    "dashboardConfig": {
+      "genAiStudio": true,
+      "modelAsService": true
+    }
+  }
+}'
+----
+
+**Step 2**: Wait for dashboard to restart:
+
+[source,bash]
+----
+$ oc get pods -n redhat-ods-applications | grep dashboard
+odh-dashboard-xxx   0/1   Terminating   0   15m
+odh-dashboard-yyy   1/1   Running       0   10s
+----
+
+**Verification**: Access the dashboard UI and confirm "Gen AI Studio" appears in the left navigation.
+
+== Common Errors Reference
+
+[cols="2,3,3"]
+|===
+|Error |Cause |Solution
+
+|`maas-api` CrashLoopBackOff
+|cert-manager missing
+|Install cert-manager operator
+
+|No Gateway resource
+|Gateway API operator missing
+|Install Gateway API CRDs
+
+|Gen AI Studio not visible
+|Dashboard config incomplete
+|Update OdhDashboardConfig
+
+|Kuadrant pods missing
+|Connectivity Link not installed
+|Install Red Hat Connectivity Link operator
+
+|LeaderWorkerSet errors
+|Operator not installed
+|Install LeaderWorkerSet operator before deploying distributed models
+|===
+
+== Lab Summary
+
+You have:
+
+✓ Verified MaaS component health
+✓ Diagnosed and fixed `maas-api` pod failures
+✓ Resolved missing Gateway API issues
+✓ Enabled Gen AI Studio in the dashboard
+
+== What's Next
+
+Now that the MaaS platform is fully operational and troubleshooting skills are established, the next module shows how to deploy generative AI models and publish them to the MaaS catalog with governance controls.
+
+////
+Section Notes:
+- Based on design doc Module 2, Section 2.3
+- Hands-on troubleshooting lab format
+- Real error scenarios with solutions
+- Verification steps after each task
+- Reference table for quick lookup
+////
