@@ -55,7 +55,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">1. The Shift to Utility AI</a>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a>
@@ -77,13 +77,13 @@
     <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a>
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a>
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
   </li>
 </ul>
   </li>
@@ -192,87 +192,46 @@
 </aside>
 <article class="doc">
 <h1 class="page">Module 3: Deploying Models to the MaaS Catalog</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>Estimated time: <strong>5 minutes</strong>.</em></p>
-</div>
 <div class="paragraph lead">
 <p><strong>Publishing a model to MaaS transforms it from a siloed resource into a governed utility accessible through centralized authentication and rate limiting.</strong></p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_module_goal"><a class="anchor" href="#_module_goal"></a>Module Goal</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Deploy generative AI models, configure distributed serving runtimes, and publish them to the governed catalog.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_performance_objective"><a class="anchor" href="#_performance_objective"></a>Performance Objective</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>[PO 3 - Partial]</strong>: Deploy models using the "Distributed inference with llm-d" runtime and publish them to the MaaS catalog with tier-based access control.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_what_youll_learn"><a class="anchor" href="#_what_youll_learn"></a>What You&#8217;ll Learn</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In this module, you will:</p>
-</div>
+<hr>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>3.1: Serving Runtimes &amp; Distributed Inference</strong></dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
 <p>Understand the requirement for distributed inference runtimes</p>
 </li>
-<li>
-<p>Deploy a generative AI model and publish it as a MaaS endpoint</p>
-</li>
-<li>
-<p>Configure tier-based access control (All tiers vs Specific tiers)</p>
-</li>
-<li>
-<p>Dynamically update model access and understand immediate enforcement</p>
-</li>
 </ul>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_module_sections"><a class="anchor" href="#_module_sections"></a>Module Sections</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This module contains three sections:</p>
-</div>
+</dd>
+<dt class="hdlist1"><strong>3.2: Lab - Publishing as a MaaS Endpoint</strong></dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>3.1: Serving Runtimes &amp; Distributed Inference</strong> - Understanding llm-d and LeaderWorkerSet</p>
-</li>
-<li>
-<p><strong>3.2: Lab - Publishing as a MaaS Endpoint</strong> - Deploying and publishing a model</p>
-</li>
-<li>
-<p><strong>3.3: Lab - Updating Access Dynamically</strong> - Managing tier access post-deployment</p>
+<p>Deploy a generative AI model and publish it as a MaaS endpoint<br></p>
 </li>
 </ul>
 </div>
+</dd>
+<dt class="hdlist1"><strong>3.3: Lab - Updating Access Dynamically</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Dynamically update model access and configure tier-based access control (All tiers vs Specific tiers)</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Once models are published to the catalog, the next module focuses on governance—creating custom tiers, enforcing rate limits, and tracking token consumption for chargeback.</p>
-</div>
-</div>
+</dd>
+</dl>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a></span>
+  <span class="prev"><a href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a></span>
   <span class="next"><a href="#s1-distributed-inference.adoc">3.1: Serving Runtimes &amp; Distributed Inference</a></span>
 </nav>
 </article>

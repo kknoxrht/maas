@@ -55,7 +55,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">1. The Shift to Utility AI</a>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a>
@@ -77,13 +77,13 @@
     <a class="nav-link" href="index.html">2. Administering the MaaS Platform</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a>
+    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
     <a class="nav-link" href="s2-deployment-workflows.html">2.2: Deployment Workflows</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a>
+    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
   </li>
 </ul>
   </li>
@@ -196,16 +196,11 @@
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated reading time: <strong>15 minutes</strong>.</em></p>
+<p><em>Estimated reading time: <strong>10 minutes</strong>.</em></p>
 </div>
 <div class="paragraph lead">
-<p><strong>Two paths to MaaS: build the platform first then add models, or retrofit existing models with MaaS annotations.</strong></p>
+<p><strong>Two paths to MaaS: build the platform first then add models, or enroll existing llm-d models into MaaS.</strong></p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_learning_objective"><a class="anchor" href="#_learning_objective"></a>Learning Objective</h2>
-<div class="sectionbody">
 <div class="dlist">
 <dl>
 <dt class="hdlist1">Objective</dt>
@@ -234,16 +229,36 @@
 <p>This is the recommended approach for new deployments.</p>
 </div>
 <div class="paragraph">
-<p><strong>When to Use</strong>:
-* Starting a new OpenShift AI implementation
-* No existing KServe models in production
-* Want to establish governance before enabling inference</p>
+<p><strong>When to Use</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Starting a new OpenShift AI implementation</p>
+</li>
+<li>
+<p>No existing KServe models in production</p>
+</li>
+<li>
+<p>Want to establish governance before enabling inference</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p><strong>Advantages</strong>:
-* Clean implementation—all models governed from day one
-* Platform team sets policies before developers consume
-* No migration complexity</p>
+<p><strong>Advantages</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Clean implementation—all models governed from day one</p>
+</li>
+<li>
+<p>Platform team sets policies before developers consume</p>
+</li>
+<li>
+<p>No migration complexity</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -251,36 +266,88 @@
 <h2 id="_model_retrofit_deployment"><a class="anchor" href="#_model_retrofit_deployment"></a>Model-Retrofit Deployment</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The retrofit approach enrolls existing KServe models into MaaS:</p>
+<p>The retrofit approach enrolls existing generative AI models into MaaS.</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">1. Existing KServe InferenceServices already deployed
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">1. Existing model using the "Distributed inference with llm-d" runtime is already deployed
 2. Enable MaaS platform components
-3. Annotate existing models to enroll them in MaaS
-4. Models become available through MaaS gateway</code></pre>
+3. Edit the existing model deployment through the dashboard
+4. Enable "Publish as MaaS endpoint" and assign tier access</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>When to Use</strong>:
-* OpenShift AI cluster already running KServe models
-* Need to add governance to existing inference workloads
-* Migrating from standalone KServe to centralized MaaS</p>
+<p><strong>When to Use</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift AI cluster already running supported models</p>
+</li>
+<li>
+<p>Need to add governance to existing inference workloads</p>
+</li>
+<li>
+<p>Migrating from standalone serving to centralized MaaS</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Currently, only the <strong>Distributed inference with llm-d</strong> runtime supports MaaS integration. If an existing model uses a different runtime, the option to publish it as a MaaS endpoint will not be available.</p>
+</div>
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p><strong>Enrollment Process</strong>:</p>
+<p><strong>Enrollment Process via UI</strong>:</p>
 </div>
 <div class="paragraph">
-<p>Add this annotation to existing <code>InferenceService</code> resources:</p>
+<p>Update existing models through the OpenShift AI dashboard:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Centralized Model HubNavigate to <strong>Projects</strong> and click your project name.</p>
+</li>
+<li>
+<p>Click the <strong>Deployments</strong> tab..</p>
+</li>
+<li>
+<p>In the <strong>Advanced settings</strong> section, select <strong>Publish as MaaS endpoint</strong>.</p>
+</li>
+<li>
+<p>Configure <strong>Tier access</strong> (select either <em>All tiers</em> or <em>Specific tiers</em>).</p>
+</li>
+<li>
+<p>Centralized Model Hub: Click <strong>Update</strong>.</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>After updating, the model appears in the Gen AI Studio dashboard and becomes accessible through the MaaS gateway.</p>
+</div>
+<div class="paragraph">
+<p><strong>Enrollment Process via CLI</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Add this annotation to existing <code>LLMInferenceService</code> resources:</p>
 </div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1beta1
-kind: InferenceService
+kind: LLMInferenceService
 metadata:
   name: existing-model
   annotations:
-    serving.kserve.io/models-as-service: "true"  <i class="conum" data-value="1"></i><b>(1)</b>
+    alpha.maas.opendatahub.io/tiers: '["free", "premium", "enterprise"]'  <i class="conum" data-value="1"></i><b>(1)</b>
 spec:
   # ... existing model configuration</code></pre>
 </div>
@@ -347,9 +414,9 @@ spec:
 </div>
 <div class="dlist">
 <dl>
-<dt class="hdlist1">Downtime</dt>
+<dt class="hdlist1">Immediate Effect</dt>
 <dd>
-<p>Adding the annotation triggers a rolling update of the InferenceService. Expect 30-60 seconds of unavailability per model.</p>
+<p>Changing tier access and MaaS settings takes effect immediately. Users who lose access will receive 403 Forbidden errors on their next API request.</p>
 </dd>
 <dt class="hdlist1">Client Changes</dt>
 <dd>
@@ -357,11 +424,11 @@ spec:
 </dd>
 <dt class="hdlist1">Tier Assignment</dt>
 <dd>
-<p>Retrofitted models default to "All tiers" access. You may want to restrict access after enrollment.</p>
+<p>Retrofitted models default to "All tiers" access if not explicitly scoped during the update. You may want to restrict access to specific tiers during the enrollment process.</p>
 </dd>
 <dt class="hdlist1">Rate Limits</dt>
 <dd>
-<p>Models immediately subject to MaaS rate limits. Monitor for 429 errors from existing clients.</p>
+<p>Models are immediately subject to MaaS rate limits upon enrollment. Monitor for 429 Rate Limit Exceeded errors from existing clients.</p>
 </dd>
 </dl>
 </div>
@@ -371,17 +438,42 @@ spec:
 <h2 id="_best_practices"><a class="anchor" href="#_best_practices"></a>Best Practices</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p><strong>For Platform-First</strong>:
-* Enable MaaS during initial OpenShift AI setup
-* Document deployment workflows before onboarding teams
-* Create default tiers aligned with organizational structure</p>
+<p><strong>For Platform-First</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enable MaaS during initial OpenShift AI setup</p>
+</li>
+<li>
+<p>Document deployment workflows before onboarding teams</p>
+</li>
+<li>
+<p>Create default tiers aligned with organizational structure</p>
+</li>
+</ul>
 </div>
 <div class="paragraph">
-<p><strong>For Model-Retrofit</strong>:
-* Test enrollment on non-production models first
-* Communicate gateway URL changes to application teams
-* Migrate models gradually (not all at once)
-* Monitor for client 401/403/429 errors after migration</p>
+<p><strong>For Model-Retrofit</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The retrofit workflow cannot be applied to just any existing KServe model; the model must already be deployed using the "Distributed inference with llm-d" runtime.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Test enrollment on non-production models first</p>
+</li>
+<li>
+<p>Communicate gateway URL changes to application teams</p>
+</li>
+<li>
+<p>Migrate models gradually (not all at once)</p>
+</li>
+<li>
+<p>Monitor for client 401/403/429 errors after migration</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
@@ -394,8 +486,8 @@ spec:
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a></span>
-  <span class="next"><a href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a></span>
+  <span class="prev"><a href="s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a></span>
+  <span class="next"><a href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a></span>
 </nav>
 </article>
   </div>

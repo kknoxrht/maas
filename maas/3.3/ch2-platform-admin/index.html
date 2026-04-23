@@ -55,7 +55,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">1. The Shift to Utility AI</a>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a>
@@ -77,13 +77,13 @@
     <a class="nav-link" href="index.html">2. Administering the MaaS Platform</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a>
+    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-deployment-workflows.html">2.2: Deployment Workflows</a>
   </li>
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a>
+    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
   </li>
 </ul>
   </li>
@@ -192,88 +192,47 @@
 </aside>
 <article class="doc">
 <h1 class="page">Module 2: Administering the MaaS Platform</h1>
-<div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p><em>Estimated time: <strong>5 minutes</strong>.</em></p>
-</div>
 <div class="paragraph lead">
 <p><strong>Configuration is where intent becomes infrastructure—updating CRDs transforms a standard OpenShift AI cluster into a governed MaaS platform.</strong></p>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_module_goal"><a class="anchor" href="#_module_goal"></a>Module Goal</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Configure the RHOAI Custom Resource Definitions (CRDs) to enable the MaaS infrastructure and expose the Gen AI dashboard.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_performance_objective"><a class="anchor" href="#_performance_objective"></a>Performance Objective</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p><strong>[PO 2] Administer the MaaS Platform</strong>: Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.</p>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_what_youll_learn"><a class="anchor" href="#_what_youll_learn"></a>What You&#8217;ll Learn</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>In this module, you will:</p>
-</div>
+<hr>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>2.1: Enabling the Grid (CRD Configuration)</strong></dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
-<p>Update the <code>DataScienceCluster</code> CRD to enable MaaS</p>
-</li>
-<li>
-<p>Configure the dashboard to expose Gen AI Studio</p>
-</li>
-<li>
-<p>Understand platform-first vs model-retrofit deployment workflows</p>
-</li>
-<li>
-<p>Troubleshoot common component enablement issues</p>
+<p>Updating DataScienceCluster and OdhDashboardConfig</p>
 </li>
 </ul>
 </div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_module_sections"><a class="anchor" href="#_module_sections"></a>Module Sections</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This module contains three sections:</p>
-</div>
+</dd>
+<dt class="hdlist1"><strong>2.2: Deployment Workflows</strong></dt>
+<dd>
 <div class="ulist">
 <ul>
 <li>
-<p><strong>2.1: Enabling the Grid (CRD Configuration)</strong> - Updating DataScienceCluster and OdhDashboardConfig</p>
-</li>
-<li>
-<p><strong>2.2: Deployment Workflows</strong> - Platform-first vs retrofitting existing models</p>
-</li>
-<li>
-<p><strong>2.3: Troubleshooting Component Enablement Lab</strong> - Verifying pods and resolving issues</p>
+<p>Platform-first vs retrofitting existing models<br></p>
 </li>
 </ul>
 </div>
+</dd>
+<dt class="hdlist1"><strong>2.3: Troubleshooting Component Enablement Lab</strong></dt>
+<dd>
+<div class="ulist">
+<ul>
+<li>
+<p>Verifying pods and resolving issues</p>
+</li>
+</ul>
 </div>
-</div>
-<div class="sect1">
-<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Once the MaaS platform is enabled and healthy, the next module shows how to deploy generative AI models and publish them to the governed catalog.</p>
-</div>
-</div>
+</dd>
+</dl>
 </div>
 <nav class="pagination">
   <span class="prev"><a href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a></span>
-  <span class="next"><a href="s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a></span>
+  <span class="next"><a href="s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a></span>
 </nav>
 </article>
   </div>

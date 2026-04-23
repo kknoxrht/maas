@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Lab: Troubleshooting Component Enablement :: Red Hat OpenShift AI - Models as a Service</title>
+    <title>Troubleshooting Component Enablement :: Red Hat OpenShift AI - Models as a Service</title>
     <link rel="prev" href="s2-deployment-workflows.html">
     <link rel="next" href="../ch3-model-deployment/index.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -55,7 +55,7 @@
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">1. The Shift to Utility AI</a>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crisis</a>
@@ -77,13 +77,13 @@
     <a class="nav-link" href="index.html">2. Administering the MaaS Platform</a>
 <ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling the Grid (CRD Configuration)</a>
+    <a class="nav-link" href="s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
   </li>
   <li class="nav-item" data-depth="2">
     <a class="nav-link" href="s2-deployment-workflows.html">2.2: Deployment Workflows</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
-    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a>
+    <a class="nav-link" href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
   </li>
 </ul>
   </li>
@@ -183,7 +183,7 @@
   <ul>
     <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
     <li><a href="index.html">2. Administering the MaaS Platform</a></li>
-    <li><a href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement Lab</a></li>
+    <li><a href="s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a></li>
   </ul>
 </nav>
 </div>
@@ -192,11 +192,11 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Lab: Troubleshooting Component Enablement</h1>
+<h1 class="page">Troubleshooting Component Enablement</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p><em>Estimated time: <strong>45 minutes</strong>.</em></p>
+<p><em>Estimated time: <strong>15 minutes</strong>.</em></p>
 </div>
 <div class="paragraph lead">
 <p><strong>When MaaS components fail to start, systematic verification reveals whether the problem is configuration, dependencies, or resource constraints.</strong></p>
@@ -288,13 +288,22 @@ default-dsc   Ready   15m</code></pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get pods -n redhat-ods-applications | grep -E 'maas|gateway'
-maas-api-7c8f9d5b-xxx                1/1   Running   0   10m
-maas-default-gateway-xxx             1/1   Running   0   10m</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get pods -n redhat-ods-applications -l app.kubernetes.io/name=maas-api
+maas-api-7c8f9d5b-xxx                1/1   Running   0   10m</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Expected Output</strong>: Both pods in <code>Running</code> state with <code>1/1</code> ready containers.</p>
+<p><strong>Expected Output</strong>: The <code>maas-api</code> pod should be in a <code>Running</code> state.</p>
+</div>
+<div class="paragraph">
+<p>Next, verify the Gateway resource exists in the correct namespace:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get gateway maas-default-gateway -n openshift-ingress
+NAME                   CLASS                          PROGRAMMED   AGE
+maas-default-gateway   openshift-gateway-controller   True         10m</code></pre>
+</div>
 </div>
 </div>
 </div>
@@ -389,48 +398,35 @@ maas-api-7c8f9d5b-yyy   1/1   Running   0   30s</code></pre>
 <h2 id="_task_3_resolve_missing_gateway"><a class="anchor" href="#_task_3_resolve_missing_gateway"></a>Task 3: Resolve Missing Gateway</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Scenario: No Gateway resource exists:</p>
+<p>Scenario: The MaaS API fails to initialize or route traffic because the required Gateway resource is missing.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Check for the Gateway in the ingress namespace:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get gateway -n redhat-ods-applications
-No resources found in redhat-ods-applications namespace.</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get gateway maas-default-gateway -n openshift-ingress
+Error from server (NotFound): gateways.gateway.networking.k8s.io "maas-default-gateway" not found</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p><strong>Step 1</strong>: Verify Gateway API operator installed:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get crd gateways.gateway.networking.k8s.io
-Error from server (NotFound): customresourcedefinitions.apiextensions.k8s.io "gateways.gateway.networking.k8s.io" not found</code></pre>
-</div>
+<p><strong>Diagnosis</strong>: The <code>maas-default-gateway</code> resource does not exist in the <code>openshift-ingress</code> namespace.</p>
 </div>
 <div class="paragraph">
-<p><strong>Diagnosis</strong>: Gateway API CRDs missing—operator not installed.</p>
-</div>
-<div class="paragraph">
-<p><strong>Solution</strong>: Install Gateway API operator (if using OpenShift Service Mesh):</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc apply -k "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0"
-customresourcedefinition.apiextensions.k8s.io/gatewayclasses.gateway.networking.k8s.io created
-customresourcedefinition.apiextensions.k8s.io/gateways.gateway.networking.k8s.io created</code></pre>
-</div>
+<p><strong>Solution</strong>: The cluster administrator must create a GatewayClass for the OpenShift Gateway Controller and deploy the Gateway.</p>
 </div>
 <div class="paragraph">
 <p><strong>Verification</strong>:</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get gateway -n redhat-ods-applications
-NAME                   CLASS   ADDRESS
-maas-default-gateway   istio   maas.apps.ocp.example.com</code></pre>
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get gateway maas-default-gateway -n openshift-ingress
+NAME                   CLASS                          PROGRAMMED   AGE
+maas-default-gateway   openshift-gateway-controller   True         1m</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>✓ Gateway appears with an assigned ADDRESS.</p>
+<p>✓ Gateway appears with the correct class and <code>PROGRAMMED</code> status set to <code>True</code></p>
 </div>
 </div>
 </div>
