@@ -1,17 +1,16 @@
 :time_estimate: 5
 
-= Module 1: The Shift to Utility AI & Architecture Foundation
+= Module 1: The Shift to Consumable Model Backplane
 
 [.lead]
 *GPU infrastructure trapped in team silos creates the worst outcome: idle capacity and project bottlenecks simultaneously.*
 
-== Module Goal
+---
 
-**Evaluate MaaS Architecture**: Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".
-
-What You'll Learn::
-
-**1.1: The GPU Silo Crisis** - Understand the "GPU Silo Crisis" and its business impact
-**1.2: Hardware & Platform Prerequisites** - Learn the hardware and platform prerequisites for MaaS including GPU enablement and certified accelerators +
-**1.3: The MaaS Architecture Stack** - Understanding KServe, Kuadrant, and Gateway API
+**1.1: The GPU Silo Crisis**::
+ - Understand the "GPU Silo Crisis" and its business impact
+**1.2: Hardware & Platform Prerequisites**::
+ - Learn the hardware and platform prerequisites for MaaS including GPU enablement and certified accelerators +
+**1.3: The MaaS Architecture Stack**::
+ - Understanding KServe, Kuadrant, and Gateway API
 

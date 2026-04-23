@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 [.lead]
 *Three layers make MaaS work: KServe serves models, Kuadrant enforces policies, and Gateway API routes traffic—each solves a distinct problem.*
 
-== Learning Objective
-
 Objective::
 Map the MaaS architecture stack and understand how KServe (serving), Kuadrant (governance), and Gateway API (routing) integrate to deliver centralized model inference.
 
@@ -49,7 +47,7 @@ Scales replicas based on request load
 Health Checks::
 Monitors model readiness and liveness
 
-A developer deploys a model. KServe ensures it's running, healthy, and can handle inference requests. But KServe alone doesn't handle *who can access the model* or *how often*—that's where Kuadrant comes in.
+A developer deploys a model. KServe ensures it's running, healthy, and can handle inference requests. But KServe alone doesn't handle *who can access the model* or *how often*, that's where Kuadrant comes in.
 
 == Layer 2: Kuadrant (Policy Enforcement)
 
@@ -142,6 +140,10 @@ $ oc get gateway -n redhat-ods-applications
 NAME                  CLASS
 maas-default-gateway  istio
 ----
+
+---
+
+image::mass_arch.png[]
 
 == What's Next
 

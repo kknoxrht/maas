@@ -10,7 +10,7 @@ Organizations face a "GPU Silo" crisis where expensive, limited hardware is trap
 
 This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.
 
-By the end of this training, you will transition your infrastructure from "Private Power Generators" (siloed hardware) to a centralized "Municipal Utility Grid" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.
+By the end of this training, you will transition your infrastructure from "dedicated, single-team clusters" (siloed hardware) to a centralized "consumable model backplane" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.
 
 **Duration**: 3-4 hours
 

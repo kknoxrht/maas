@@ -1,37 +1,15 @@
-:time_estimate: 5
+:time_estimate: 35
 
 = Module 2: Administering the MaaS Platform
-
-_Estimated time: *{time_estimate} minutes*._
 
 [.lead]
 *Configuration is where intent becomes infrastructure—updating CRDs transforms a standard OpenShift AI cluster into a governed MaaS platform.*
 
-== Module Goal
+---
 
-Configure the RHOAI Custom Resource Definitions (CRDs) to enable the MaaS infrastructure and expose the Gen AI dashboard.
-
-== Performance Objective
-
-**[PO 2] Administer the MaaS Platform**: Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.
-
-== What You'll Learn
-
-In this module, you will:
-
-* Update the `DataScienceCluster` CRD to enable MaaS
-* Configure the dashboard to expose Gen AI Studio
-* Understand platform-first vs model-retrofit deployment workflows
-* Troubleshoot common component enablement issues
-
-== Module Sections
-
-This module contains three sections:
-
-* **2.1: Enabling the Grid (CRD Configuration)** - Updating DataScienceCluster and OdhDashboardConfig
-* **2.2: Deployment Workflows** - Platform-first vs retrofitting existing models
-* **2.3: Troubleshooting Component Enablement Lab** - Verifying pods and resolving issues
-
-== What's Next
-
-Once the MaaS platform is enabled and healthy, the next module shows how to deploy generative AI models and publish them to the governed catalog.
+**2.1: Enabling the Grid (CRD Configuration)**::
+ - Updating DataScienceCluster and OdhDashboardConfig
+**2.2: Deployment Workflows**::
+ - Platform-first vs retrofitting existing models +
+**2.3: Troubleshooting Component Enablement Lab**::
+ - Verifying pods and resolving issues

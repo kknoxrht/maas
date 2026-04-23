@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 [.lead]
 *MaaS is the wiring, but generic GPU enablement is the foundation—without certified accelerators and proper drivers, the entire stack fails.*
 
-== Learning Objective
-
 Objective::
 Identify the hardware and platform requirements needed before enabling Models-as-a-Service on Red Hat OpenShift AI.
 

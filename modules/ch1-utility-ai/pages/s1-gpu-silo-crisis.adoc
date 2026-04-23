@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 [.lead]
 *Expensive GPU hardware trapped in team silos creates idle capacity in some departments while high-priority projects stall in others.*
 
-== Learning Objective
-
 Objective::
 Understand the business and operational problems created by fragmented GPU infrastructure and how the Models-as-a-Service "Centralized Model Hub" solves them.
 

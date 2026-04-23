@@ -1,6 +1,6 @@
-:time_estimate: 45
+:time_estimate: 15
 
-= Lab: Troubleshooting Component Enablement
+= Troubleshooting Component Enablement
 
 _Estimated time: *{time_estimate} minutes*._
 
@@ -52,12 +52,20 @@ Check MaaS-specific pods:
 
 [source,bash]
 ----
-$ oc get pods -n redhat-ods-applications | grep -E 'maas|gateway'
+$ oc get pods -n redhat-ods-applications -l app.kubernetes.io/name=maas-api
 maas-api-7c8f9d5b-xxx                1/1   Running   0   10m
-maas-default-gateway-xxx             1/1   Running   0   10m
 ----
 
-**Expected Output**: Both pods in `Running` state with `1/1` ready containers.
+**Expected Output**: The `maas-api` pod should be in a `Running` state.
+
+Next, verify the Gateway resource exists in the correct namespace:
+
+[source,bash]
+----
+$ oc get gateway maas-default-gateway -n openshift-ingress
+NAME                   CLASS                          PROGRAMMED   AGE
+maas-default-gateway   openshift-gateway-controller   True         10m
+----
 
 == Task 2: Troubleshoot maas-api Pod Failure
 
@@ -136,43 +144,30 @@ maas-api-7c8f9d5b-yyy   1/1   Running   0   30s
 
 == Task 3: Resolve Missing Gateway
 
-Scenario: No Gateway resource exists:
+Scenario: The MaaS API fails to initialize or route traffic because the required Gateway resource is missing.
+
+**Step 1**: Check for the Gateway in the ingress namespace:
 
 [source,bash]
 ----
-$ oc get gateway -n redhat-ods-applications
-No resources found in redhat-ods-applications namespace.
+$ oc get gateway maas-default-gateway -n openshift-ingress
+Error from server (NotFound): gateways.gateway.networking.k8s.io "maas-default-gateway" not found
 ----
 
-**Step 1**: Verify Gateway API operator installed:
+**Diagnosis**: The `maas-default-gateway` resource does not exist in the `openshift-ingress` namespace. 
 
-[source,bash]
-----
-$ oc get crd gateways.gateway.networking.k8s.io
-Error from server (NotFound): customresourcedefinitions.apiextensions.k8s.io "gateways.gateway.networking.k8s.io" not found
-----
-
-**Diagnosis**: Gateway API CRDs missing—operator not installed.
-
-**Solution**: Install Gateway API operator (if using OpenShift Service Mesh):
-
-[source,bash]
-----
-$ oc apply -k "github.com/kubernetes-sigs/gateway-api/config/crd?ref=v1.0.0"
-customresourcedefinition.apiextensions.k8s.io/gatewayclasses.gateway.networking.k8s.io created
-customresourcedefinition.apiextensions.k8s.io/gateways.gateway.networking.k8s.io created
-----
+**Solution**: The cluster administrator must create a GatewayClass for the OpenShift Gateway Controller and deploy the Gateway. 
 
 **Verification**:
 
 [source,bash]
 ----
-$ oc get gateway -n redhat-ods-applications
-NAME                   CLASS   ADDRESS
-maas-default-gateway   istio   maas.apps.ocp.example.com
+$ oc get gateway maas-default-gateway -n openshift-ingress
+NAME                   CLASS                          PROGRAMMED   AGE
+maas-default-gateway   openshift-gateway-controller   True         1m
 ----
 
-✓ Gateway appears with an assigned ADDRESS.
+✓ Gateway appears with the correct class and `PROGRAMMED` status set to `True`
 
 == Task 4: Fix Dashboard Configuration
 

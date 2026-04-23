@@ -1,4 +1,4 @@
-:time_estimate: 30
+:time_estimate: 10
 
 = Enabling the Grid (CRD Configuration)
 
@@ -109,7 +109,44 @@ The `1` under `RESTARTS` indicates it picked up the config change.
 
 == Step 3: Verify Gateway API Deployment
 
-MaaS automatically creates a Gateway resource:
+.Click for the maas-default-gateway deployment .yaml 
+[%collapsible]
+====
+[source,bash]
+----
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: maas-default-gateway
+  namespace: openshift-ingress
+spec:
+  # You may need to change this to match the specific GatewayClass in your cluster 
+  # (e.g., run `oc get gatewayclass` or `kubectl get gatewayclass` to verify)
+  gatewayClassName: istio 
+  listeners:
+    - name: http
+      hostname: "*.appdomain.cloud" # Optional: restricts to your specific domain
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      hostname: "*.appdomain.cloud" # Optional: restricts to your specific domain
+      port: 443
+      protocol: HTTPS
+      # Typically, you would reference a TLS secret here for HTTPS termination
+      # tls:
+      #   mode: Terminate
+      #   certificateRefs:
+      #     - name: your-tls-secret
+      allowedRoutes:
+        namespaces:
+          from: All
+----
+====
+
+Verify the MaaS Gateway resource:
 
 [source,bash]
 ----
@@ -129,13 +166,48 @@ $ oc get datasciencecluster default-dsc -o yaml | grep -A 5 modelsAsService
     managementState: Managed  # Must be "Managed", not "Removed"
 ----
 
+or deploy the gateway:
+
+[source,bash]
+----
+apiVersion: gateway.networking.k8s.io/v1beta1
+kind: Gateway
+metadata:
+  name: maas-default-gateway
+  namespace: openshift-ingress
+spec:
+  # You may need to change this to match the specific GatewayClass in your cluster 
+  # (e.g., run `oc get gatewayclass` or `kubectl get gatewayclass` to verify)
+  gatewayClassName: istio 
+  listeners:
+    - name: http
+      hostname: "*.appdomain.cloud" # Optional: restricts to your specific domain
+      port: 80
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All
+    - name: https
+      hostname: "*.appdomain.cloud" # Optional: restricts to your specific domain
+      port: 443
+      protocol: HTTPS
+      # Typically, you would reference a TLS secret here for HTTPS termination
+      # tls:
+      #   mode: Terminate
+      #   certificateRefs:
+      #     - name: your-tls-secret
+      allowedRoutes:
+        namespaces:
+          from: All
+----
+
 == Common Configuration Errors
 
 **Problem**: `maas-api` pod stuck in `CrashLoopBackOff`
 
 [source,text]
 ----
-Cause: cert-manager operator not installed
+Possible Cause: cert-manager operator not installed
 Solution: Install cert-manager before enabling MaaS
 ----
 
@@ -143,7 +215,7 @@ Solution: Install cert-manager before enabling MaaS
 
 [source,text]
 ----
-Cause: Gateway API operator missing
+Possible Cause: Gateway API operator missing
 Solution: Verify Gateway API operator is installed and healthy
 ----
 
@@ -151,7 +223,7 @@ Solution: Verify Gateway API operator is installed and healthy
 
 [source,text]
 ----
-Cause: OdhDashboardConfig not updated
+Possible Cause: OdhDashboardConfig not updated
 Solution: Check genAiStudio: true and modelAsService: true are set
 ----
 

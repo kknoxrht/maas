@@ -1,13 +1,11 @@
-:time_estimate: 15
+:time_estimate: 10
 
 = Deployment Workflows
 
 _Estimated reading time: *{time_estimate} minutes*._
 
 [.lead]
-*Two paths to MaaS: build the platform first then add models, or retrofit existing models with MaaS annotations.*
-
-== Learning Objective
+*Two paths to MaaS: build the platform first then add models, or enroll existing llm-d models into MaaS.*
 
 Objective::
 Understand the platform-first vs model-retrofit deployment workflows and when to use each approach.
@@ -27,44 +25,64 @@ The platform-first approach enables MaaS infrastructure *before* deploying any m
 This is the recommended approach for new deployments.
 
 **When to Use**:
+
 * Starting a new OpenShift AI implementation
 * No existing KServe models in production
 * Want to establish governance before enabling inference
 
 **Advantages**:
+
 * Clean implementation—all models governed from day one
 * Platform team sets policies before developers consume
 * No migration complexity
 
 == Model-Retrofit Deployment
 
-The retrofit approach enrolls existing KServe models into MaaS:
+The retrofit approach enrolls existing generative AI models into MaaS.
 
 [source,text]
 ----
-1. Existing KServe InferenceServices already deployed
+1. Existing model using the "Distributed inference with llm-d" runtime is already deployed
 2. Enable MaaS platform components
-3. Annotate existing models to enroll them in MaaS
-4. Models become available through MaaS gateway
+3. Edit the existing model deployment through the dashboard
+4. Enable "Publish as MaaS endpoint" and assign tier access
 ----
 
 **When to Use**:
-* OpenShift AI cluster already running KServe models
+
+* OpenShift AI cluster already running supported models
 * Need to add governance to existing inference workloads
-* Migrating from standalone KServe to centralized MaaS
+* Migrating from standalone serving to centralized MaaS
 
-**Enrollment Process**:
+[IMPORTANT]
+====
+Currently, only the *Distributed inference with llm-d* runtime supports MaaS integration. If an existing model uses a different runtime, the option to publish it as a MaaS endpoint will not be available.
+====
 
-Add this annotation to existing `InferenceService` resources:
+**Enrollment Process via UI**:
+
+Update existing models through the OpenShift AI dashboard:
+
+1. Centralized Model HubNavigate to **Projects** and click your project name.
+2. Click the **Deployments** tab..
+4. In the **Advanced settings** section, select **Publish as MaaS endpoint**.
+5. Configure **Tier access** (select either _All tiers_ or _Specific tiers_). 
+6. Centralized Model Hub: Click **Update**.
+
+After updating, the model appears in the Gen AI Studio dashboard and becomes accessible through the MaaS gateway.
+
+**Enrollment Process via CLI**:
+
+Add this annotation to existing `LLMInferenceService` resources:
 
 [source,yaml]
 ----
 apiVersion: serving.kserve.io/v1beta1
-kind: InferenceService
+kind: LLMInferenceService
 metadata:
   name: existing-model
   annotations:
-    serving.kserve.io/models-as-service: "true"  # <1>
+    alpha.maas.opendatahub.io/tiers: '["free", "premium", "enterprise"]'  # <1>
 spec:
   # ... existing model configuration
 ----
@@ -99,26 +117,30 @@ After annotation, the model appears in the Gen AI Studio dashboard and becomes a
 
 When retrofitting existing models:
 
-Downtime::
-Adding the annotation triggers a rolling update of the InferenceService. Expect 30-60 seconds of unavailability per model.
+Immediate Effect::
+Changing tier access and MaaS settings takes effect immediately. Users who lose access will receive 403 Forbidden errors on their next API request.
 
 Client Changes::
 Applications consuming the old KServe endpoint must migrate to the MaaS gateway URL and use Bearer token authentication.
 
 Tier Assignment::
-Retrofitted models default to "All tiers" access. You may want to restrict access after enrollment.
+Retrofitted models default to "All tiers" access if not explicitly scoped during the update. You may want to restrict access to specific tiers during the enrollment process.
 
 Rate Limits::
-Models immediately subject to MaaS rate limits. Monitor for 429 errors from existing clients.
+Models are immediately subject to MaaS rate limits upon enrollment. Monitor for 429 Rate Limit Exceeded errors from existing clients.
 
 == Best Practices
 
 **For Platform-First**:
+
 * Enable MaaS during initial OpenShift AI setup
 * Document deployment workflows before onboarding teams
 * Create default tiers aligned with organizational structure
 
 **For Model-Retrofit**:
+
+The retrofit workflow cannot be applied to just any existing KServe model; the model must already be deployed using the "Distributed inference with llm-d" runtime.
+
 * Test enrollment on non-production models first
 * Communicate gateway URL changes to application teams
 * Migrate models gradually (not all at once)
