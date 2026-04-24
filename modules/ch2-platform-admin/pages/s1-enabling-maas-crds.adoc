@@ -7,8 +7,6 @@ _Estimated reading time: *{time_estimate} minutes*._
 [.lead]
 *A single field change in the DataScienceCluster CRD—`managementState: Managed`—triggers the deployment of the entire MaaS infrastructure.*
 
-== Learning Objective
-
 Objective::
 Configure the OpenShift AI Custom Resource Definitions (CRDs) to enable the Models-as-a-Service component and activate the Gen AI Studio dashboard.
 

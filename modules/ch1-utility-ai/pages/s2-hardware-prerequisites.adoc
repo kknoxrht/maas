@@ -88,13 +88,13 @@ Before enabling MaaS, verify:
 
 == Common Pitfalls
 
-**Problem**: Models fail to publish as MaaS endpoints
-**Cause**: Gateway API operator missing
+**Problem**: Models fail to publish as MaaS endpoints +
+**Cause**: Gateway API operator missing +
 **Solution**: Verify all dependency operators are present
 
-**Problem**: DSC failed to declare MaaS Component ready.
-**Cause**: MaaS Gateway API endpoint must exist. 
-**Solution**: The OpenShift AI Operator looks for a specific Gateway resource (maas-default-gateway). If it doesn’t exist, it halts the MaaS API deployment to prevent unroutable services. Create the gateway.
+**Problem**: DSC failed to declare MaaS Component ready +
+**Cause**: MaaS Gateway API endpoint must exist +
+**Solution**: The OpenShift AI Operator looks for a specific Gateway resource (maas-default-gateway). If it doesn’t exist, it halts the MaaS API deployment to prevent unroutable services. Create the gateway
 
 == What's Next
 
