@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Defining Governance Tiers :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-rate-limits-quotas.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">3. Governance &amp; Observability</a></li>
+    <li><a href="s1-governance-tiers.html">3.1: Defining Governance Tiers</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Defining Governance Tiers</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>12 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Without tiers, centralized serving becomes uncontrolled consumption—tier-based access transforms the MaaS platform from unlimited resource drain to fair allocation across departments.</strong></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Understand MaaS tier architecture, configure default and custom tiers, and map OpenShift user groups to tier levels to enforce governance policies.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_governance_challenge"><a class="anchor" href="#_the_governance_challenge"></a>The Governance Challenge</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A platform engineer controls $200,000 worth of GPU infrastructure serving multiple departments. Without governance:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>The marketing team runs unlimited inference requests, exhausting cluster capacity</p>
+</li>
+<li>
+<p>The fraud detection team&#8217;s critical workload gets rate-limited because resources are gone</p>
+</li>
+<li>
+<p>Finance cannot allocate AI costs accurately because there&#8217;s no consumption tracking</p>
+</li>
+<li>
+<p>Security has no audit trail showing who accessed which models</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>MaaS solves this through tier-based governance: every user belongs to a tier, every tier has limits, and every request is authenticated and tracked.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_are_maas_tiers"><a class="anchor" href="#_what_are_maas_tiers"></a>What Are MaaS Tiers?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Tiers are <strong>access control layers</strong> that define:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Access Level</dt>
+<dd>
+<p>Which models a user can query (Free tier can&#8217;t access Enterprise-only models)</p>
+</dd>
+<dt class="hdlist1">Rate Limits</dt>
+<dd>
+<p>Maximum requests per minute (Free: 100 req/min, Enterprise: 1000 req/min)</p>
+</dd>
+<dt class="hdlist1">Token Quotas</dt>
+<dd>
+<p>Maximum tokens consumed per minute (Free: 10K tokens/min, Enterprise: 100K tokens/min)</p>
+</dd>
+<dt class="hdlist1">Group Mapping</dt>
+<dd>
+<p>Which OpenShift groups are assigned to each tier</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>A developer with a Free tier Bearer token can only access models published to "Free tier and above." An Enterprise user can access all models.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_default_tier_configuration"><a class="anchor" href="#_default_tier_configuration"></a>Default Tier Configuration</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When MaaS is enabled, the platform creates three default tiers:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3335%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tier Name</th>
+<th class="tableblock halign-left valign-top">Priority Level</th>
+<th class="tableblock halign-left valign-top">Default Group</th>
+<th class="tableblock halign-left valign-top">Typical Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>system:authenticated</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All authenticated users, basic exploration, development</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Premium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(none by default)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Department teams with moderate usage needs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enterprise</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">(none by default)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Production workloads, critical applications, high throughput</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Priority Level</strong> determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the <strong>highest level number</strong>.</p>
+</div>
+<div class="paragraph">
+<p>Example: A user in both <code>system:authenticated</code> (Free, Level 0) and <code>premium-users</code> (Premium, Level 1) gets Premium tier access.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_group_assignment_logic"><a class="anchor" href="#_group_assignment_logic"></a>Group Assignment Logic</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS uses OpenShift group membership to assign users to tiers:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>User authenticates</strong> with Bearer token</p>
+</li>
+<li>
+<p><strong>Authorino extracts</strong> user identity and group memberships</p>
+</li>
+<li>
+<p><strong>MaaS evaluates</strong> which tier configurations match the user&#8217;s groups</p>
+</li>
+<li>
+<p><strong>Highest level wins</strong> if the user belongs to multiple tiers</p>
+</li>
+<li>
+<p><strong>Access enforced</strong> based on assigned tier and model configuration</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A platform engineer creates a group <code>data-science-team</code> in OpenShift, then maps it to the Premium tier. All members of that group automatically get Premium access.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_viewing_tiers_in_the_dashboard"><a class="anchor" href="#_viewing_tiers_in_the_dashboard"></a>Viewing Tiers in the Dashboard</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Prerequisites</strong>: Administrator access to the OpenShift AI dashboard with Gen AI Studio enabled.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: In the left navigation menu, click <strong>Settings</strong>, then click <strong>Tiers</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: You should see the default tiers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Tier Name       Priority Level    Groups                    Request Limit    Token Limit
+Free            0                 system:authenticated      100/min          10,000/min
+Premium         1                 (none)                    500/min          50,000/min
+Enterprise      2                 (none)                    1,000/min        100,000/min</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The exact limits shown depend on your cluster configuration. Default values may vary.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_a_custom_tier_dashboard"><a class="anchor" href="#_creating_a_custom_tier_dashboard"></a>Creating a Custom Tier (Dashboard)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Scenario: The data science team needs a specialized tier with custom limits.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: On the <strong>Tiers</strong> page, click <strong>Create tier</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Configure the tier details:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Tier name</strong>: <code>DataScience</code></p>
+</li>
+<li>
+<p><strong>Priority level</strong>: <code>3</code> (higher than Enterprise)</p>
+</li>
+<li>
+<p><strong>Description</strong>: <code>Custom tier for data science team workloads</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Assign OpenShift groups:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Click <strong>Add group</strong></p>
+</li>
+<li>
+<p>Enter group name: <code>data-science-team</code></p>
+</li>
+<li>
+<p>Click <strong>Add</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Configure rate limits:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>Enforce request rate limit</strong></p>
+</li>
+<li>
+<p>Set <strong>Maximum requests</strong>: <code>2000</code></p>
+</li>
+<li>
+<p>Set <strong>Time unit</strong>: <code>per minute</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Configure token quotas:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>Enforce token rate limit</strong></p>
+</li>
+<li>
+<p>Set <strong>Maximum tokens</strong>: <code>200000</code></p>
+</li>
+<li>
+<p>Set <strong>Time unit</strong>: <code>per minute</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 6</strong>: Click <strong>Create tier</strong> to finalize.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>: The new tier appears in the tier list with Priority Level 3.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_a_custom_tier_cli"><a class="anchor" href="#_creating_a_custom_tier_cli"></a>Creating a Custom Tier (CLI)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Platform engineers can also configure tiers by editing the underlying ConfigMap directly:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: View the current tier configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get configmap tier-to-group-mapping -n redhat-ods-applications -o yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tier-to-group-mapping
+  namespace: redhat-ods-applications
+data:
+  tiers: |
+    - name: Free
+      level: 0
+      groups:
+        - system:authenticated
+      rateLimits:
+        requests: 100
+        tokens: 10000
+    - name: Premium
+      level: 1
+      groups: []
+      rateLimits:
+        requests: 500
+        tokens: 50000</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Edit the ConfigMap to add a custom tier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc edit configmap tier-to-group-mapping -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Add the new tier configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">    - name: DataScience
+      level: 3
+      groups:
+        - data-science-team
+      rateLimits:
+        requests: 2000
+        tokens: 200000</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Save and exit. The MaaS API automatically reloads the configuration.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get configmap tier-to-group-mapping -n redhat-ods-applications -o jsonpath='{.data.tiers}' | grep -A 5 "DataScience"
+    - name: DataScience
+      level: 3
+      groups:
+        - data-science-team
+      rateLimits:</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The new tier is now active and enforced by Kuadrant.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_understanding_tier_priority_conflicts"><a class="anchor" href="#_understanding_tier_priority_conflicts"></a>Understanding Tier Priority Conflicts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>What happens when a user belongs to multiple groups?</p>
+</div>
+<div class="paragraph">
+<p><strong>Example Scenario</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>User <code>alice@example.com</code> belongs to:</p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>system:authenticated</code> (Free tier, Level 0)</p>
+</li>
+<li>
+<p><code>premium-users</code> (Premium tier, Level 1)</p>
+</li>
+<li>
+<p><code>data-science-team</code> (DataScience tier, Level 3)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>MaaS Behavior</strong>: Alice is assigned to the <strong>DataScience tier</strong> (Level 3) because it has the highest level number.</p>
+</div>
+<div class="paragraph">
+<p><strong>Result</strong>:
+* Alice gets 2000 requests/min limit (not 100 or 500)
+* Alice gets 200K tokens/min quota (not 10K or 50K)
+* Alice can access models published to "DataScience tier and above"</p>
+</div>
+<div class="paragraph">
+<p>The highest level wins—no averaging, no combining limits.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_critical_tier_management_rules"><a class="anchor" href="#_critical_tier_management_rules"></a>Critical Tier Management Rules</h2>
+<div class="sectionbody">
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<strong>Never delete all tiers</strong>. If you delete the last remaining tier, the dashboard will not display the "Add tier" button, preventing you from creating new tiers through the UI. You must always keep at least one tier in the system.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Best Practices</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Start with defaults</strong>: Modify default tiers before creating custom ones</p>
+</li>
+<li>
+<p><strong>Group naming</strong>: Use clear, descriptive OpenShift group names (<code>fraud-detection-prod</code>, not <code>group1</code>)</p>
+</li>
+<li>
+<p><strong>Level gaps</strong>: Leave gaps between levels (0, 10, 20) to allow inserting tiers later</p>
+</li>
+<li>
+<p><strong>Document mappings</strong>: Maintain a record of which teams map to which tiers</p>
+</li>
+<li>
+<p><strong>Monitor usage</strong>: Review tier consumption metrics before adjusting limits</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dashboard_vs_cli_when_to_use_each"><a class="anchor" href="#_dashboard_vs_cli_when_to_use_each"></a>Dashboard vs CLI: When to Use Each</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Approach</th>
+<th class="tableblock halign-left valign-top">Best For</th>
+<th class="tableblock halign-left valign-top">Limitations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dashboard UI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick tier creation, visual overview, assigning groups</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires admin UI access, limited to basic configurations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLI (ConfigMap)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Automation, GitOps workflows, bulk changes, scripting</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires cluster CLI access, must understand YAML structure</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combination</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initial setup via UI, ongoing management via GitOps</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None—recommended approach</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A platform engineer might use the UI during initial testing, then migrate to GitOps-managed ConfigMaps for production tier management.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that tier architecture and group mapping are configured, the next section covers how to set request rate limits and token quotas, and how Kuadrant&#8217;s Limitador component enforces these policies for every API request.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">3. Governance &amp; Observability</a></span>
+  <span class="next"><a href="s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,785 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab - Updating Access Dynamically :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s2-publishing-lab.html">
+    <link rel="next" href="../ch5-api-integration/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">4. Deploying Models to the MaaS Catalog</a></li>
+    <li><a href="s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab - Updating Access Dynamically</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>12 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Tier access changes take effect immediately—no redeployment, no downtime, just instant policy enforcement across all active requests.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_objective"><a class="anchor" href="#_lab_objective"></a>Lab Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Modify tier-based access control on deployed models, understand the immediate impact on users, and test access enforcement with different tier credentials.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>At least one model deployed and published to MaaS (from previous lab)</p>
+</li>
+<li>
+<p>Multiple tier configurations (Free, Premium, Enterprise)</p>
+</li>
+<li>
+<p>Access to OpenShift AI dashboard with model management permissions</p>
+</li>
+<li>
+<p>Test Bearer tokens from different tier levels (optional but recommended)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_overview"><a class="anchor" href="#_lab_overview"></a>Lab Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lab, you will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Update tier access via the OpenShift AI dashboard</p>
+</li>
+<li>
+<p>Update tier access via CLI (annotation editing)</p>
+</li>
+<li>
+<p>Verify immediate enforcement without redeployment</p>
+</li>
+<li>
+<p>Test access with different tier credentials</p>
+</li>
+<li>
+<p>Understand the business impact of dynamic access changes</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_1_view_current_tier_access"><a class="anchor" href="#_task_1_view_current_tier_access"></a>Task 1: View Current Tier Access</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: List deployed models and their current tier access:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get llminferenceservice -n &lt;your-project&gt; -o custom-columns=\
+NAME:.metadata.name,\
+TIERS:.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">NAME                TIERS
+nemotron-nano-4b    ["free","premium","enterprise"]
+qwen-8b-fp8         ["premium","enterprise"]
+llama-3-8b          ["free","premium","enterprise"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This shows which tiers can currently access each model.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_2_update_access_via_dashboard_ui_approach"><a class="anchor" href="#_task_2_update_access_via_dashboard_ui_approach"></a>Task 2: Update Access via Dashboard (UI Approach)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Scenario</strong>: Your organization wants to restrict <code>nemotron-nano-4b</code> to Premium and Enterprise users only, removing Free tier access.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Navigate to <strong>Data Science Projects → [Your Project] → Deployments</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Locate <code>nemotron-nano-4b</code> and click the <strong>⋮</strong> (kebab menu) → <strong>Edit</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Scroll to <strong>Advanced settings → Tier access</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Current Setting</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">✓ Publish as MaaS endpoint
+  Tier access:  ● All tiers         ← Current
+                ○ Specific tiers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Change tier access:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Select <strong>○ Specific tiers</strong></p>
+</li>
+<li>
+<p>Check <strong>✓ Premium</strong></p>
+</li>
+<li>
+<p>Check <strong>✓ Enterprise</strong></p>
+</li>
+<li>
+<p>Uncheck <strong>Free</strong> (if it appears)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Expected UI State</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">✓ Publish as MaaS endpoint
+  Tier access:  ○ All tiers
+                ● Specific tiers
+                  ✓ Premium
+                  ✓ Enterprise</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 6</strong>: Click <strong>Update</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Immediate Result</strong>: No pod restart occurs. The change takes effect instantly.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Check the annotation was updated:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get llminferenceservice nemotron-nano-4b -n &lt;your-project&gt; \
+  -o jsonpath='{.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">["premium","enterprise"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Free tier removed from access list.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_3_test_immediate_enforcement"><a class="anchor" href="#_task_3_test_immediate_enforcement"></a>Task 3: Test Immediate Enforcement</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: If you have a Free tier Bearer token, test access:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export FREE_TOKEN="your-free-tier-token"
+$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${FREE_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Response</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">HTTP/1.1 403 Forbidden
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Free tier users are immediately blocked—no grace period, no cached access.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Test with Premium or Enterprise token:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export PREMIUM_TOKEN="your-premium-tier-token"
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${PREMIUM_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 20
+  }' | jq '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (successful inference):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">"Hello! How can I assist you today?"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Premium and Enterprise users retain access.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_4_update_access_via_cli_annotation_editing"><a class="anchor" href="#_task_4_update_access_via_cli_annotation_editing"></a>Task 4: Update Access via CLI (Annotation Editing)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For production environments and GitOps workflows, update tier access using <code>oc patch</code>:</p>
+</div>
+<div class="paragraph">
+<p><strong>Scenario</strong>: Open <code>qwen-8b-fp8</code> access to all tiers (currently Premium/Enterprise only).</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Update the tier annotation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc patch llminferenceservice qwen-8b-fp8 -n &lt;your-project&gt; \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"free\",\"premium\",\"enterprise\"]"}]'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>NOTE</strong>: The <code>~1</code> escapes the <code>/</code> character in the annotation key for JSON patch syntax.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">llminferenceservice.serving.kserve.io/qwen-8b-fp8 patched</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get llminferenceservice qwen-8b-fp8 -n &lt;your-project&gt; \
+  -o jsonpath='{.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">["free","premium","enterprise"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Model now accessible to all tier levels.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_5_alternative_cli_approach_yaml_edit"><a class="anchor" href="#_task_5_alternative_cli_approach_yaml_edit"></a>Task 5: Alternative CLI Approach (YAML Edit)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You can also edit the full resource directly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc edit llminferenceservice llama-3-8b -n &lt;your-project&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Modify the annotations section:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama-3-8b
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["enterprise"]'  <i class="conum" data-value="1"></i><b>(1)</b>
+spec:
+  # ... rest of spec unchanged</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Restrict to Enterprise tier only</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Save and exit. The change takes effect immediately.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_6_understanding_business_impact"><a class="anchor" href="#_task_6_understanding_business_impact"></a>Task 6: Understanding Business Impact</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Dynamic tier updates enable real-time business policy changes:</p>
+</div>
+<div class="paragraph">
+<p><strong>Scenario 1: Budget Constraints</strong></p>
+</div>
+<div class="paragraph">
+<p>Finance alerts that Free tier is consuming 80% of monthly token budget. Platform engineer immediately restricts expensive models to Premium+ tiers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc patch llminferenceservice expensive-model -n production \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"premium\",\"enterprise\"]"}]'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>: Free tier users get 403 Forbidden on their next request. Token consumption drops immediately.</p>
+</div>
+<div class="paragraph">
+<p><strong>Scenario 2: New Tier Launch</strong></p>
+</div>
+<div class="paragraph">
+<p>Organization creates a "Partner" tier for external collaborators. Platform engineer grants access to specific models:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc patch llminferenceservice partner-model -n production \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"partner\",\"enterprise\"]"}]'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>: Partner tier users can access the model immediately—no deployment, no waiting.</p>
+</div>
+<div class="paragraph">
+<p><strong>Scenario 3: Security Incident</strong></p>
+</div>
+<div class="paragraph">
+<p>A compromised Free tier account is detected. Platform engineer revokes all Free tier access instantly:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ for model in $(oc get llminferenceservice -n production -o name); do
+  oc patch $model -n production \
+    --type='json' \
+    -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"premium\",\"enterprise\"]"}]'
+done</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Impact</strong>: All Free tier access blocked across all models within seconds.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_7_monitoring_access_changes"><a class="anchor" href="#_task_7_monitoring_access_changes"></a>Task 7: Monitoring Access Changes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Track tier access changes over time for audit and compliance:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Check resource events:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get events -n &lt;your-project&gt; --field-selector involvedObject.name=nemotron-nano-4b</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LAST SEEN   TYPE     REASON    OBJECT                            MESSAGE
+2m          Normal   Updated   llminferenceservice/nemotron...   Tier access updated: ["premium","enterprise"]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Query Kuadrant logs for 403 Forbidden events:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc logs -n kuadrant-system deployment/authorino --tail=100 | grep "Forbidden"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">2024-04-24T11:23:45Z WARN Forbidden user=alice@example.com tier=Free model=nemotron-nano-4b reason=tier_access_denied</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This provides an audit trail showing exactly when users lost access.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_verification_checklist"><a class="anchor" href="#_lab_verification_checklist"></a>Lab Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After completing this lab, verify:</p>
+</div>
+<div class="paragraph">
+<p>✓ You updated tier access via the OpenShift AI dashboard
+✓ You updated tier access via CLI (<code>oc patch</code> or <code>oc edit</code>)
+✓ Tier changes took effect immediately without pod restart
+✓ You tested access with different tier credentials (401/403 responses)
+✓ You understand the business scenarios for dynamic access updates
+✓ You can query audit logs showing tier enforcement</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_access_control_decision_matrix"><a class="anchor" href="#_access_control_decision_matrix"></a>Access Control Decision Matrix</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">User Tier</th>
+<th class="tableblock halign-left valign-top">Model Tier Access</th>
+<th class="tableblock halign-left valign-top">Result</th>
+<th class="tableblock halign-left valign-top">HTTP Code</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>["free", "premium", "enterprise"]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access granted</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200 OK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>["premium", "enterprise"]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access denied</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403 Forbidden</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Premium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>["enterprise"]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access denied</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403 Forbidden</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Premium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>["free", "premium"]</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access granted (highest level wins)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200 OK</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enterprise</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Any tier configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access granted (highest tier)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">200 OK</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_dynamic_updates"><a class="anchor" href="#_troubleshooting_dynamic_updates"></a>Troubleshooting Dynamic Updates</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Cause</th>
+<th class="tableblock halign-left valign-top">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tier change not taking effect</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Typo in tier name (case-sensitive)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verify tier names match exactly: <code>"free"</code> not <code>"Free"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All users getting 403 Forbidden</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Annotation syntax error (invalid JSON)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check annotation format: <code>'["tier1","tier2"]'</code> with proper quotes</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cannot update via dashboard</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model not deployed with llm-d runtime</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only llm-d models support dynamic MaaS updates</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Patch command fails</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">JSON path escaping error</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Use <code>~1</code> to escape <code>/</code> in annotation key</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Changes revert after pod restart</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Annotation not persisted to CRD</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Ensure <code>oc patch</code> or dashboard update completed successfully</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With models deployed, published to MaaS, and dynamically governed by tiers, the final module shifts perspective to developers—showing how to discover models, generate authentication tokens, and integrate MaaS endpoints into applications using the OpenAI-compatible API.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a></span>
+  <span class="next"><a href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

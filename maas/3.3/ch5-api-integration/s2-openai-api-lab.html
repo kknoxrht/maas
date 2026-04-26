@@ -1,0 +1,1003 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab - Consuming the OpenAI-Compatible API :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s1-developer-dashboard.html">
+    <link rel="next" href="s3-error-handling-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">5. API Integration &amp; Consumer Experience</a></li>
+    <li><a href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab - Consuming the OpenAI-Compatible API</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>15 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>MaaS exposes models through the OpenAI-compatible API—existing applications built for ChatGPT or GPT-4 can switch to self-hosted models by changing the base URL and Bearer token.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_objective"><a class="anchor" href="#_lab_objective"></a>Lab Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Make REST API calls to list models and generate chat completions, test models interactively in the MaaS Playground, and understand OpenAI API compatibility for seamless integration.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Bearer token generated in Gen AI Studio (from previous section)</p>
+</li>
+<li>
+<p>At least one model deployed and published to MaaS (from Module 4)</p>
+</li>
+<li>
+<p><code>curl</code> and <code>jq</code> installed on your workstation</p>
+</li>
+<li>
+<p>Access to OpenShift AI dashboard with Gen AI Studio enabled</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_overview"><a class="anchor" href="#_lab_overview"></a>Lab Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lab, you will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Query the <code>/v1/models</code> endpoint to discover available models</p>
+</li>
+<li>
+<p>Make inference requests to <code>/v1/chat/completions</code></p>
+</li>
+<li>
+<p>Test models interactively in the MaaS Playground</p>
+</li>
+<li>
+<p>Understand OpenAI API compatibility and migration patterns</p>
+</li>
+<li>
+<p>Inspect request/response structure for application integration</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_1_set_up_environment_variables"><a class="anchor" href="#_task_1_set_up_environment_variables"></a>Task 1: Set Up Environment Variables</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Export your Bearer token:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."  <i class="conum" data-value="1"></i><b>(1)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Replace with your actual token from Gen AI Studio → API Keys</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Retrieve the MaaS gateway URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_URL=$(oc get gateway maas-default-gateway \
+  -n redhat-ods-applications \
+  -o jsonpath='{.status.addresses[0].value}')
+
+$ echo "MaaS Gateway: https://${MAAS_URL}"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">MaaS Gateway: https://maas.apps.cluster.example.com</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ These environment variables will be used throughout the lab.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_2_list_available_models"><a class="anchor" href="#_task_2_list_available_models"></a>Task 2: List Available Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>/v1/models</code> endpoint returns all models accessible by your tier.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Query the models endpoint:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "object": "list",
+  "data": [
+    {
+      "id": "nemotron-nano-4b",
+      "object": "model",
+      "created": 1713984000,
+      "owned_by": "redhat-ods-applications"
+    },
+    {
+      "id": "llama-3-8b",
+      "object": "model",
+      "created": 1713984100,
+      "owned_by": "redhat-ods-applications"
+    },
+    {
+      "id": "qwen-8b-fp8",
+      "object": "model",
+      "created": 1713984200,
+      "owned_by": "redhat-ods-applications"
+    }
+  ]
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Response Structure</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>object</code></dt>
+<dd>
+<p>Always <code>"list"</code> for this endpoint</p>
+</dd>
+<dt class="hdlist1"><code>data[]</code></dt>
+<dd>
+<p>Array of available models</p>
+</dd>
+<dt class="hdlist1"><code>id</code></dt>
+<dd>
+<p>The model identifier used in chat completion requests (e.g., <code>"model": "nemotron-nano-4b"</code>)</p>
+</dd>
+<dt class="hdlist1"><code>created</code></dt>
+<dd>
+<p>Unix timestamp when the model was deployed</p>
+</dd>
+<dt class="hdlist1"><code>owned_by</code></dt>
+<dd>
+<p>The namespace or organization that published the model</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Extract just the model names:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq -r '.data[].id'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">nemotron-nano-4b
+llama-3-8b
+qwen-8b-fp8</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ These are the model IDs you&#8217;ll use in the <code>"model"</code> field of chat completion requests.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_3_generate_chat_completions"><a class="anchor" href="#_task_3_generate_chat_completions"></a>Task 3: Generate Chat Completions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>/v1/chat/completions</code> endpoint sends prompts to models and receives generated responses.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Make a simple chat completion request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [
+      {"role": "user", "content": "Explain what Red Hat OpenShift AI does in one sentence."}
+    ],
+    "max_tokens": 50,
+    "temperature": 0.7
+  }' | jq</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "chatcmpl-9abc123",
+  "object": "chat.completion",
+  "created": 1713984300,
+  "model": "nemotron-nano-4b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Red Hat OpenShift AI is an enterprise platform for developing, training, and deploying machine learning models at scale on OpenShift Container Platform."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 18,
+    "completion_tokens": 32,
+    "total_tokens": 50
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Response Structure</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>id</code></dt>
+<dd>
+<p>Unique identifier for this completion request</p>
+</dd>
+<dt class="hdlist1"><code>model</code></dt>
+<dd>
+<p>The model that generated the response</p>
+</dd>
+<dt class="hdlist1"><code>choices[0].message.content</code></dt>
+<dd>
+<p>The generated text response</p>
+</dd>
+<dt class="hdlist1"><code>usage.prompt_tokens</code></dt>
+<dd>
+<p>Number of tokens in your input prompt</p>
+</dd>
+<dt class="hdlist1"><code>usage.completion_tokens</code></dt>
+<dd>
+<p>Number of tokens in the generated response</p>
+</dd>
+<dt class="hdlist1"><code>usage.total_tokens</code></dt>
+<dd>
+<p>Sum of prompt and completion tokens (used for quota enforcement)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Extract just the generated text:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "What is Kubernetes?"}],
+    "max_tokens": 30
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Kubernetes is an open-source container orchestration platform that automates deployment, scaling, and management of containerized applications.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ This is the core integration pattern: send JSON request, extract <code>.choices[0].message.content</code>.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_4_multi_turn_conversations"><a class="anchor" href="#_task_4_multi_turn_conversations"></a>Task 4: Multi-Turn Conversations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The API supports conversation history by including prior messages in the <code>messages</code> array.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Start a conversation:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant specializing in OpenShift."},
+      {"role": "user", "content": "What is a Pod?"}
+    ],
+    "max_tokens": 50
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">A Pod is the smallest deployable unit in Kubernetes. It represents one or more containers that share storage and network resources, running on the same host.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Continue the conversation by including the assistant&#8217;s previous response:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant specializing in OpenShift."},
+      {"role": "user", "content": "What is a Pod?"},
+      {"role": "assistant", "content": "A Pod is the smallest deployable unit in Kubernetes. It represents one or more containers that share storage and network resources, running on the same host."},
+      {"role": "user", "content": "Can a Pod contain multiple containers?"}
+    ],
+    "max_tokens": 30
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Yes, a Pod can contain multiple containers. They share the same network namespace and storage volumes.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ This pattern enables context-aware applications like chatbots and interactive assistants.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_5_testing_in_the_maas_playground"><a class="anchor" href="#_task_5_testing_in_the_maas_playground"></a>Task 5: Testing in the MaaS Playground</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The MaaS Playground provides an interactive interface for testing models before integration.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Navigate to <strong>Gen AI Studio → Playground</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Select a model from the dropdown:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Model:  [nemotron-nano-4b ▼]</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Configure generation parameters:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Temperature:        0.7  (Higher = more creative, Lower = more deterministic)
+Max tokens:         100  (Maximum response length)
+Top P:              0.9  (Nucleus sampling threshold)
+Frequency penalty:  0.0  (Penalize repeated tokens)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Enter a prompt in the text area:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">User: Explain the difference between a Deployment and a StatefulSet.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 6</strong>: Click <strong>Send</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (in the Playground interface):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Assistant: A Deployment manages stateless applications where pods are
+interchangeable. A StatefulSet maintains persistent identities and stable
+network identifiers for each pod, making it suitable for stateful applications
+like databases.
+
+Token usage: 42 tokens
+Response time: 1.2s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Playground Benefits</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>No code required for testing</p>
+</li>
+<li>
+<p>Real-time parameter tuning (temperature, max_tokens)</p>
+</li>
+<li>
+<p>Instant feedback on model behavior</p>
+</li>
+<li>
+<p>Visible token consumption for quota planning</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_6_understanding_openai_api_compatibility"><a class="anchor" href="#_task_6_understanding_openai_api_compatibility"></a>Task 6: Understanding OpenAI API Compatibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS implements the OpenAI API specification, enabling seamless migration from OpenAI services.</p>
+</div>
+<div class="paragraph">
+<p><strong>Migrating from OpenAI to MaaS</strong>:</p>
+</div>
+<div class="paragraph">
+<p><strong>Before</strong> (OpenAI):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import openai
+
+openai.api_key = "sk-proj-abc123..."  # OpenAI API key
+openai.api_base = "https://api.openai.com/v1"
+
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Hello"}]
+)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>After</strong> (MaaS):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import openai
+
+openai.api_key = "eyJhbGciOiJSUzI1..."  # MaaS Bearer token
+openai.api_base = "https://maas.apps.cluster.example.com/v1"
+
+response = openai.ChatCompletion.create(
+    model="nemotron-nano-4b",  <i class="conum" data-value="1"></i><b>(1)</b>
+    messages=[{"role": "user", "content": "Hello"}]
+)</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Change only the model name—code logic remains identical</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>What Changes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>api_key</code>: OpenAI key → MaaS Bearer token</p>
+</li>
+<li>
+<p><code>api_base</code>: <code>api.openai.com</code> → MaaS gateway URL</p>
+</li>
+<li>
+<p><code>model</code>: <code>gpt-4</code> → self-hosted model name (e.g., <code>nemotron-nano-4b</code>)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>What Stays the Same</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Request structure (<code>messages</code>, <code>max_tokens</code>, <code>temperature</code>)</p>
+</li>
+<li>
+<p>Response format (<code>.choices[0].message.content</code>)</p>
+</li>
+<li>
+<p>Error handling (401, 403, 429 status codes)</p>
+</li>
+<li>
+<p>Client libraries (OpenAI Python SDK, LangChain, Haystack)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_7_testing_tier_based_access_control"><a class="anchor" href="#_task_7_testing_tier_based_access_control"></a>Task 7: Testing Tier-Based Access Control</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Scenario</strong>: Your Free tier account tries to access a Premium-only model.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Attempt to query <code>qwen-8b-fp8</code> (restricted to Premium/Enterprise):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-8b-fp8",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }' | jq</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (if your tier lacks access):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>HTTP Status Code</strong>: <code>403 Forbidden</code></p>
+</div>
+<div class="paragraph">
+<p>✓ This demonstrates tier-based access enforcement at the API level.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Switch to an accessible model:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Hello! How can I assist you today?</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Models published to your tier work without restrictions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_8_parameter_tuning_for_different_use_cases"><a class="anchor" href="#_task_8_parameter_tuning_for_different_use_cases"></a>Task 8: Parameter Tuning for Different Use Cases</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Use Case 1: Deterministic Factual Responses</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [{"role": "user", "content": "What is the capital of France?"}],
+    "temperature": 0.1,
+    "max_tokens": 10
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">The capital of France is Paris.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong>: <code>temperature: 0.1</code> (low randomness), <code>max_tokens: 10</code> (short answer)</p>
+</div>
+<div class="paragraph">
+<p><strong>Use Case 2: Creative Content Generation</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Write a tagline for a cloud-native platform."}],
+    "temperature": 0.9,
+    "max_tokens": 50
+  }' | jq -r '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example, varies due to high temperature):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">"Build once, deploy everywhere—unlock infinite scale with cloud-native freedom."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Parameters</strong>: <code>temperature: 0.9</code> (high creativity), <code>max_tokens: 50</code> (longer response)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_verification_checklist"><a class="anchor" href="#_lab_verification_checklist"></a>Lab Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After completing this lab, verify:</p>
+</div>
+<div class="paragraph">
+<p>✓ You queried <code>/v1/models</code> and retrieved the list of accessible models
+✓ You made chat completion requests to <code>/v1/chat/completions</code>
+✓ You extracted generated text from the response structure
+✓ You tested multi-turn conversations with message history
+✓ You tested models interactively in the MaaS Playground
+✓ You understand OpenAI API compatibility for migration
+✓ You observed tier-based access control (403 Forbidden for restricted models)
+✓ You tuned parameters (temperature, max_tokens) for different use cases</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_api_request_patterns"><a class="anchor" href="#_common_api_request_patterns"></a>Common API Request Patterns</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Use Case</th>
+<th class="tableblock halign-left valign-top">Request Pattern</th>
+<th class="tableblock halign-left valign-top">Key Parameters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Chatbot</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-turn with conversation history</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature: 0.7</code>, preserve full <code>messages</code> array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Q&amp;A System</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Single-turn factual queries</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature: 0.1</code>, <code>max_tokens: 50</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content Generation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Creative writing, marketing copy</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature: 0.9</code>, <code>max_tokens: 200</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Code Completion</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Structured output (JSON, YAML)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature: 0.2</code>, <code>max_tokens: 500</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Summarization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Large input, short output</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>temperature: 0.3</code>, <code>max_tokens: 100</code></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_common_issues"><a class="anchor" href="#_troubleshooting_common_issues"></a>Troubleshooting Common Issues</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Cause</th>
+<th class="tableblock halign-left valign-top">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401 Unauthorized</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Invalid or expired Bearer token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Regenerate token in Gen AI Studio → API Keys</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403 Forbidden</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Your tier lacks access to the model</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check model tier access in Gen AI Studio → Models</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">429 Too Many Requests</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exceeded rate limit or token quota</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implement retry logic (covered in next section)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500 Internal Server Error</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model serving pod crashed or OOMKilled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contact platform team to check model health</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Empty <code>data[]</code> array in <code>/v1/models</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No models published to your tier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Contact platform team to publish models or upgrade tier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you can consume the OpenAI-compatible API and test models in the Playground, the next lab demonstrates proper error handling—implementing Python retry logic with exponential backoff for 429 Rate Limit errors, parsing the <code>Retry-After</code> header, and handling 401/403 authentication failures gracefully.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-developer-dashboard.html">5.1: The Developer Dashboard</a></span>
+  <span class="next"><a href="s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

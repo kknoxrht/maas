@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>The Developer Dashboard :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-openai-api-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">5. API Integration &amp; Consumer Experience</a></li>
+    <li><a href="s1-developer-dashboard.html">5.1: The Developer Dashboard</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">The Developer Dashboard</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>10 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>The utility grid succeeds when developers can discover models and generate credentials autonomously—without submitting tickets, waiting for platform teams, or reverse-engineering endpoint URLs.</strong></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Navigate the Gen AI Studio interface, discover available models in the catalog, view tier-based access limits, and generate Bearer tokens for programmatic API access.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_developer_experience_challenge"><a class="anchor" href="#_the_developer_experience_challenge"></a>The Developer Experience Challenge</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A developer needs to integrate a generative AI model into a customer-facing application. In a traditional environment:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Submit a ticket requesting access to the "GPT model server"</p>
+</li>
+<li>
+<p>Wait 3 days for platform team to respond with custom endpoint URLs</p>
+</li>
+<li>
+<p>Receive unclear documentation about authentication</p>
+</li>
+<li>
+<p>Discover rate limits only after the application crashes in production</p>
+</li>
+<li>
+<p>Re-submit tickets every time credentials expire</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>MaaS eliminates this friction through the Gen AI Studio—a self-service dashboard where developers autonomously discover models, understand their access limits, and generate time-bound API keys.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_is_gen_ai_studio"><a class="anchor" href="#_what_is_gen_ai_studio"></a>What Is Gen AI Studio?</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Gen AI Studio is the <strong>consumer interface</strong> for MaaS. It provides:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Model Catalog</dt>
+<dd>
+<p>Browse all models published to the MaaS platform with tier-based visibility (developers only see models their tier can access)</p>
+</dd>
+<dt class="hdlist1">Tier Information</dt>
+<dd>
+<p>View your current tier assignment, rate limits, and token quotas</p>
+</dd>
+<dt class="hdlist1">API Key Management</dt>
+<dd>
+<p>Generate and manage Bearer tokens for programmatic access</p>
+</dd>
+<dt class="hdlist1">Model Playground</dt>
+<dd>
+<p>Test models interactively before integration (covered in next section)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Unlike administrative interfaces that expose cluster configuration and CRDs, Gen AI Studio is designed for developers who want to consume models—not deploy them.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_accessing_gen_ai_studio"><a class="anchor" href="#_accessing_gen_ai_studio"></a>Accessing Gen AI Studio</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Prerequisites</strong>:
+- OpenShift AI dashboard access
+- User account assigned to at least one tier (default: <code>system:authenticated</code> maps to Free tier)
+- MaaS platform enabled (verified in Module 2)</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard.</p>
+</div>
+<div class="paragraph">
+<p>The URL format is typically:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">https://rhods-dashboard-redhat-ods-applications.apps.&lt;cluster-domain&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: In the left navigation menu, locate the <strong>Gen AI Studio</strong> section.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected UI State</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Navigation Menu:
+  Data Science Projects
+  Model Serving
+  Resources
+→ Gen AI Studio        ← This section
+    ├── Models
+    ├── Playground
+    └── API Keys
+  Settings
+  Documentation</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If "Gen AI Studio" does not appear, the MaaS platform is not enabled. Verify <code>OdhDashboardConfig</code> settings (see Module 2, Section 2.1).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_discovering_models_in_the_catalog"><a class="anchor" href="#_discovering_models_in_the_catalog"></a>Discovering Models in the Catalog</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Click <strong>Gen AI Studio → Models</strong> in the left navigation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: You see a catalog of models published to MaaS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Available Models
+
+┌─────────────────────────────────────────────────────────────────┐
+│ nemotron-nano-4b                                                │
+│ NVIDIA Nemotron-3-Nano-4B-FP8                                   │
+│ Status: Active                                                  │
+│ Tier access: Free, Premium, Enterprise                         │
+│ Published by: data-science-team                                │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ qwen-8b-fp8                                                     │
+│ RedHatAI/Qwen3-8B-FP8-dynamic                                   │
+│ Status: Active                                                  │
+│ Tier access: Premium, Enterprise                               │
+│ Published by: nlp-team                                         │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ llama-3-8b                                                      │
+│ Llama-3.1-8B-Instruct                                           │
+│ Status: Active                                                  │
+│ Tier access: Free, Premium, Enterprise                         │
+│ Published by: platform-team                                    │
+└─────────────────────────────────────────────────────────────────┘</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key Information</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Model Name</dt>
+<dd>
+<p>The identifier used in API requests (e.g., <code>"model": "nemotron-nano-4b"</code>)</p>
+</dd>
+<dt class="hdlist1">Tier Access</dt>
+<dd>
+<p>Which tiers can query this model. If your tier is not listed, API requests will return <code>403 Forbidden</code></p>
+</dd>
+<dt class="hdlist1">Status</dt>
+<dd>
+<p><code>Active</code> means the model is serving. Models in <code>Creating</code> or <code>Failed</code> states are not accessible</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The catalog shows <strong>only models you have permission to access</strong> based on your tier. An Enterprise user sees all models; a Free tier user only sees models published to "Free tier and above."
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_understanding_your_tier_limits"><a class="anchor" href="#_understanding_your_tier_limits"></a>Understanding Your Tier Limits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Click <strong>Settings → Tiers</strong> in the left navigation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: Your current tier assignment and limits:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Your Current Tier: Premium (Level 1)
+
+Rate Limits:
+  Requests per minute:        500
+  Tokens per minute:          50,000
+
+Group Membership:
+  data-science-team           (Premium)
+  system:authenticated        (Free)
+
+Effective Tier: Premium (highest level wins)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Understanding the Limits</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Requests per minute</dt>
+<dd>
+<p>Maximum number of API calls (e.g., <code>/v1/chat/completions</code>) you can make in 60 seconds. Exceeding this triggers <code>429 Too Many Requests</code>.</p>
+</dd>
+<dt class="hdlist1">Tokens per minute</dt>
+<dd>
+<p>Maximum input + output tokens consumed in 60 seconds across all requests. Exceeding this also triggers <code>429 Too Many Requests</code>.</p>
+</dd>
+</dl>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Both limits apply simultaneously. A single large request consuming 60,000 tokens would trigger the token quota (exceeding 50,000/min), even if you&#8217;re well under the request limit.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_bearer_tokens_api_keys"><a class="anchor" href="#_generating_bearer_tokens_api_keys"></a>Generating Bearer Tokens (API Keys)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Click <strong>Gen AI Studio → API Keys</strong> in the left navigation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Click <strong>Create API Key</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Configure the API key:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Name</strong>: <code>my-app-production-key</code> (descriptive name for tracking)</p>
+</li>
+<li>
+<p><strong>Expiration</strong>: <code>90 days</code> (or custom duration)</p>
+</li>
+<li>
+<p><strong>Scopes</strong>: <code>All models</code> (or restrict to specific models)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Click <strong>Generate</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: The dashboard displays your Bearer token <strong>once</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Your API Key (save this securely):
+
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImdyb3VwcyI6WyJkYXRhLXNjaWVuY2UtdGVhbSIsInN5c3RlbTphdXRoZW50aWNhdGVkIl0sInRpZXIiOiJwcmVtaXVtIiwiaWF0IjoxNzEzOTg0MDAwLCJleHAiOjE3MjE3NjAwMDB9.signature...
+
+⚠️  This token will not be shown again. Store it securely.</code></pre>
+</div>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p><strong>Security Best Practices</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Store tokens in secret management systems (Vault, Kubernetes Secrets, AWS Secrets Manager)</p>
+</li>
+<li>
+<p>Never commit tokens to version control (Git, SVN)</p>
+</li>
+<li>
+<p>Rotate tokens regularly (30-90 day expiration recommended)</p>
+</li>
+<li>
+<p>Revoke tokens immediately if compromised</p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Copy the token and store it securely.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>: Your API key appears in the list:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">API Keys:
+
+Name                          Created        Expires        Status
+my-app-production-key         2024-04-24     2024-07-23     Active
+legacy-app-key                2024-03-10     2024-06-08     Active
+test-integration-key          2024-04-20     2024-05-20     Active</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_testing_token_validity"><a class="anchor" href="#_testing_token_validity"></a>Testing Token Validity</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before integrating the token into an application, verify it works:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Export the token as an environment variable:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Query the MaaS gateway to retrieve the URL:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+$ echo $MAAS_URL
+maas.apps.cluster.example.com</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Test authentication with a simple <code>/v1/models</code> request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq '.data[].id'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (valid token):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"nemotron-nano-4b"
+"llama-3-8b"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error Output</strong> (invalid or expired token):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "error": {
+    "message": "Unauthorized: Invalid or expired token",
+    "type": "authentication_error",
+    "code": "unauthorized"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ If you see model names, your token is valid and ready for application integration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_revoking_api_keys"><a class="anchor" href="#_revoking_api_keys"></a>Revoking API Keys</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>When to Revoke</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Token compromised or exposed in logs</p>
+</li>
+<li>
+<p>Team member leaves the organization</p>
+</li>
+<li>
+<p>Application decommissioned</p>
+</li>
+<li>
+<p>Rotating credentials as part of security policy</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Navigate to <strong>Gen AI Studio → API Keys</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Locate the key to revoke, click the <strong>⋮</strong> (kebab menu), and select <strong>Revoke</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Immediate Impact</strong>: All API requests using this token receive <code>401 Unauthorized</code> within seconds.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_developer_dashboard_vs_platform_dashboard"><a class="anchor" href="#_developer_dashboard_vs_platform_dashboard"></a>Developer Dashboard vs. Platform Dashboard</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Feature</th>
+<th class="tableblock halign-left valign-top">Gen AI Studio (Developer)</th>
+<th class="tableblock halign-left valign-top">OpenShift AI Dashboard (Platform)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Purpose</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consume models via API</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy models and configure infrastructure</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audience</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developers, Data Scientists, Application Teams</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platform Engineers, Cluster Admins</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model Visibility</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only models accessible by your tier</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All models in the cluster</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Capabilities</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">View catalog, generate tokens, test models</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy models, configure tiers, manage resources</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Access Control</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tier-based (Free, Premium, Enterprise)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RBAC-based (admin, edit, view)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A developer uses Gen AI Studio to discover and consume models. A platform engineer uses the administrative dashboard to deploy models and configure governance.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_discovery_patterns"><a class="anchor" href="#_common_discovery_patterns"></a>Common Discovery Patterns</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Scenario 1: Finding the Right Model</strong></p>
+</div>
+<div class="paragraph">
+<p>Developer: "I need a small, fast model for product description generation."</p>
+</div>
+<div class="paragraph">
+<p>Gen AI Studio workflow:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Browse <strong>Models</strong> catalog</p>
+</li>
+<li>
+<p>Filter by model size (e.g., 4B-8B parameters)</p>
+</li>
+<li>
+<p>Check tier access (ensure your tier can use it)</p>
+</li>
+<li>
+<p>Test in Playground (next section) before integration</p>
+</li>
+<li>
+<p>Generate API key and integrate</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Scenario 2: Understanding Access Restrictions</strong></p>
+</div>
+<div class="paragraph">
+<p>Developer: "Why am I getting 403 Forbidden for <code>qwen-8b-fp8</code>?"</p>
+</div>
+<div class="paragraph">
+<p>Gen AI Studio workflow:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Navigate to <strong>Models</strong> and locate <code>qwen-8b-fp8</code></p>
+</li>
+<li>
+<p>Check <strong>Tier access</strong>: Shows "Premium, Enterprise"</p>
+</li>
+<li>
+<p>Navigate to <strong>Settings → Tiers</strong> and check your tier: Shows "Free (Level 0)"</p>
+</li>
+<li>
+<p>Contact platform team to request Premium access or use a different model</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Scenario 3: Token Expiration</strong></p>
+</div>
+<div class="paragraph">
+<p>Developer: "My application stopped working after 90 days."</p>
+</div>
+<div class="paragraph">
+<p>Gen AI Studio workflow:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Navigate to <strong>API Keys</strong></p>
+</li>
+<li>
+<p>Locate expired key: Shows "Status: Expired"</p>
+</li>
+<li>
+<p>Generate new key with same scopes</p>
+</li>
+<li>
+<p>Update application secrets with new token</p>
+</li>
+<li>
+<p>Revoke old token for audit trail</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you can discover models and generate credentials, the next lab section demonstrates how to consume the OpenAI-compatible API—making REST calls to <code>/v1/models</code> and <code>/v1/chat/completions</code>, testing models in the MaaS Playground, and understanding the API request/response structure.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">5. API Integration &amp; Consumer Experience</a></span>
+  <span class="next"><a href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

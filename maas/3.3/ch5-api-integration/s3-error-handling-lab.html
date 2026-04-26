@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab - Error Handling &amp; Application Patterns :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s2-openai-api-lab.html">
+    <link rel="next" href="../appendix/appendix.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">5. API Integration &amp; Consumer Experience</a></li>
+    <li><a href="s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab - Error Handling &amp; Application Patterns</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>18 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Production applications fail gracefully—401 triggers token refresh, 403 logs authorization denials, and 429 backs off exponentially before retrying.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_objective"><a class="anchor" href="#_lab_objective"></a>Lab Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Implement production-ready error handling for MaaS API integration, including retry logic with exponential backoff for 429 Rate Limit errors, parsing the <code>Retry-After</code> header, and handling authentication failures gracefully.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>Bearer token generated in Gen AI Studio (from Section 5.1)</p>
+</li>
+<li>
+<p>Python 3.8+ installed with <code>requests</code> library</p>
+</li>
+<li>
+<p>At least one model deployed and published to MaaS</p>
+</li>
+<li>
+<p>Understanding of HTTP status codes (401, 403, 429)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_overview"><a class="anchor" href="#_lab_overview"></a>Lab Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lab, you will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Understand the three primary error types (401, 403, 429)</p>
+</li>
+<li>
+<p>Implement Python retry logic with exponential backoff</p>
+</li>
+<li>
+<p>Parse and respect the <code>Retry-After</code> header</p>
+</li>
+<li>
+<p>Build a production-ready MaaS client with error handling</p>
+</li>
+<li>
+<p>Test error handling under simulated rate limit conditions</p>
+</li>
+<li>
+<p>Integrate graceful degradation patterns</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_1_understanding_maas_error_responses"><a class="anchor" href="#_task_1_understanding_maas_error_responses"></a>Task 1: Understanding MaaS Error Responses</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS returns standard HTTP status codes with structured JSON error messages.</p>
+</div>
+<div class="sect2">
+<h3 id="_error_type_1_401_unauthorized"><a class="anchor" href="#_error_type_1_401_unauthorized"></a>Error Type 1: 401 Unauthorized</h3>
+<div class="paragraph">
+<p><strong>Cause</strong>: Invalid, expired, or missing Bearer token.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example Request</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer invalid-token-12345" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "nemotron-nano-4b", "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Response</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Unauthorized: Invalid or expired token",
+    "type": "authentication_error",
+    "code": "unauthorized"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Handling Strategy</strong>: Refresh token, log incident, notify user.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_error_type_2_403_forbidden"><a class="anchor" href="#_error_type_2_403_forbidden"></a>Error Type 2: 403 Forbidden</h3>
+<div class="paragraph">
+<p><strong>Cause</strong>: Your tier does not have access to the requested model.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example Request</strong> (Free tier accessing Premium-only model):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "qwen-8b-fp8", "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Response</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">HTTP/1.1 403 Forbidden
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Handling Strategy</strong>: Log tier mismatch, fall back to accessible model, notify platform team.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_error_type_3_429_too_many_requests"><a class="anchor" href="#_error_type_3_429_too_many_requests"></a>Error Type 3: 429 Too Many Requests</h3>
+<div class="paragraph">
+<p><strong>Cause</strong>: Exceeded rate limit (requests per minute) or token quota (tokens per minute).</p>
+</div>
+<div class="paragraph">
+<p><strong>Example Response</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Retry-After: 45
+
+{
+  "error": {
+    "message": "Rate limit exceeded: 500 requests per minute. Retry after 45 seconds.",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded",
+    "param": null,
+    "limit": {
+      "requests": 500,
+      "tokens": 50000,
+      "period": "1m"
+    }
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Key Headers</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><code>Retry-After</code></dt>
+<dd>
+<p>Number of seconds to wait before retrying (integer value in seconds)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>Handling Strategy</strong>: Exponential backoff, respect <code>Retry-After</code>, log rate limit events.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_2_basic_error_handling_in_python"><a class="anchor" href="#_task_2_basic_error_handling_in_python"></a>Task 2: Basic Error Handling in Python</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Create a basic MaaS client with error detection:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import requests
+import os
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def query_model(model, prompt):
+    """Query MaaS model with basic error handling."""
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 100
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    # Check for errors
+    if response.status_code == 401:
+        raise Exception("Authentication failed: Token invalid or expired")
+    elif response.status_code == 403:
+        raise Exception(f"Access denied: Your tier cannot access model '{model}'")
+    elif response.status_code == 429:
+        raise Exception("Rate limit exceeded: Too many requests")
+    elif response.status_code != 200:
+        raise Exception(f"Unexpected error: {response.status_code} - {response.text}")
+
+    return response.json()["choices"][0]["message"]["content"]
+
+# Test the function
+if __name__ == "__main__":
+    try:
+        result = query_model("nemotron-nano-4b", "What is OpenShift?")
+        print(f"Response: {result}")
+    except Exception as e:
+        print(f"Error: {e}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Save as <code>maas_client_basic.py</code> and test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_URL="maas.apps.cluster.example.com"
+$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+$ python3 maas_client_basic.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (success):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Response: OpenShift is Red Hat's enterprise Kubernetes platform that provides developer and operational tools for building, deploying, and managing containerized applications at scale.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (authentication failure with invalid token):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Error: Authentication failed: Token invalid or expired</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ This basic client detects errors but does not retry automatically.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_3_implementing_retry_logic_with_exponential_backoff"><a class="anchor" href="#_task_3_implementing_retry_logic_with_exponential_backoff"></a>Task 3: Implementing Retry Logic with Exponential Backoff</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Production applications should retry transient failures (429 Rate Limit) with increasing delays.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Create a production-ready client with retry logic:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import requests
+import os
+import time
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def query_model_with_retry(model, prompt, max_retries=3):
+    """
+    Query MaaS model with exponential backoff retry logic.
+
+    Args:
+        model: Model name (e.g., "nemotron-nano-4b")
+        prompt: User prompt
+        max_retries: Maximum retry attempts for 429 errors
+
+    Returns:
+        Generated text response
+
+    Raises:
+        Exception: For non-retryable errors (401, 403, 500)
+    """
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 100
+    }
+
+    for attempt in range(max_retries + 1):
+        response = requests.post(url, json=payload, headers=headers)
+
+        # Success
+        if response.status_code == 200:
+            return response.json()["choices"][0]["message"]["content"]
+
+        # Non-retryable errors
+        if response.status_code == 401:
+            logger.error("Authentication failed: Invalid or expired token")
+            raise Exception("401 Unauthorized: Token is invalid or expired")
+
+        if response.status_code == 403:
+            error_msg = response.json().get("error", {}).get("message", "Access denied")
+            logger.error(f"Authorization failed: {error_msg}")
+            raise Exception(f"403 Forbidden: {error_msg}")
+
+        # Retryable error: Rate limit exceeded
+        if response.status_code == 429:
+            if attempt &gt;= max_retries:
+                logger.error(f"Rate limit exceeded after {max_retries} retries")
+                raise Exception("429 Too Many Requests: Max retries exceeded")
+
+            # Parse Retry-After header (in seconds)
+            retry_after = int(response.headers.get("Retry-After", 0))
+
+            # Exponential backoff: 2^attempt seconds, or use Retry-After if provided
+            if retry_after &gt; 0:
+                wait_time = retry_after
+                logger.warning(f"Rate limit hit. Retry-After header: {retry_after}s")
+            else:
+                wait_time = 2 ** attempt  # 1s, 2s, 4s, 8s...
+                logger.warning(f"Rate limit hit. Exponential backoff: {wait_time}s")
+
+            logger.info(f"Attempt {attempt + 1}/{max_retries + 1}: Waiting {wait_time}s before retry...")
+            time.sleep(wait_time)
+            continue
+
+        # Unexpected errors
+        logger.error(f"Unexpected error: {response.status_code} - {response.text}")
+        raise Exception(f"HTTP {response.status_code}: {response.text}")
+
+    # Should never reach here due to max_retries check above
+    raise Exception("Unexpected retry loop exit")
+
+# Test the function
+if __name__ == "__main__":
+    try:
+        result = query_model_with_retry("nemotron-nano-4b", "Explain Kubernetes Pods in 20 words.")
+        print(f"\nSuccess! Response:\n{result}\n")
+    except Exception as e:
+        print(f"\nError: {e}\n")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Save as <code>maas_client_retry.py</code> and test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ python3 maas_client_retry.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (success):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Success! Response:
+Pods are the smallest deployable units in Kubernetes, encapsulating one or more containers with shared storage and network resources.</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (rate limit with retry):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">WARNING:__main__:Rate limit hit. Retry-After header: 30s
+INFO:__main__:Attempt 1/4: Waiting 30s before retry...
+WARNING:__main__:Rate limit hit. Exponential backoff: 2s
+INFO:__main__:Attempt 2/4: Waiting 2s before retry...
+
+Success! Response:
+Pods are the smallest deployable units in Kubernetes...</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The client automatically retries on 429 errors with exponential backoff.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_4_simulating_rate_limit_testing"><a class="anchor" href="#_task_4_simulating_rate_limit_testing"></a>Task 4: Simulating Rate Limit Testing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Generate high-volume requests to trigger rate limits:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import requests
+import os
+import time
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def stress_test_rate_limit(model, num_requests):
+    """Send burst requests to trigger rate limiting."""
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    success_count = 0
+    rate_limit_count = 0
+
+    for i in range(num_requests):
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": f"Request {i}"}],
+            "max_tokens": 10
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code == 200:
+            success_count += 1
+            print(f"✓ Request {i + 1}: Success")
+        elif response.status_code == 429:
+            rate_limit_count += 1
+            retry_after = response.headers.get("Retry-After", "unknown")
+            print(f"✗ Request {i + 1}: Rate limit (Retry-After: {retry_after}s)")
+            break  # Stop on first rate limit
+        else:
+            print(f"✗ Request {i + 1}: Error {response.status_code}")
+
+    print(f"\nResults: {success_count} successful, {rate_limit_count} rate limited")
+
+if __name__ == "__main__":
+    stress_test_rate_limit("nemotron-nano-4b", num_requests=600)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Save as <code>stress_test.py</code> and run:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ python3 stress_test.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example for Free tier with 100 req/min limit):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">✓ Request 1: Success
+✓ Request 2: Success
+...
+✓ Request 98: Success
+✓ Request 99: Success
+✓ Request 100: Success
+✗ Request 101: Rate limit (Retry-After: 42s)
+
+Results: 100 successful, 1 rate limited</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ This confirms the tier&#8217;s request limit (e.g., 100 requests per minute for Free tier).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_5_production_ready_client_with_graceful_degradation"><a class="anchor" href="#_task_5_production_ready_client_with_graceful_degradation"></a>Task 5: Production-Ready Client with Graceful Degradation</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Build a complete client with fallback logic:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import requests
+import os
+import time
+import logging
+from typing import Optional
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+class MaaSClient:
+    """Production-ready MaaS API client with error handling and retry logic."""
+
+    def __init__(self, base_url: str, token: str, max_retries: int = 3):
+        self.base_url = base_url.rstrip('/')
+        self.token = token
+        self.max_retries = max_retries
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        })
+
+    def chat_completion(self, model: str, prompt: str,
+                        fallback_model: Optional[str] = None,
+                        **kwargs) -&gt; dict:
+        """
+        Generate chat completion with automatic retry and fallback.
+
+        Args:
+            model: Primary model name
+            prompt: User prompt
+            fallback_model: Model to try if primary model returns 403
+            **kwargs: Additional parameters (max_tokens, temperature, etc.)
+
+        Returns:
+            dict: Complete API response with choices and usage
+        """
+        # Try primary model
+        try:
+            return self._request_with_retry(model, prompt, **kwargs)
+        except Exception as e:
+            if "403" in str(e) and fallback_model:
+                logger.warning(f"Model '{model}' forbidden. Trying fallback '{fallback_model}'")
+                return self._request_with_retry(fallback_model, prompt, **kwargs)
+            raise
+
+    def _request_with_retry(self, model: str, prompt: str, **kwargs) -&gt; dict:
+        """Internal method with retry logic."""
+        url = f"https://{self.base_url}/v1/chat/completions"
+
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            **kwargs
+        }
+
+        for attempt in range(self.max_retries + 1):
+            response = self.session.post(url, json=payload)
+
+            # Success
+            if response.status_code == 200:
+                return response.json()
+
+            # Handle errors
+            if response.status_code == 401:
+                logger.error("Authentication failed: Token invalid or expired")
+                raise Exception("401 Unauthorized: Refresh your Bearer token")
+
+            if response.status_code == 403:
+                error_data = response.json().get("error", {})
+                logger.error(f"Access denied: {error_data.get('message', 'Unknown')}")
+                raise Exception(f"403 Forbidden: {error_data.get('message')}")
+
+            if response.status_code == 429:
+                if attempt &gt;= self.max_retries:
+                    raise Exception(f"429 Too Many Requests: Exceeded {self.max_retries} retries")
+
+                retry_after = int(response.headers.get("Retry-After", 2 ** attempt))
+                logger.warning(f"Rate limit hit. Waiting {retry_after}s (attempt {attempt + 1})")
+                time.sleep(retry_after)
+                continue
+
+            # Unexpected errors
+            raise Exception(f"HTTP {response.status_code}: {response.text}")
+
+        raise Exception("Max retries exceeded")
+
+    def list_models(self) -&gt; list:
+        """List available models."""
+        url = f"https://{self.base_url}/v1/models"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to list models: {response.status_code}")
+
+        return [model["id"] for model in response.json()["data"]]
+
+# Usage example
+if __name__ == "__main__":
+    client = MaaSClient(
+        base_url=os.getenv("MAAS_URL"),
+        token=os.getenv("MAAS_TOKEN"),
+        max_retries=3
+    )
+
+    # List available models
+    print("Available models:")
+    for model in client.list_models():
+        print(f"  - {model}")
+
+    # Chat completion with fallback
+    try:
+        response = client.chat_completion(
+            model="qwen-8b-fp8",  # Premium-only model
+            prompt="What is OpenShift?",
+            fallback_model="nemotron-nano-4b",  # Fallback to Free tier model
+            max_tokens=50
+        )
+        print(f"\nResponse: {response['choices'][0]['message']['content']}")
+        print(f"Tokens used: {response['usage']['total_tokens']}")
+    except Exception as e:
+        logger.error(f"Request failed: {e}")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Save as <code>maas_client_production.py</code> and test:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ python3 maas_client_production.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (with fallback triggered):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Available models:
+  - nemotron-nano-4b
+  - llama-3-8b
+
+2024-04-24 14:30:15 - __main__ - WARNING - Model 'qwen-8b-fp8' forbidden. Trying fallback 'nemotron-nano-4b'
+
+Response: OpenShift is Red Hat's enterprise Kubernetes platform that provides developer and operational tools for building, deploying, and managing containerized applications.
+Tokens used: 35</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The client gracefully falls back to an accessible model when tier restrictions block the primary model.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_6_integrating_with_application_frameworks"><a class="anchor" href="#_task_6_integrating_with_application_frameworks"></a>Task 6: Integrating with Application Frameworks</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>LangChain Integration</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from langchain.llms.base import LLM
+from langchain.callbacks.manager import CallbackManagerForLLMRun
+from typing import Optional, List
+import requests
+
+class MaaSLLM(LLM):
+    """LangChain wrapper for MaaS API."""
+
+    base_url: str
+    token: str
+    model: str = "nemotron-nano-4b"
+
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+    ) -&gt; str:
+        url = f"https://{self.base_url}/v1/chat/completions"
+        headers = {"Authorization": f"Bearer {self.token}"}
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 200
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+
+    @property
+    def _llm_type(self) -&gt; str:
+        return "maas"
+
+# Usage
+llm = MaaSLLM(base_url="maas.apps.cluster.example.com", token="your-token")
+response = llm("What is Kubernetes?")
+print(response)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>OpenAI SDK Integration</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import openai
+
+openai.api_key = os.getenv("MAAS_TOKEN")
+openai.api_base = f"https://{os.getenv('MAAS_URL')}/v1"
+
+response = openai.ChatCompletion.create(
+    model="nemotron-nano-4b",
+    messages=[{"role": "user", "content": "Explain OpenShift AI in one sentence."}],
+    max_tokens=50
+)
+
+print(response.choices[0].message.content)</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_verification_checklist"><a class="anchor" href="#_lab_verification_checklist"></a>Lab Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After completing this lab, verify:</p>
+</div>
+<div class="paragraph">
+<p>✓ You understand the three primary error types (401, 403, 429)
+✓ You implemented basic error detection in Python
+✓ You implemented retry logic with exponential backoff
+✓ You parse and respect the <code>Retry-After</code> header
+✓ You tested rate limit handling under simulated load
+✓ You built a production-ready client with fallback models
+✓ You understand integration with LangChain and OpenAI SDK</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_error_handling_decision_matrix"><a class="anchor" href="#_error_handling_decision_matrix"></a>Error Handling Decision Matrix</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 30%;">
+<col style="width: 30%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">HTTP Code</th>
+<th class="tableblock halign-left valign-top">Error Type</th>
+<th class="tableblock halign-left valign-top">Retry?</th>
+<th class="tableblock halign-left valign-top">Action</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">401</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Unauthorized</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Refresh Bearer token, log incident</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Forbidden</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fall back to accessible model, log tier mismatch</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">429</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rate Limit</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes (with backoff)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Exponential backoff, respect <code>Retry-After</code>, retry up to 3 times</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Internal Server Error</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes (1-2 retries)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Log error, contact platform team if persistent</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">503</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service Unavailable</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes (with backoff)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model serving pod restarting, retry after 10s</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_best_practices_for_production_applications"><a class="anchor" href="#_best_practices_for_production_applications"></a>Best Practices for Production Applications</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>1. Token Management</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Store tokens in secret managers (Vault, AWS Secrets Manager, Kubernetes Secrets)</p>
+</li>
+<li>
+<p>Implement automatic token refresh before expiration</p>
+</li>
+<li>
+<p>Never log tokens in application logs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>2. Retry Logic</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Always respect <code>Retry-After</code> header</p>
+</li>
+<li>
+<p>Implement exponential backoff (1s → 2s → 4s → 8s)</p>
+</li>
+<li>
+<p>Limit retries to 3-5 attempts to avoid infinite loops</p>
+</li>
+<li>
+<p>Log all retry attempts for debugging</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>3. Observability</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Track token consumption metrics (input/output tokens per request)</p>
+</li>
+<li>
+<p>Monitor 429 rate limit frequency to adjust request patterns</p>
+</li>
+<li>
+<p>Alert on persistent 401/403 errors (indicates configuration issues)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>4. Graceful Degradation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Define fallback models for tier-restricted scenarios</p>
+</li>
+<li>
+<p>Cache responses for repeated queries (respects rate limits)</p>
+</li>
+<li>
+<p>Implement circuit breaker pattern for persistent failures</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>5. Cost Optimization</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Set conservative <code>max_tokens</code> limits to avoid quota exhaustion</p>
+</li>
+<li>
+<p>Use lower <code>temperature</code> values for deterministic tasks (reduces unnecessary token usage)</p>
+</li>
+<li>
+<p>Batch requests when possible instead of individual API calls</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_production_issues"><a class="anchor" href="#_troubleshooting_production_issues"></a>Troubleshooting Production Issues</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Symptom</th>
+<th class="tableblock halign-left valign-top">Likely Cause</th>
+<th class="tableblock halign-left valign-top">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Constant 429 errors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Application exceeding tier limits</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduce request rate, implement caching, or upgrade tier</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sporadic 401 errors</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Token expiring mid-operation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Implement token refresh before expiration (check <code>exp</code> claim in JWT)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All requests return 403</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model tier access changed by platform team</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check Gen AI Studio → Models for updated tier access</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High latency despite low load</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Inefficient retry logic causing cascading delays</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review backoff implementation, reduce max retries</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Token quota exhausted despite low request count</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Large <code>max_tokens</code> setting or high-volume responses</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduce <code>max_tokens</code>, optimize prompts for shorter responses</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_course_summary"><a class="anchor" href="#_course_summary"></a>Course Summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Congratulations! You have completed the Red Hat OpenShift AI Models-as-a-Service training.</p>
+</div>
+<div class="paragraph">
+<p>You can now:</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Evaluate MaaS Architecture</strong>: Understand the transition from GPU silos to centralized token delivery, and articulate how MaaS prevents "Shadow AI"</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Administer the MaaS Platform</strong>: Configure OpenShift AI CRDs to enable MaaS components, establish Gateway API routing, and activate the dashboard</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Implement Governance</strong>: Define tiered service limits, configure group-based rate limiting, track token consumption, and automate chargeback workflows</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Deploy Models</strong>: Configure distributed inference runtimes, publish models to the governed catalog, and dynamically update tier-based access control</p>
+</div>
+<div class="paragraph">
+<p>✓ <strong>Consume Endpoints</strong>: Navigate Gen AI Studio, generate authentication tokens, implement retry logic, and integrate models into applications</p>
+</div>
+<div class="paragraph">
+<p>Your organization has transitioned from "Private Power Generators" (siloed GPUs) to a "Municipal Utility Grid" (centralized MaaS platform) where lines of business consume AI inference as a governed, trackable, and cost-allocated utility.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_additional_resources"><a class="anchor" href="#_additional_resources"></a>Additional Resources</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>[Red Hat OpenShift AI Documentation](<a href="https://access.redhat.com/documentation/en-us/red_hat_openshift_ai/" class="bare">https://access.redhat.com/documentation/en-us/red_hat_openshift_ai/</a>)</p>
+</li>
+<li>
+<p>[KServe Model Serving](<a href="https://kserve.github.io/website/" class="bare">https://kserve.github.io/website/</a>)</p>
+</li>
+<li>
+<p>[vLLM Documentation](<a href="https://docs.vllm.ai/" class="bare">https://docs.vllm.ai/</a>)</p>
+</li>
+<li>
+<p>[OpenAI API Reference](<a href="https://platform.openai.com/docs/api-reference" class="bare">https://platform.openai.com/docs/api-reference</a>)</p>
+</li>
+<li>
+<p>[Kuadrant Authentication Policies](<a href="https://docs.kuadrant.io/" class="bare">https://docs.kuadrant.io/</a>)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a></span>
+  <span class="next"><a href="../appendix/appendix.html">Appendix</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

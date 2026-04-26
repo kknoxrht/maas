@@ -1,0 +1,841 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Serving Runtimes &amp; Distributed Inference :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="s2-publishing-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">4. Deploying Models to the MaaS Catalog</a></li>
+    <li><a href="s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Serving Runtimes &amp; Distributed Inference</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>12 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Only the distributed inference runtime integrates with MaaS governance—without it, models remain standalone endpoints outside tier-based control.</strong></p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Understand why distributed inference with llm-d is required for MaaS, how LeaderWorkerSet enables multi-GPU serving, and the structure of LLMInferenceService custom resources.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_why_distributed_inference_matters"><a class="anchor" href="#_why_distributed_inference_matters"></a>Why Distributed Inference Matters</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>A platform engineer faces a choice: deploy a model as a standalone KServe InferenceService or publish it as a governed MaaS endpoint.</p>
+</div>
+<div class="paragraph">
+<p><strong>Standalone InferenceService</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bypasses MaaS gateway entirely</p>
+</li>
+<li>
+<p>No tier-based access control</p>
+</li>
+<li>
+<p>No token consumption tracking</p>
+</li>
+<li>
+<p>No rate limiting or quotas</p>
+</li>
+<li>
+<p>Direct model access without authentication</p>
+</li>
+<li>
+<p>Cannot appear in Gen AI Studio catalog</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>MaaS-Published Model</strong> (Distributed Inference with llm-d):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Routes through Gateway API and Kuadrant</p>
+</li>
+<li>
+<p>Enforces tier-based access control</p>
+</li>
+<li>
+<p>Tracks token consumption for chargeback</p>
+</li>
+<li>
+<p>Applies request rate limits and quotas</p>
+</li>
+<li>
+<p>Requires Bearer token authentication</p>
+</li>
+<li>
+<p>Appears in Gen AI Studio catalog automatically</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>MaaS integration is not an optional feature—it&#8217;s a <strong>runtime requirement</strong>. Only models deployed using the <strong>Distributed inference with llm-d</strong> runtime can publish to the MaaS catalog.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>If you deploy a model using any other runtime (standard KServe, vLLM without llm-d, NVIDIA NIM, MLServer), the option to "Publish as MaaS endpoint" will not appear in the dashboard.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_the_llm_d_runtime_architecture"><a class="anchor" href="#_the_llm_d_runtime_architecture"></a>The llm-d Runtime Architecture</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Distributed Inference with llm-d is a Kubernetes-native framework designed for serving large language models at scale.</p>
+</div>
+<div class="paragraph">
+<p><strong>Core Components</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">vLLM Inference Engine</dt>
+<dd>
+<p>High-performance inference runtime supporting optimizations like prefix-cache aware routing and disaggregated serving</p>
+</dd>
+<dt class="hdlist1">LeaderWorkerSet Operator</dt>
+<dd>
+<p>Kubernetes controller that manages multi-replica distributed workloads with leader election and worker coordination</p>
+</dd>
+<dt class="hdlist1">Envoy Proxy</dt>
+<dd>
+<p>Handles networking and routing between leader and worker pods</p>
+</dd>
+<dt class="hdlist1">KServe Integration</dt>
+<dd>
+<p>Provides standardized model serving APIs (<code>/v1/models</code>, <code>/v1/chat/completions</code>)</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>How Distributed Inference Works</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">1. LLMInferenceService CRD defines model, replicas, and resources
+2. llm-d controller creates a LeaderWorkerSet
+3. Leader pod coordinates inference requests
+4. Worker pods handle parallel token generation
+5. Envoy proxy routes traffic to leader
+6. KServe provides OpenAI-compatible API endpoints
+7. MaaS gateway routes external requests to the service</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>A 70B parameter model is too large for a single GPU. Distributed inference splits it across multiple GPUs, with the leader coordinating requests and workers processing chunks of the model.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_leaderworkerset_the_missing_piece"><a class="anchor" href="#_leaderworkerset_the_missing_piece"></a>LeaderWorkerSet: The Missing Piece</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Standard Kubernetes Deployments create identical replicas. LeaderWorkerSet creates a <strong>leader</strong> pod that coordinates multiple <strong>worker</strong> pods.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Why LeaderWorkerSet is Required</dt>
+<dd>
+<p>Large language models need coordinated multi-GPU serving. Without LeaderWorkerSet, each replica would load the entire model independently—wasting GPU memory and preventing true distributed inference.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>Standard Deployment</strong> (Not MaaS-compatible):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Deployment → 3 identical pods
+Each pod loads entire 70B model
+Total GPU memory: 3x full model size
+No coordination between pods
+Cannot publish to MaaS</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>LeaderWorkerSet</strong> (MaaS-compatible):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">LeaderWorkerSet → 1 leader + 3 workers
+Model split across worker GPUs
+Leader coordinates inference requests
+Total GPU memory: 1x full model size
+Integrated with MaaS gateway</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Prerequisites</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Before deploying distributed inference models, your cluster administrator must install:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>LeaderWorkerSet Operator (from OperatorHub)</p>
+</li>
+<li>
+<p>Gateway API operators (OpenShift Gateway API)</p>
+</li>
+<li>
+<p>cert-manager (for TLS certificates)</p>
+</li>
+<li>
+<p>Red Hat Connectivity Link (Kuadrant for authentication)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Verify LeaderWorkerSet is installed:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get csv -n openshift-operators | grep leaderworkerset
+leaderworkerset-operator.v1.1.0   LeaderWorkerSet Operator   1.1.0   Succeeded</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ If the operator shows <code>Succeeded</code>, distributed inference is available.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_llminferenceservice_crd_structure"><a class="anchor" href="#_llminferenceservice_crd_structure"></a>LLMInferenceService CRD Structure</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>LLMInferenceService</code> custom resource replaces standard <code>InferenceService</code> for MaaS-enabled models.</p>
+</div>
+<div class="paragraph">
+<p><strong>Key Fields</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: my-model-deployment
+  namespace: my-project
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["free", "premium"]'  <i class="conum" data-value="1"></i><b>(1)</b>
+spec:
+  replicas: 2  <i class="conum" data-value="2"></i><b>(2)</b>
+  model:
+    uri: hf://RedHatAI/Qwen3-8B-FP8-dynamic  <i class="conum" data-value="3"></i><b>(3)</b>
+    name: RedHatAI/Qwen3-8B-FP8-dynamic     <i class="conum" data-value="4"></i><b>(4)</b>
+  router:
+    route: {}    <i class="conum" data-value="5"></i><b>(5)</b>
+    gateway: {}  <i class="conum" data-value="6"></i><b>(6)</b>
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:  <i class="conum" data-value="7"></i><b>(7)</b>
+      - --max-model-len=8192
+      - --gpu-memory-utilization=0.85
+      resources:
+        limits:
+          cpu: '4'
+          memory: 32Gi
+          nvidia.com/gpu: "1"  <i class="conum" data-value="8"></i><b>(8)</b>
+        requests:
+          cpu: '2'
+          memory: 16Gi
+          nvidia.com/gpu: "1"</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>MaaS tier assignment (Free and Premium can access this model)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Number of distributed worker replicas</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Model source (HuggingFace, S3, PVC, or OCI)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Model name displayed in API responses</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Creates OpenShift Route for direct access</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="6"></i><b>6</b></td>
+<td>Registers with MaaS Gateway for governed access</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="7"></i><b>7</b></td>
+<td>vLLM runtime arguments for optimization</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="8"></i><b>8</b></td>
+<td>GPU resources per replica</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Understanding the Model URI</strong>:</p>
+</div>
+<div class="paragraph">
+<p>MaaS supports multiple model storage backends:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Storage Type</th>
+<th class="tableblock halign-left valign-top">URI Format</th>
+<th class="tableblock halign-left valign-top">Example</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">HuggingFace</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hf://&lt;model&gt;/&lt;optional-hash&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>hf://RedHatAI/Qwen3-8B-FP8-dynamic</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">S3 Bucket</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>s3://&lt;bucket-name&gt;/&lt;object-key&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>s3://my-models/llama-3.1-8b</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Persistent Volume Claim</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pvc://&lt;claim-name&gt;/&lt;path&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>pvc://model-storage/llama3</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">OCI Container Image</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oci://&lt;registry&gt;/&lt;org&gt;/&lt;repo&gt;:&lt;tag&gt;</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oci://quay.io/myorg/llama3:v1</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A platform engineer chooses storage based on operational requirements: HuggingFace for public models, S3 for private corporate models, PVC for air-gapped environments.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_resource_configuration_strategies"><a class="anchor" href="#_resource_configuration_strategies"></a>Resource Configuration Strategies</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Distributed inference requires careful resource planning.</p>
+</div>
+<div class="sect2">
+<h3 id="_single_gpu_deployment"><a class="anchor" href="#_single_gpu_deployment"></a>Single-GPU Deployment</h3>
+<div class="paragraph">
+<p>For smaller models (7B-13B parameters):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  replicas: 2
+  template:
+    containers:
+    - name: main
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 32Gi</code></pre>
+</div>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Use case</strong>: Development, testing, small-scale production</p>
+</li>
+<li>
+<p><strong>GPU requirements</strong>: 1 GPU per replica</p>
+</li>
+<li>
+<p><strong>Total GPUs needed</strong>: <code>replicas * 1</code> (e.g., 2 replicas = 2 GPUs)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_multi_gpu_deployment"><a class="anchor" href="#_multi_gpu_deployment"></a>Multi-GPU Deployment</h3>
+<div class="paragraph">
+<p>For larger models (70B+ parameters):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  replicas: 1
+  template:
+    containers:
+    - name: main
+      resources:
+        limits:
+          nvidia.com/gpu: "4"  <i class="conum" data-value="1"></i><b>(1)</b>
+          memory: 128Gi</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Model split across 4 GPUs within a single pod
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Use case</strong>: Large models requiring tensor parallelism</p>
+</li>
+<li>
+<p><strong>GPU requirements</strong>: 4 GPUs per replica</p>
+</li>
+<li>
+<p><strong>Total GPUs needed</strong>: <code>replicas * 4</code> (e.g., 1 replica = 4 GPUs)</p>
+</li>
+</ul>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_recommended_configurations_by_model_size"><a class="anchor" href="#_recommended_configurations_by_model_size"></a>Recommended Configurations by Model Size</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 22.2222%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Model Size</th>
+<th class="tableblock halign-left valign-top">Replicas</th>
+<th class="tableblock halign-left valign-top">GPUs per Replica</th>
+<th class="tableblock halign-left valign-top">Total GPUs</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">7B-8B (FP8)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2-4</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2-4 GPUs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">13B-20B (FP8)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1-2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1-2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2-4 GPUs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">70B (FP8)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4-8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">4-8 GPUs</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">70B (FP16)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">8 GPUs</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_vllm_runtime_arguments"><a class="anchor" href="#_vllm_runtime_arguments"></a>vLLM Runtime Arguments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>vLLM provides optimization arguments to control memory, performance, and behavior.</p>
+</div>
+<div class="paragraph">
+<p><strong>Common vLLM Arguments</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  template:
+    containers:
+    - name: main
+      args:
+      - --gpu-memory-utilization=0.85  <i class="conum" data-value="1"></i><b>(1)</b>
+      - --max-model-len=8192           <i class="conum" data-value="2"></i><b>(2)</b>
+      - --enable-prefix-caching        <i class="conum" data-value="3"></i><b>(3)</b>
+      - --disable-uvicorn-access-log   <i class="conum" data-value="4"></i><b>(4)</b>
+      - --trust-remote-code            <i class="conum" data-value="5"></i><b>(5)</b></code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Reserve 15% GPU memory for CUDA operations (prevents OOM errors)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Maximum context length in tokens (lower = less memory usage)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>Cache repeated prompt prefixes for faster inference</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Reduce log volume in production</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="5"></i><b>5</b></td>
+<td>Allow custom model code execution (required for some models)</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Optimization Scenarios</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Reduce Memory Consumption</dt>
+<dd>
+<p><code>--gpu-memory-utilization=0.75</code> and <code>--max-model-len=4096</code> to fit larger models on smaller GPUs</p>
+</dd>
+<dt class="hdlist1">Improve Latency</dt>
+<dd>
+<p><code>--enable-prefix-caching</code> speeds up requests with repeated prompts</p>
+</dd>
+<dt class="hdlist1">Production Environments</dt>
+<dd>
+<p><code>--disable-uvicorn-access-log</code> reduces I/O overhead</p>
+</dd>
+<dt class="hdlist1">Custom Models</dt>
+<dd>
+<p><code>--trust-remote-code</code> enables models with custom tokenizers or architecture</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>For complete vLLM argument reference, see Red Hat AI Inference Server documentation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_dashboard_vs_cli_deployment"><a class="anchor" href="#_dashboard_vs_cli_deployment"></a>Dashboard vs CLI Deployment</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Approach</th>
+<th class="tableblock halign-left valign-top">Best For</th>
+<th class="tableblock halign-left valign-top">Limitations</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dashboard UI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick deployments, visual feedback, initial model testing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Limited vLLM argument customization, fewer storage backend options</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">CLI (YAML)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Production deployments, GitOps workflows, full vLLM configuration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Requires YAML knowledge, no visual validation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Combination</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Initial deployment via UI, production tuning via CLI</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">None—recommended approach</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>A platform engineer might deploy via the dashboard during proof-of-concept, then export the generated YAML for GitOps-managed production deployments.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_runtime_selection_in_the_dashboard"><a class="anchor" href="#_runtime_selection_in_the_dashboard"></a>Runtime Selection in the Dashboard</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When deploying via OpenShift AI dashboard:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Navigate to <strong>Projects → [Your Project] → Deployments → Deploy model</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: In the <strong>Serving runtime</strong> dropdown, you will see:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Available Runtimes:
+ ✓ Distributed inference with llm-d  ← Only this runtime supports MaaS
+ ✗ vLLM ServingRuntime             ← Standalone, no MaaS integration
+ ✗ NVIDIA NIM for LLMs             ← Standalone, no MaaS integration
+ ✗ OpenVINO Model Server           ← Non-generative models only</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Select <strong>Distributed inference with llm-d</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Result</strong>: The <strong>Publish as MaaS endpoint</strong> checkbox appears in Advanced settings.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Selecting any runtime other than "Distributed inference with llm-d" removes the ability to publish to MaaS. You can still deploy the model, but it will not appear in the Gen AI Studio catalog and will bypass governance entirely.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you understand the distributed inference architecture and LLMInferenceService structure, the next lab section walks through deploying your first model and publishing it to the MaaS catalog with tier-based access control.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">4. Deploying Models to the MaaS Catalog</a></span>
+  <span class="next"><a href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,928 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab - Observability &amp; Automated Chargeback :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s2-rate-limits-quotas.html">
+    <link rel="next" href="../ch4-model-deployment/index.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">3. Governance &amp; Observability</a></li>
+    <li><a href="s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab - Observability &amp; Automated Chargeback</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>20 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Without visibility into token consumption, governance policies are unauditable and chargeback is guesswork—MaaS metrics transform usage data into actionable financial reports.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_objective"><a class="anchor" href="#_lab_objective"></a>Lab Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Track token consumption metrics using MaaS observability tools, differentiate infrastructure metrics from governance metrics, and access the data needed for automated chargeback workflows.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift CLI (<code>oc</code>) installed and authenticated</p>
+</li>
+<li>
+<p>Administrator access to OpenShift AI dashboard</p>
+</li>
+<li>
+<p>At least one tier configured with rate limits</p>
+</li>
+<li>
+<p>At least one model deployed and published to MaaS</p>
+</li>
+<li>
+<p>Prometheus monitoring enabled (typically installed with OpenShift)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_overview"><a class="anchor" href="#_lab_overview"></a>Lab Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lab, you will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Differentiate infrastructure metrics from MaaS governance metrics</p>
+</li>
+<li>
+<p>Access MaaS consumption data via the dashboard</p>
+</li>
+<li>
+<p>Query token usage metrics using CLI tools</p>
+</li>
+<li>
+<p>Understand the data structure for chargeback automation</p>
+</li>
+<li>
+<p>View "Authorized Hits" and policy enforcement events</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_1_understanding_metric_categories"><a class="anchor" href="#_task_1_understanding_metric_categories"></a>Task 1: Understanding Metric Categories</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS tracks two distinct categories of metrics:</p>
+</div>
+<div class="sect2">
+<h3 id="_infrastructure_metrics"><a class="anchor" href="#_infrastructure_metrics"></a>Infrastructure Metrics</h3>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Monitor physical hardware health and performance.</p>
+</div>
+<div class="paragraph">
+<p><strong>What They Track</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>GPU utilization percentage</p>
+</li>
+<li>
+<p>GPU memory usage</p>
+</li>
+<li>
+<p>GPU temperature</p>
+</li>
+<li>
+<p>Pod CPU and memory consumption</p>
+</li>
+<li>
+<p>Model inference latency</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Tools</strong>: DCGM Exporter, Prometheus, OpenShift monitoring dashboards</p>
+</div>
+<div class="paragraph">
+<p><strong>Audience</strong>: SREs and infrastructure teams monitoring cluster health</p>
+</div>
+<div class="paragraph">
+<p>A platform engineer uses infrastructure metrics to determine if GPUs are overheating or if a model needs more memory. These metrics don&#8217;t track <strong>who</strong> is using resources or <strong>how much</strong> they&#8217;re consuming in terms of tokens.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_maas_governance_metrics"><a class="anchor" href="#_maas_governance_metrics"></a>MaaS Governance Metrics</h3>
+<div class="paragraph">
+<p><strong>Purpose</strong>: Track policy enforcement and token consumption for chargeback.</p>
+</div>
+<div class="paragraph">
+<p><strong>What They Track</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Authorized API requests per user/tier</p>
+</li>
+<li>
+<p>Token consumption (input + output) per user/tier</p>
+</li>
+<li>
+<p>Rate limit violations (429 errors) per tier</p>
+</li>
+<li>
+<p>Model access attempts per tier</p>
+</li>
+<li>
+<p>Authentication failures per user</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Tools</strong>: MaaS dashboard, Kuadrant metrics, Limitador counters</p>
+</div>
+<div class="paragraph">
+<p><strong>Audience</strong>: Platform engineers managing governance and finance teams calculating chargeback</p>
+</div>
+<div class="paragraph">
+<p>A finance analyst uses governance metrics to calculate how much Department A owes for 500,000 tokens of inference last month. Infrastructure metrics can&#8217;t answer that question.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_2_view_tier_consumption_in_the_dashboard"><a class="anchor" href="#_task_2_view_tier_consumption_in_the_dashboard"></a>Task 2: View Tier Consumption in the Dashboard</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard as an administrator.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Navigate to <strong>Settings → Tiers</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: You should see the tier list with current limits:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Tier Name       Priority Level    Groups                    Request Limit    Token Limit
+Free            0                 system:authenticated      100/min          10,000/min
+Premium         1                 premium-users             500/min          50,000/min
+Enterprise      2                 enterprise-users          1,000/min        100,000/min</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Click on a tier name (e.g., <strong>Premium</strong>) to view details.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Locate the <strong>Usage</strong> section (if available in your version).</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Information</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Current request rate (requests in the last minute)</p>
+</li>
+<li>
+<p>Current token consumption (tokens in the last minute)</p>
+</li>
+<li>
+<p>Number of users currently assigned to this tier</p>
+</li>
+<li>
+<p>Recent rate limit violations (429 errors)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Dashboard visibility of usage metrics depends on OpenShift AI version. Version 3.4+ includes enhanced usage tracking in the tier detail view.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_3_query_maas_metrics_via_cli"><a class="anchor" href="#_task_3_query_maas_metrics_via_cli"></a>Task 3: Query MaaS Metrics via CLI</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS exposes consumption metrics through Prometheus-compatible endpoints.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Verify Prometheus is monitoring MaaS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get servicemonitor -n redhat-ods-applications | grep maas
+maas-api-metrics   10d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: A ServiceMonitor exists for <code>maas-api-metrics</code>, indicating Prometheus is scraping MaaS data.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Access Prometheus (via OpenShift Console or port-forward):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc port-forward -n openshift-monitoring svc/prometheus-k8s 9090:9090
+Forwarding from 127.0.0.1:9090 -&gt; 9090</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Open <code><a href="http://localhost:9090" class="bare">http://localhost:9090</a></code> in your browser.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Query token consumption by tier:</p>
+</div>
+<div class="paragraph">
+<p>In the Prometheus query interface, enter:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier) (maas_tokens_consumed_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free"}        152340
+{tier="Premium"}     892150
+{tier="Enterprise"}  2145890</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This shows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Free tier users have consumed 152,340 tokens total</p>
+</li>
+<li>
+<p>Premium tier users have consumed 892,150 tokens total</p>
+</li>
+<li>
+<p>Enterprise tier users have consumed 2,145,890 tokens total</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Query request counts by tier:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier) (maas_requests_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free"}        8234
+{tier="Premium"}     45612
+{tier="Enterprise"}  103456</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Query rate limit violations:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier) (maas_rate_limit_exceeded_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free"}        45
+{tier="Premium"}     12
+{tier="Enterprise"}  0</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This indicates:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Free tier users hit rate limits 45 times</p>
+</li>
+<li>
+<p>Premium tier users hit rate limits 12 times</p>
+</li>
+<li>
+<p>Enterprise tier users never hit rate limits (sufficient capacity)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_4_understanding_authorized_hits"><a class="anchor" href="#_task_4_understanding_authorized_hits"></a>Task 4: Understanding Authorized Hits</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS tracks "Authorized Hits"—successful API requests that passed authentication, authorization, and rate limiting.</p>
+</div>
+<div class="paragraph">
+<p><strong>Why It Matters</strong>: You only charge for <strong>successful</strong> inference requests, not failed authentication attempts or rate limit errors.</p>
+</div>
+<div class="paragraph">
+<p><strong>Query Authorized Hits</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier, model) (maas_authorized_requests_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free", model="llama-3.1-8b"}          7823
+{tier="Premium", model="llama-3.1-8b"}       12450
+{tier="Premium", model="llama-3.1-70b"}      890
+{tier="Enterprise", model="llama-3.1-70b"}   45230</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This shows:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Free tier made 7,823 successful requests to the 8B model</p>
+</li>
+<li>
+<p>Premium tier made 12,450 requests to 8B and 890 to 70B</p>
+</li>
+<li>
+<p>Enterprise tier made 45,230 requests to the 70B model</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>A finance team uses this data to allocate inference costs to specific departments based on which tier they belong to.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_5_viewing_token_inputoutput_split"><a class="anchor" href="#_task_5_viewing_token_inputoutput_split"></a>Task 5: Viewing Token Input/Output Split</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For accurate chargeback, you need to separate input tokens (user prompts) from output tokens (model responses) because they typically have different costs.</p>
+</div>
+<div class="paragraph">
+<p><strong>Query Input Tokens</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier) (maas_input_tokens_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free"}        45230
+{tier="Premium"}     234890
+{tier="Enterprise"}  892340</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Query Output Tokens</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-promql hljs" data-lang="promql">sum by (tier) (maas_output_tokens_total)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">{tier="Free"}        107110
+{tier="Premium"}     657260
+{tier="Enterprise"}  1253550</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Analysis</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The Enterprise tier consumed:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>892,340 input tokens</p>
+</li>
+<li>
+<p>1,253,550 output tokens</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If input tokens cost $0.001 per 1K tokens and output tokens cost $0.003 per 1K tokens:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">Input Cost:  (892,340 / 1000) * $0.001 = $0.89
+Output Cost: (1,253,550 / 1000) * $0.003 = $3.76
+Total Cost:  $4.65 (for Enterprise tier consumption)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This calculation happens automatically in chargeback automation scripts by querying these metrics.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_6_accessing_metrics_via_cli_without_prometheus_ui"><a class="anchor" href="#_task_6_accessing_metrics_via_cli_without_prometheus_ui"></a>Task 6: Accessing Metrics via CLI (Without Prometheus UI)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Platform engineers can query metrics directly from the command line:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Identify the Prometheus service:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get svc -n openshift-monitoring | grep prometheus
+prometheus-k8s   ClusterIP   10.0.123.45   &lt;none&gt;   9090/TCP   15d</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Query metrics using <code>oc exec</code> and <code>curl</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc exec -n openshift-monitoring statefulset/prometheus-k8s -- \
+  curl -s 'http://localhost:9090/api/v1/query?query=sum(maas_tokens_consumed_total)' | \
+  jq '.data.result[0].value[1]'
+
+"3190380"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: Total token consumption across all tiers: <code>3,190,380</code> tokens.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Query tier-specific consumption:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc exec -n openshift-monitoring statefulset/prometheus-k8s -- \
+  curl -s 'http://localhost:9090/api/v1/query?query=sum(maas_tokens_consumed_total)by(tier)' | \
+  jq '.data.result[] | {tier: .metric.tier, tokens: .value[1]}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{"tier": "Free", "tokens": "152340"}
+{"tier": "Premium", "tokens": "892150"}
+{"tier": "Enterprise", "tokens": "2145890"}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This data can be piped to automated chargeback scripts that run on a schedule (nightly, monthly).</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_7_viewing_kuadrant_policy_enforcement_logs"><a class="anchor" href="#_task_7_viewing_kuadrant_policy_enforcement_logs"></a>Task 7: Viewing Kuadrant Policy Enforcement Logs</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Kuadrant logs provide audit trails showing exactly when and why requests were denied.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Check Limitador logs for rate limit events:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc logs -n kuadrant-system deployment/limitador --tail=50 | grep -i "exceeded"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">2024-04-24T10:23:15Z INFO Rate limit exceeded user=alice@example.com tier=Free limit=requests_per_minute
+2024-04-24T10:23:18Z INFO Rate limit exceeded user=bob@example.com tier=Free limit=tokens_per_minute
+2024-04-24T10:28:45Z INFO Rate limit exceeded user=charlie@example.com tier=Premium limit=requests_per_minute</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>What This Shows</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>alice@example.com</code> hit the Free tier&#8217;s request rate limit</p>
+</li>
+<li>
+<p><code>bob@example.com</code> hit the Free tier&#8217;s token quota</p>
+</li>
+<li>
+<p><code>charlie@example.com</code> hit the Premium tier&#8217;s request rate limit</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Check Authorino logs for authentication/authorization failures:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc logs -n kuadrant-system deployment/authorino --tail=50 | grep -i "forbidden\|unauthorized"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">2024-04-24T10:15:23Z WARN Unauthorized request token=invalid
+2024-04-24T10:18:12Z WARN Forbidden user=dave@example.com tier=Free model=llama-3.1-70b reason=tier_access_denied</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>What This Shows</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>An invalid token was rejected (401 Unauthorized)</p>
+</li>
+<li>
+<p>User <code>dave@example.com</code> (Free tier) tried to access the 70B model, which is restricted to Premium+ tiers (403 Forbidden)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>These logs provide complete audit trails for security and compliance teams.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_8_exporting_metrics_for_financial_systems"><a class="anchor" href="#_task_8_exporting_metrics_for_financial_systems"></a>Task 8: Exporting Metrics for Financial Systems</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Organizations typically export MaaS metrics to financial or billing systems on a schedule.</p>
+</div>
+<div class="paragraph">
+<p><strong>Example Automated Workflow</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Cron Job</strong> runs nightly at 2:00 AM</p>
+</li>
+<li>
+<p><strong>Script queries</strong> Prometheus for yesterday&#8217;s token consumption by tier</p>
+</li>
+<li>
+<p><strong>Data exported</strong> to CSV or JSON format</p>
+</li>
+<li>
+<p><strong>Finance system</strong> imports the data and calculates chargeback</p>
+</li>
+<li>
+<p><strong>Departmental invoices</strong> generated automatically</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Example Export Script</strong> (bash):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">#!/bin/bash
+# Export MaaS token usage for chargeback
+
+PROMETHEUS_URL="http://prometheus-k8s.openshift-monitoring.svc:9090"
+QUERY="sum by (tier) (maas_tokens_consumed_total)"
+
+curl -s "${PROMETHEUS_URL}/api/v1/query?query=${QUERY}" | \
+  jq -r '.data.result[] | "\(.metric.tier),\(.value[1])"' &gt; /tmp/maas-usage-$(date +%Y-%m-%d).csv
+
+echo "Export complete: /tmp/maas-usage-$(date +%Y-%m-%d).csv"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Output File</strong> (<code>maas-usage-2024-04-24.csv</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-csv hljs" data-lang="csv">Free,152340
+Premium,892150
+Enterprise,2145890</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This CSV can be imported into SAP, Oracle Financials, or custom billing systems.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_verification_checklist"><a class="anchor" href="#_lab_verification_checklist"></a>Lab Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After completing this lab, verify:</p>
+</div>
+<div class="paragraph">
+<p>✓ You can differentiate infrastructure metrics (GPU temp) from governance metrics (token consumption)
+✓ You can view tier usage in the OpenShift AI dashboard
+✓ You can query MaaS metrics using Prometheus (UI or CLI)
+✓ You can identify "Authorized Hits" vs. failed requests
+✓ You can separate input tokens from output tokens for differential pricing
+✓ You can access Kuadrant audit logs showing policy enforcement
+✓ You understand how to export metrics for automated chargeback</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_observability_scenarios"><a class="anchor" href="#_common_observability_scenarios"></a>Common Observability Scenarios</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Question</th>
+<th class="tableblock halign-left valign-top">Metric to Query</th>
+<th class="tableblock halign-left valign-top">Why It Matters</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Which tier is consuming the most resources?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sum by (tier) (maas_tokens_consumed_total)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Identify which departments need budget discussions</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Are users hitting rate limits frequently?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sum by (tier) (maas_rate_limit_exceeded_total)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Indicates limits may be too restrictive</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Which models are most popular?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sum by (model) (maas_authorized_requests_total)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Informs which models to scale or deprecate</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">What&#8217;s our total monthly token cost?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>sum(maas_input_tokens_total)</code> + <code>sum(maas_output_tokens_total)</code></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Calculate total inference costs for budgeting</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Who tried to access unauthorized models?</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check Authorino logs for <code>Forbidden</code> events</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Security audit trail for compliance</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With governance, rate limiting, and observability fully configured, the final module shifts perspective to model deployment—showing how to deploy generative AI models using the distributed inference runtime and publish them to the MaaS catalog with tier-based access controls.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a></span>
+  <span class="next"><a href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,846 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Lab - Publishing as a MaaS Endpoint :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="s1-serving-runtimes.html">
+    <link rel="next" href="s3-access-update-lab.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../appendix/appendix.html">Appendix</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">4. Deploying Models to the MaaS Catalog</a></li>
+    <li><a href="s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Lab - Publishing as a MaaS Endpoint</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p><em>Estimated time: <strong>15 minutes</strong>.</em></p>
+</div>
+<div class="paragraph lead">
+<p><strong>Deploying a model makes it run; publishing it to MaaS makes it governed—authentication, rate limits, and chargeback tracking activate automatically.</strong></p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_objective"><a class="anchor" href="#_lab_objective"></a>Lab Objective</h2>
+<div class="sectionbody">
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Objective</dt>
+<dd>
+<p>Deploy a generative AI model using distributed inference, publish it to the MaaS catalog, and configure tier-based access control.</p>
+</dd>
+</dl>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
+<div class="sectionbody">
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift AI dashboard access with project creation permissions</p>
+</li>
+<li>
+<p>MaaS platform components enabled (verified in Module 2)</p>
+</li>
+<li>
+<p>At least one governance tier configured (verified in Module 3)</p>
+</li>
+<li>
+<p>Cluster with GPU nodes available</p>
+</li>
+<li>
+<p>LeaderWorkerSet Operator installed</p>
+</li>
+<li>
+<p>Data science project created (or permission to create one)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_overview"><a class="anchor" href="#_lab_overview"></a>Lab Overview</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>In this lab, you will:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Deploy a model via the OpenShift AI dashboard</p>
+</li>
+<li>
+<p>Enable "Publish as MaaS endpoint" during deployment</p>
+</li>
+<li>
+<p>Configure tier-based access control</p>
+</li>
+<li>
+<p>Verify the model appears in the Gen AI Studio catalog</p>
+</li>
+<li>
+<p>Deploy a model using CLI (YAML)</p>
+</li>
+<li>
+<p>Test model accessibility through the MaaS gateway</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_1_deploy_model_via_dashboard_ui_approach"><a class="anchor" href="#_task_1_deploy_model_via_dashboard_ui_approach"></a>Task 1: Deploy Model via Dashboard (UI Approach)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Log in to the OpenShift AI dashboard.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Navigate to <strong>Data Science Projects</strong> and select your project (or create a new one).</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Click the <strong>Deployments</strong> tab, then click <strong>Deploy model</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 4</strong>: Configure the model deployment:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Model name</strong>: <code>nemotron-nano-4b</code></p>
+</li>
+<li>
+<p><strong>Serving runtime</strong>: Select <strong>Distributed inference with llm-d</strong> (required for MaaS)</p>
+</li>
+<li>
+<p><strong>Model framework</strong>: Select <strong>vLLM</strong></p>
+</li>
+<li>
+<p><strong>Number of replicas</strong>: <code>1</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 5</strong>: Configure the model location:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Source model location</strong>: Select <strong>New cluster storage</strong> (or use existing PVC)</p>
+</li>
+<li>
+<p><strong>Model path format</strong>: Select <strong>HuggingFace repository</strong></p>
+</li>
+<li>
+<p><strong>Model repository</strong>: <code>NVIDIA-Nemotron-3-Nano-4B-FP8</code></p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>You can also use <code>nvidia/nemotron-3-nano-4b-instruct</code> or other compatible models from HuggingFace. The FP8 quantized version reduces memory requirements.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 6</strong>: Configure resources:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>GPU</strong>: <code>1</code> (adjust based on cluster capacity)</p>
+</li>
+<li>
+<p><strong>Memory</strong>: <code>16Gi</code></p>
+</li>
+<li>
+<p><strong>CPU</strong>: <code>2</code></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 7</strong>: Expand <strong>Advanced settings</strong> and enable MaaS publishing:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Check <strong>Publish as MaaS endpoint</strong></p>
+</li>
+<li>
+<p><strong>Tier access</strong>: Select <strong>All tiers</strong> (allows Free, Premium, and Enterprise access)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Expected UI State</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">✓ Publish as MaaS endpoint
+  Tier access:  ● All tiers
+                ○ Specific tiers</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 8</strong>: Click <strong>Deploy</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: The deployment appears in the <strong>Deployments</strong> tab with status <code>Creating</code>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification (Wait 3-5 minutes)</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Check deployment status:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get llminferenceservice -n &lt;your-project&gt;
+NAME                READY   URL                                           AGE
+nemotron-nano-4b    True    https://nemotron-nano-4b-&lt;project&gt;...         5m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ When <code>READY</code> shows <code>True</code>, the model is deployed and serving.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 9</strong>: Verify MaaS catalog registration:</p>
+</div>
+<div class="paragraph">
+<p>Navigate to <strong>Home → Gen AI Studio → Models</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>: <code>nemotron-nano-4b</code> appears in the model catalog with:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Model name: <code>nemotron-nano-4b</code></p>
+</li>
+<li>
+<p>Status: Active</p>
+</li>
+<li>
+<p>Tier access: All tiers</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_2_test_model_accessibility"><a class="anchor" href="#_task_2_test_model_accessibility"></a>Task 2: Test Model Accessibility</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Step 1</strong>: Generate a Bearer token (if you don&#8217;t have one):</p>
+</div>
+<div class="paragraph">
+<p>Navigate to <strong>Home → Gen AI Studio → API Keys → Create API key</strong>.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Test model listing endpoint:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+$ export TOKEN="your-api-key-here"
+
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${TOKEN}" | jq '.data[].id'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">"nemotron-nano-4b"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The model appears in the MaaS catalog, accessible through the gateway.</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Test inference request:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Explain what Red Hat OpenShift AI does in one sentence."}],
+    "max_tokens": 50
+  }' | jq '.choices[0].message.content'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong> (example):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-text hljs" data-lang="text">"Red Hat OpenShift AI is an enterprise platform for developing, training, and deploying machine learning models at scale on OpenShift Container Platform."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The model responds successfully through the MaaS gateway with authentication.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_3_deploy_model_via_cli_yaml_approach"><a class="anchor" href="#_task_3_deploy_model_via_cli_yaml_approach"></a>Task 3: Deploy Model via CLI (YAML Approach)</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>For production deployments and GitOps workflows, create the LLMInferenceService directly:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1</strong>: Create a YAML file for a second model deployment:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ cat &gt; qwen-model.yaml &lt;&lt;EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: qwen-8b-fp8
+  namespace: &lt;your-project&gt;
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["premium", "enterprise"]'  <i class="conum" data-value="1"></i><b>(1)</b>
+spec:
+  replicas: 2
+  model:
+    uri: hf://RedHatAI/Qwen3-8B-FP8-dynamic
+    name: qwen-8b-fp8
+  router:
+    route: {}
+    gateway: {}  <i class="conum" data-value="2"></i><b>(2)</b>
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:
+      - --max-model-len=8192
+      - --gpu-memory-utilization=0.85
+      resources:
+        limits:
+          cpu: '4'
+          memory: 32Gi
+          nvidia.com/gpu: "1"
+        requests:
+          cpu: '2'
+          memory: 16Gi
+          nvidia.com/gpu: "1"
+EOF</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>Restricts access to Premium and Enterprise tiers only (Free tier users get 403 Forbidden)</td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Registers with MaaS Gateway for governed access</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p><strong>Step 2</strong>: Apply the configuration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc apply -f qwen-model.yaml
+llminferenceservice.serving.kserve.io/qwen-8b-fp8 created</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Step 3</strong>: Monitor deployment progress:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc get llminferenceservice qwen-8b-fp8 -w
+NAME          READY   URL                                    AGE
+qwen-8b-fp8   False   https://qwen-8b-fp8-&lt;project&gt;...      10s
+qwen-8b-fp8   True    https://qwen-8b-fp8-&lt;project&gt;...      4m30s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ When <code>READY</code> shows <code>True</code>, the model is live.</p>
+</div>
+<div class="paragraph">
+<p><strong>Verification</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Check MaaS catalog:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${TOKEN}" | jq '.data[] | select(.id=="qwen-8b-fp8")'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Output</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "id": "qwen-8b-fp8",
+  "object": "model",
+  "created": 1713984000,
+  "owned_by": "redhat-ods-applications"
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ The CLI-deployed model appears in the catalog with tier restrictions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_4_understanding_tier_access_control"><a class="anchor" href="#_task_4_understanding_tier_access_control"></a>Task 4: Understanding Tier Access Control</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You deployed two models with different tier access:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Model</th>
+<th class="tableblock halign-left valign-top">Tier Access</th>
+<th class="tableblock halign-left valign-top">Who Can Access</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">nemotron-nano-4b</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All tiers</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Free, Premium, and Enterprise users</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">qwen-8b-fp8</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Premium, Enterprise</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Only Premium and Enterprise users (Free users get 403 Forbidden)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Test Tier Restriction</strong> (if you have a Free tier token):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ export FREE_TOKEN="free-tier-user-token"
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${FREE_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "qwen-8b-fp8", "messages": [{"role": "user", "content": "Hello"}]}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Expected Response</strong>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>✓ Tier-based access control is enforced by Kuadrant.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_task_5_deploying_additional_models"><a class="anchor" href="#_task_5_deploying_additional_models"></a>Task 5: Deploying Additional Models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Example: Llama Model for LlamaStack</strong></p>
+</div>
+<div class="paragraph">
+<p>For LlamaStack integration, deploy a Llama-compatible model:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama-3-8b
+  namespace: &lt;your-project&gt;
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["free", "premium", "enterprise"]'
+spec:
+  replicas: 2
+  model:
+    uri: hf://meta-llama/Llama-3.1-8B-Instruct
+    name: llama-3-8b
+  router:
+    route: {}
+    gateway: {}
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:
+      - --max-model-len=8192
+      - --enable-prefix-caching
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 32Gi</code></pre>
+</div>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Llama models may require HuggingFace authentication token if the model repository is gated. Configure the secret in your project before deployment.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Apply and verify:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">$ oc apply -f llama-model.yaml
+$ oc get llminferenceservice llama-3-8b -w</code></pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lab_verification_checklist"><a class="anchor" href="#_lab_verification_checklist"></a>Lab Verification Checklist</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>After completing this lab, verify:</p>
+</div>
+<div class="paragraph">
+<p>✓ You deployed at least one model via the OpenShift AI dashboard
+✓ You enabled "Publish as MaaS endpoint" during deployment
+✓ You configured tier-based access (all tiers vs specific tiers)
+✓ The model appears in the Gen AI Studio catalog
+✓ You deployed at least one model via CLI (YAML)
+✓ You can query models through the MaaS gateway using Bearer tokens
+✓ Tier access restrictions are enforced (403 Forbidden for restricted tiers)</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_deployment_scenarios"><a class="anchor" href="#_common_deployment_scenarios"></a>Common Deployment Scenarios</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 37.5%;">
+<col style="width: 37.5%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Scenario</th>
+<th class="tableblock halign-left valign-top">Configuration</th>
+<th class="tableblock halign-left valign-top">Result</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Development/Testing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All tiers access, 1 replica, smaller model (4B-8B)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quick deployment, accessible to all users</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Production (High Availability)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Specific tiers, 2+ replicas, load balancing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Fault tolerance, governance-controlled access</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enterprise-Only Model</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Enterprise tier only, larger model (70B)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Restricted to premium users, higher resource allocation</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Multi-Model Catalog</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deploy 3-5 models with varying tier access</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Users see different models based on their tier</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_common_issues"><a class="anchor" href="#_troubleshooting_common_issues"></a>Troubleshooting Common Issues</h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 28.5714%;">
+<col style="width: 28.5714%;">
+<col style="width: 42.8572%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Issue</th>
+<th class="tableblock halign-left valign-top">Cause</th>
+<th class="tableblock halign-left valign-top">Solution</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model stuck in <code>Creating</code> state</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Insufficient GPU resources in cluster</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check <code>oc get nodes</code> for GPU availability or reduce replica count</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">"Publish as MaaS endpoint" option missing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Wrong serving runtime selected</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Must use "Distributed inference with llm-d" runtime</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model not appearing in catalog</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Missing MaaS annotation or gateway not configured</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Verify <code>alpha.maas.opendatahub.io/tiers</code> annotation exists</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">403 Forbidden for all users</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model published to tier user doesn&#8217;t belong to</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Update tier access to include user&#8217;s tier level</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Pod OOMKilled (out of memory)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model too large for GPU memory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Reduce <code>--max-model-len</code> or increase GPU memory allocation</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s Next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that you&#8217;ve deployed models to the MaaS catalog with tier-based access, the next lab shows how to dynamically update model access—changing tier restrictions on live models without redeployment.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a></span>
+  <span class="next"><a href="s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
