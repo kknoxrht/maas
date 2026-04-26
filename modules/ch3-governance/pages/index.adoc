@@ -1,0 +1,18 @@
+:time_estimate: 5
+
+= Module 3: Governance, Observability, and Chargeback
+
+[.lead]
+*Without tiers and quotas, centralized serving becomes uncontrolled consumption—governance transforms the Centralized Model Hub from free-for-all to fair allocation.*
+
+**Implement MaaS Governance and Observability**::
+Define tiered service limits, configure group-based rate limiting, track token consumption metrics, and automate chargeback workflows.
+
+---
+
+**3.1: Defining Governance Tiers**::
+ - Default tiers and group mappings, create custom governance tiers (Free, Premium, Enterprise), Map OpenShift user groups to tier levels
+**3.2: Rate Limits and Quotas**::
+ - onfigure request rate limits and token quotas
+**3.3: Lab - Observability & Automated Chargeback**::
+ - Tracking metrics and billing calculations

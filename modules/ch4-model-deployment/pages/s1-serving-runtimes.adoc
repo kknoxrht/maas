@@ -1,0 +1,374 @@
+:time_estimate: 12
+
+= Serving Runtimes & Distributed Inference
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Only the distributed inference runtime integrates with MaaS governance—without it, models remain standalone endpoints outside tier-based control.*
+
+Objective::
+Understand why distributed inference with llm-d is required for MaaS, how LeaderWorkerSet enables multi-GPU serving, and the structure of LLMInferenceService custom resources.
+
+== Why Distributed Inference Matters
+
+A platform engineer faces a choice: deploy a model as a standalone KServe InferenceService or publish it as a governed MaaS endpoint.
+
+**Standalone InferenceService**:
+
+* Bypasses MaaS gateway entirely
+* No tier-based access control
+* No token consumption tracking
+* No rate limiting or quotas
+* Direct model access without authentication
+* Cannot appear in Gen AI Studio catalog
+
+**MaaS-Published Model** (Distributed Inference with llm-d):
+
+* Routes through Gateway API and Kuadrant
+* Enforces tier-based access control
+* Tracks token consumption for chargeback
+* Applies request rate limits and quotas
+* Requires Bearer token authentication
+* Appears in Gen AI Studio catalog automatically
+
+MaaS integration is not an optional feature—it's a *runtime requirement*. Only models deployed using the **Distributed inference with llm-d** runtime can publish to the MaaS catalog.
+
+[IMPORTANT]
+====
+If you deploy a model using any other runtime (standard KServe, vLLM without llm-d, NVIDIA NIM, MLServer), the option to "Publish as MaaS endpoint" will not appear in the dashboard.
+====
+
+== The llm-d Runtime Architecture
+
+Distributed Inference with llm-d is a Kubernetes-native framework designed for serving large language models at scale.
+
+**Core Components**:
+
+vLLM Inference Engine::
+High-performance inference runtime supporting optimizations like prefix-cache aware routing and disaggregated serving
+
+LeaderWorkerSet Operator::
+Kubernetes controller that manages multi-replica distributed workloads with leader election and worker coordination
+
+Envoy Proxy::
+Handles networking and routing between leader and worker pods
+
+KServe Integration::
+Provides standardized model serving APIs (`/v1/models`, `/v1/chat/completions`)
+
+**How Distributed Inference Works**:
+
+[source,text]
+----
+1. LLMInferenceService CRD defines model, replicas, and resources
+2. llm-d controller creates a LeaderWorkerSet
+3. Leader pod coordinates inference requests
+4. Worker pods handle parallel token generation
+5. Envoy proxy routes traffic to leader
+6. KServe provides OpenAI-compatible API endpoints
+7. MaaS gateway routes external requests to the service
+----
+
+A 70B parameter model is too large for a single GPU. Distributed inference splits it across multiple GPUs, with the leader coordinating requests and workers processing chunks of the model.
+
+== LeaderWorkerSet: The Missing Piece
+
+Standard Kubernetes Deployments create identical replicas. LeaderWorkerSet creates a **leader** pod that coordinates multiple **worker** pods.
+
+Why LeaderWorkerSet is Required::
+Large language models need coordinated multi-GPU serving. Without LeaderWorkerSet, each replica would load the entire model independently—wasting GPU memory and preventing true distributed inference.
+
+**Standard Deployment** (Not MaaS-compatible):
+
+[source,text]
+----
+Deployment → 3 identical pods
+Each pod loads entire 70B model
+Total GPU memory: 3x full model size
+No coordination between pods
+Cannot publish to MaaS
+----
+
+**LeaderWorkerSet** (MaaS-compatible):
+
+[source,text]
+----
+LeaderWorkerSet → 1 leader + 3 workers
+Model split across worker GPUs
+Leader coordinates inference requests
+Total GPU memory: 1x full model size
+Integrated with MaaS gateway
+----
+
+**Prerequisites**:
+
+Before deploying distributed inference models, your cluster administrator must install:
+
+* LeaderWorkerSet Operator (from OperatorHub)
+* Gateway API operators (OpenShift Gateway API)
+* cert-manager (for TLS certificates)
+* Red Hat Connectivity Link (Kuadrant for authentication)
+
+Verify LeaderWorkerSet is installed:
+
+[source,bash]
+----
+$ oc get csv -n openshift-operators | grep leaderworkerset
+leaderworkerset-operator.v1.1.0   LeaderWorkerSet Operator   1.1.0   Succeeded
+----
+
+✓ If the operator shows `Succeeded`, distributed inference is available.
+
+== LLMInferenceService CRD Structure
+
+The `LLMInferenceService` custom resource replaces standard `InferenceService` for MaaS-enabled models.
+
+**Key Fields**:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: my-model-deployment
+  namespace: my-project
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["free", "premium"]'  # <1>
+spec:
+  replicas: 2  # <2>
+  model:
+    uri: hf://RedHatAI/Qwen3-8B-FP8-dynamic  # <3>
+    name: RedHatAI/Qwen3-8B-FP8-dynamic     # <4>
+  router:
+    route: {}    # <5>
+    gateway: {}  # <6>
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:  # <7>
+      - --max-model-len=8192
+      - --gpu-memory-utilization=0.85
+      resources:
+        limits:
+          cpu: '4'
+          memory: 32Gi
+          nvidia.com/gpu: "1"  # <8>
+        requests:
+          cpu: '2'
+          memory: 16Gi
+          nvidia.com/gpu: "1"
+----
+<1> MaaS tier assignment (Free and Premium can access this model)
+<2> Number of distributed worker replicas
+<3> Model source (HuggingFace, S3, PVC, or OCI)
+<4> Model name displayed in API responses
+<5> Creates OpenShift Route for direct access
+<6> Registers with MaaS Gateway for governed access
+<7> vLLM runtime arguments for optimization
+<8> GPU resources per replica
+
+**Understanding the Model URI**:
+
+MaaS supports multiple model storage backends:
+
+[cols="2,3,3"]
+|===
+|Storage Type |URI Format |Example
+
+|HuggingFace
+|`hf://<model>/<optional-hash>`
+|`hf://RedHatAI/Qwen3-8B-FP8-dynamic`
+
+|S3 Bucket
+|`s3://<bucket-name>/<object-key>`
+|`s3://my-models/llama-3.1-8b`
+
+|Persistent Volume Claim
+|`pvc://<claim-name>/<path>`
+|`pvc://model-storage/llama3`
+
+|OCI Container Image
+|`oci://<registry>/<org>/<repo>:<tag>`
+|`oci://quay.io/myorg/llama3:v1`
+|===
+
+A platform engineer chooses storage based on operational requirements: HuggingFace for public models, S3 for private corporate models, PVC for air-gapped environments.
+
+== Resource Configuration Strategies
+
+Distributed inference requires careful resource planning.
+
+=== Single-GPU Deployment
+
+For smaller models (7B-13B parameters):
+
+[source,yaml]
+----
+spec:
+  replicas: 2
+  template:
+    containers:
+    - name: main
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 32Gi
+----
+
+* **Use case**: Development, testing, small-scale production
+* **GPU requirements**: 1 GPU per replica
+* **Total GPUs needed**: `replicas * 1` (e.g., 2 replicas = 2 GPUs)
+
+=== Multi-GPU Deployment
+
+For larger models (70B+ parameters):
+
+[source,yaml]
+----
+spec:
+  replicas: 1
+  template:
+    containers:
+    - name: main
+      resources:
+        limits:
+          nvidia.com/gpu: "4"  # <1>
+          memory: 128Gi
+----
+<1> Model split across 4 GPUs within a single pod
+
+* **Use case**: Large models requiring tensor parallelism
+* **GPU requirements**: 4 GPUs per replica
+* **Total GPUs needed**: `replicas * 4` (e.g., 1 replica = 4 GPUs)
+
+=== Recommended Configurations by Model Size
+
+[cols="2,2,2,3"]
+|===
+|Model Size |Replicas |GPUs per Replica |Total GPUs
+
+|7B-8B (FP8)
+|2-4
+|1
+|2-4 GPUs
+
+|13B-20B (FP8)
+|1-2
+|1-2
+|2-4 GPUs
+
+|70B (FP8)
+|1
+|4-8
+|4-8 GPUs
+
+|70B (FP16)
+|1
+|8
+|8 GPUs
+|===
+
+== vLLM Runtime Arguments
+
+vLLM provides optimization arguments to control memory, performance, and behavior.
+
+**Common vLLM Arguments**:
+
+[source,yaml]
+----
+spec:
+  template:
+    containers:
+    - name: main
+      args:
+      - --gpu-memory-utilization=0.85  # <1>
+      - --max-model-len=8192           # <2>
+      - --enable-prefix-caching        # <3>
+      - --disable-uvicorn-access-log   # <4>
+      - --trust-remote-code            # <5>
+----
+<1> Reserve 15% GPU memory for CUDA operations (prevents OOM errors)
+<2> Maximum context length in tokens (lower = less memory usage)
+<3> Cache repeated prompt prefixes for faster inference
+<4> Reduce log volume in production
+<5> Allow custom model code execution (required for some models)
+
+**Optimization Scenarios**:
+
+Reduce Memory Consumption::
+`--gpu-memory-utilization=0.75` and `--max-model-len=4096` to fit larger models on smaller GPUs
+
+Improve Latency::
+`--enable-prefix-caching` speeds up requests with repeated prompts
+
+Production Environments::
+`--disable-uvicorn-access-log` reduces I/O overhead
+
+Custom Models::
+`--trust-remote-code` enables models with custom tokenizers or architecture
+
+For complete vLLM argument reference, see Red Hat AI Inference Server documentation.
+
+== Dashboard vs CLI Deployment
+
+[cols="2,3,3"]
+|===
+|Approach |Best For |Limitations
+
+|Dashboard UI
+|Quick deployments, visual feedback, initial model testing
+|Limited vLLM argument customization, fewer storage backend options
+
+|CLI (YAML)
+|Production deployments, GitOps workflows, full vLLM configuration
+|Requires YAML knowledge, no visual validation
+
+|Combination
+|Initial deployment via UI, production tuning via CLI
+|None—recommended approach
+|===
+
+A platform engineer might deploy via the dashboard during proof-of-concept, then export the generated YAML for GitOps-managed production deployments.
+
+== Runtime Selection in the Dashboard
+
+When deploying via OpenShift AI dashboard:
+
+**Step 1**: Navigate to **Projects → [Your Project] → Deployments → Deploy model**
+
+**Step 2**: In the **Serving runtime** dropdown, you will see:
+
+[source,text]
+----
+Available Runtimes:
+ ✓ Distributed inference with llm-d  ← Only this runtime supports MaaS
+ ✗ vLLM ServingRuntime             ← Standalone, no MaaS integration
+ ✗ NVIDIA NIM for LLMs             ← Standalone, no MaaS integration
+ ✗ OpenVINO Model Server           ← Non-generative models only
+----
+
+**Step 3**: Select **Distributed inference with llm-d**
+
+**Result**: The **Publish as MaaS endpoint** checkbox appears in Advanced settings.
+
+[IMPORTANT]
+====
+Selecting any runtime other than "Distributed inference with llm-d" removes the ability to publish to MaaS. You can still deploy the model, but it will not appear in the Gen AI Studio catalog and will bypass governance entirely.
+====
+
+== What's Next
+
+Now that you understand the distributed inference architecture and LLMInferenceService structure, the next lab section walks through deploying your first model and publishing it to the MaaS catalog with tier-based access control.
+
+////
+Section Notes:
+- Based on design doc Module 4, Section 4.1
+- Balances conceptual (why llm-d required) with technical (CRD structure, vLLM args)
+- Follows RHOAI style: bold italic lead, definition lists, business narrative
+- Resource configuration strategies for different model sizes
+- Clear distinction: MaaS-enabled vs standalone
+- Verification commands and prerequisite clarity
+- Prepares reader for hands-on deployment labs
+////

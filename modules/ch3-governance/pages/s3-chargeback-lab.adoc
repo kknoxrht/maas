@@ -1,0 +1,458 @@
+:time_estimate: 20
+
+= Lab - Observability & Automated Chargeback
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Without visibility into token consumption, governance policies are unauditable and chargeback is guesswork—MaaS metrics transform usage data into actionable financial reports.*
+
+== Lab Objective
+
+Objective::
+Track token consumption metrics using MaaS observability tools, differentiate infrastructure metrics from governance metrics, and access the data needed for automated chargeback workflows.
+
+== Prerequisites
+
+* OpenShift CLI (`oc`) installed and authenticated
+* Administrator access to OpenShift AI dashboard
+* At least one tier configured with rate limits
+* At least one model deployed and published to MaaS
+* Prometheus monitoring enabled (typically installed with OpenShift)
+
+== Lab Overview
+
+In this lab, you will:
+
+1. Differentiate infrastructure metrics from MaaS governance metrics
+2. Access MaaS consumption data via the dashboard
+3. Query token usage metrics using CLI tools
+4. Understand the data structure for chargeback automation
+5. View "Authorized Hits" and policy enforcement events
+
+== Task 1: Understanding Metric Categories
+
+MaaS tracks two distinct categories of metrics:
+
+=== Infrastructure Metrics
+
+**Purpose**: Monitor physical hardware health and performance.
+
+**What They Track**:
+
+* GPU utilization percentage
+* GPU memory usage
+* GPU temperature
+* Pod CPU and memory consumption
+* Model inference latency
+
+**Tools**: DCGM Exporter, Prometheus, OpenShift monitoring dashboards
+
+**Audience**: SREs and infrastructure teams monitoring cluster health
+
+A platform engineer uses infrastructure metrics to determine if GPUs are overheating or if a model needs more memory. These metrics don't track *who* is using resources or *how much* they're consuming in terms of tokens.
+
+=== MaaS Governance Metrics
+
+**Purpose**: Track policy enforcement and token consumption for chargeback.
+
+**What They Track**:
+
+* Authorized API requests per user/tier
+* Token consumption (input + output) per user/tier
+* Rate limit violations (429 errors) per tier
+* Model access attempts per tier
+* Authentication failures per user
+
+**Tools**: MaaS dashboard, Kuadrant metrics, Limitador counters
+
+**Audience**: Platform engineers managing governance and finance teams calculating chargeback
+
+A finance analyst uses governance metrics to calculate how much Department A owes for 500,000 tokens of inference last month. Infrastructure metrics can't answer that question.
+
+== Task 2: View Tier Consumption in the Dashboard
+
+**Step 1**: Log in to the OpenShift AI dashboard as an administrator.
+
+**Step 2**: Navigate to **Settings → Tiers**.
+
+**Expected Output**: You should see the tier list with current limits:
+
+[source,text]
+----
+Tier Name       Priority Level    Groups                    Request Limit    Token Limit
+Free            0                 system:authenticated      100/min          10,000/min
+Premium         1                 premium-users             500/min          50,000/min
+Enterprise      2                 enterprise-users          1,000/min        100,000/min
+----
+
+**Step 3**: Click on a tier name (e.g., **Premium**) to view details.
+
+**Step 4**: Locate the **Usage** section (if available in your version).
+
+**Expected Information**:
+
+* Current request rate (requests in the last minute)
+* Current token consumption (tokens in the last minute)
+* Number of users currently assigned to this tier
+* Recent rate limit violations (429 errors)
+
+NOTE: Dashboard visibility of usage metrics depends on OpenShift AI version. Version 3.4+ includes enhanced usage tracking in the tier detail view.
+
+== Task 3: Query MaaS Metrics via CLI
+
+MaaS exposes consumption metrics through Prometheus-compatible endpoints.
+
+**Step 1**: Verify Prometheus is monitoring MaaS:
+
+[source,bash]
+----
+$ oc get servicemonitor -n redhat-ods-applications | grep maas
+maas-api-metrics   10d
+----
+
+**Expected Output**: A ServiceMonitor exists for `maas-api-metrics`, indicating Prometheus is scraping MaaS data.
+
+**Step 2**: Access Prometheus (via OpenShift Console or port-forward):
+
+[source,bash]
+----
+$ oc port-forward -n openshift-monitoring svc/prometheus-k8s 9090:9090
+Forwarding from 127.0.0.1:9090 -> 9090
+----
+
+Open `http://localhost:9090` in your browser.
+
+**Step 3**: Query token consumption by tier:
+
+In the Prometheus query interface, enter:
+
+[source,promql]
+----
+sum by (tier) (maas_tokens_consumed_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free"}        152340
+{tier="Premium"}     892150
+{tier="Enterprise"}  2145890
+----
+
+This shows:
+
+* Free tier users have consumed 152,340 tokens total
+* Premium tier users have consumed 892,150 tokens total
+* Enterprise tier users have consumed 2,145,890 tokens total
+
+**Step 4**: Query request counts by tier:
+
+[source,promql]
+----
+sum by (tier) (maas_requests_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free"}        8234
+{tier="Premium"}     45612
+{tier="Enterprise"}  103456
+----
+
+**Step 5**: Query rate limit violations:
+
+[source,promql]
+----
+sum by (tier) (maas_rate_limit_exceeded_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free"}        45
+{tier="Premium"}     12
+{tier="Enterprise"}  0
+----
+
+This indicates:
+
+* Free tier users hit rate limits 45 times
+* Premium tier users hit rate limits 12 times
+* Enterprise tier users never hit rate limits (sufficient capacity)
+
+== Task 4: Understanding Authorized Hits
+
+MaaS tracks "Authorized Hits"—successful API requests that passed authentication, authorization, and rate limiting.
+
+**Why It Matters**: You only charge for **successful** inference requests, not failed authentication attempts or rate limit errors.
+
+**Query Authorized Hits**:
+
+[source,promql]
+----
+sum by (tier, model) (maas_authorized_requests_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free", model="llama-3.1-8b"}          7823
+{tier="Premium", model="llama-3.1-8b"}       12450
+{tier="Premium", model="llama-3.1-70b"}      890
+{tier="Enterprise", model="llama-3.1-70b"}   45230
+----
+
+This shows:
+
+* Free tier made 7,823 successful requests to the 8B model
+* Premium tier made 12,450 requests to 8B and 890 to 70B
+* Enterprise tier made 45,230 requests to the 70B model
+
+A finance team uses this data to allocate inference costs to specific departments based on which tier they belong to.
+
+== Task 5: Viewing Token Input/Output Split
+
+For accurate chargeback, you need to separate input tokens (user prompts) from output tokens (model responses) because they typically have different costs.
+
+**Query Input Tokens**:
+
+[source,promql]
+----
+sum by (tier) (maas_input_tokens_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free"}        45230
+{tier="Premium"}     234890
+{tier="Enterprise"}  892340
+----
+
+**Query Output Tokens**:
+
+[source,promql]
+----
+sum by (tier) (maas_output_tokens_total)
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+{tier="Free"}        107110
+{tier="Premium"}     657260
+{tier="Enterprise"}  1253550
+----
+
+**Analysis**:
+
+The Enterprise tier consumed:
+
+* 892,340 input tokens
+* 1,253,550 output tokens
+
+If input tokens cost $0.001 per 1K tokens and output tokens cost $0.003 per 1K tokens:
+
+[source,text]
+----
+Input Cost:  (892,340 / 1000) * $0.001 = $0.89
+Output Cost: (1,253,550 / 1000) * $0.003 = $3.76
+Total Cost:  $4.65 (for Enterprise tier consumption)
+----
+
+This calculation happens automatically in chargeback automation scripts by querying these metrics.
+
+== Task 6: Accessing Metrics via CLI (Without Prometheus UI)
+
+Platform engineers can query metrics directly from the command line:
+
+**Step 1**: Identify the Prometheus service:
+
+[source,bash]
+----
+$ oc get svc -n openshift-monitoring | grep prometheus
+prometheus-k8s   ClusterIP   10.0.123.45   <none>   9090/TCP   15d
+----
+
+**Step 2**: Query metrics using `oc exec` and `curl`:
+
+[source,bash]
+----
+$ oc exec -n openshift-monitoring statefulset/prometheus-k8s -- \
+  curl -s 'http://localhost:9090/api/v1/query?query=sum(maas_tokens_consumed_total)' | \
+  jq '.data.result[0].value[1]'
+
+"3190380"
+----
+
+**Expected Output**: Total token consumption across all tiers: `3,190,380` tokens.
+
+**Step 3**: Query tier-specific consumption:
+
+[source,bash]
+----
+$ oc exec -n openshift-monitoring statefulset/prometheus-k8s -- \
+  curl -s 'http://localhost:9090/api/v1/query?query=sum(maas_tokens_consumed_total)by(tier)' | \
+  jq '.data.result[] | {tier: .metric.tier, tokens: .value[1]}'
+----
+
+**Expected Output**:
+
+[source,json]
+----
+{"tier": "Free", "tokens": "152340"}
+{"tier": "Premium", "tokens": "892150"}
+{"tier": "Enterprise", "tokens": "2145890"}
+----
+
+This data can be piped to automated chargeback scripts that run on a schedule (nightly, monthly).
+
+== Task 7: Viewing Kuadrant Policy Enforcement Logs
+
+Kuadrant logs provide audit trails showing exactly when and why requests were denied.
+
+**Step 1**: Check Limitador logs for rate limit events:
+
+[source,bash]
+----
+$ oc logs -n kuadrant-system deployment/limitador --tail=50 | grep -i "exceeded"
+----
+
+**Expected Output**:
+
+[source,text]
+----
+2024-04-24T10:23:15Z INFO Rate limit exceeded user=alice@example.com tier=Free limit=requests_per_minute
+2024-04-24T10:23:18Z INFO Rate limit exceeded user=bob@example.com tier=Free limit=tokens_per_minute
+2024-04-24T10:28:45Z INFO Rate limit exceeded user=charlie@example.com tier=Premium limit=requests_per_minute
+----
+
+**What This Shows**:
+
+* `alice@example.com` hit the Free tier's request rate limit
+* `bob@example.com` hit the Free tier's token quota
+* `charlie@example.com` hit the Premium tier's request rate limit
+
+**Step 2**: Check Authorino logs for authentication/authorization failures:
+
+[source,bash]
+----
+$ oc logs -n kuadrant-system deployment/authorino --tail=50 | grep -i "forbidden\|unauthorized"
+----
+
+**Expected Output**:
+
+[source,text]
+----
+2024-04-24T10:15:23Z WARN Unauthorized request token=invalid
+2024-04-24T10:18:12Z WARN Forbidden user=dave@example.com tier=Free model=llama-3.1-70b reason=tier_access_denied
+----
+
+**What This Shows**:
+
+* An invalid token was rejected (401 Unauthorized)
+* User `dave@example.com` (Free tier) tried to access the 70B model, which is restricted to Premium+ tiers (403 Forbidden)
+
+These logs provide complete audit trails for security and compliance teams.
+
+== Task 8: Exporting Metrics for Financial Systems
+
+Organizations typically export MaaS metrics to financial or billing systems on a schedule.
+
+**Example Automated Workflow**:
+
+1. **Cron Job** runs nightly at 2:00 AM
+2. **Script queries** Prometheus for yesterday's token consumption by tier
+3. **Data exported** to CSV or JSON format
+4. **Finance system** imports the data and calculates chargeback
+5. **Departmental invoices** generated automatically
+
+**Example Export Script** (bash):
+
+[source,bash]
+----
+#!/bin/bash
+# Export MaaS token usage for chargeback
+
+PROMETHEUS_URL="http://prometheus-k8s.openshift-monitoring.svc:9090"
+QUERY="sum by (tier) (maas_tokens_consumed_total)"
+
+curl -s "${PROMETHEUS_URL}/api/v1/query?query=${QUERY}" | \
+  jq -r '.data.result[] | "\(.metric.tier),\(.value[1])"' > /tmp/maas-usage-$(date +%Y-%m-%d).csv
+
+echo "Export complete: /tmp/maas-usage-$(date +%Y-%m-%d).csv"
+----
+
+**Output File** (`maas-usage-2024-04-24.csv`):
+
+[source,csv]
+----
+Free,152340
+Premium,892150
+Enterprise,2145890
+----
+
+This CSV can be imported into SAP, Oracle Financials, or custom billing systems.
+
+== Lab Verification Checklist
+
+After completing this lab, verify:
+
+✓ You can differentiate infrastructure metrics (GPU temp) from governance metrics (token consumption)
+✓ You can view tier usage in the OpenShift AI dashboard
+✓ You can query MaaS metrics using Prometheus (UI or CLI)
+✓ You can identify "Authorized Hits" vs. failed requests
+✓ You can separate input tokens from output tokens for differential pricing
+✓ You can access Kuadrant audit logs showing policy enforcement
+✓ You understand how to export metrics for automated chargeback
+
+== Common Observability Scenarios
+
+[cols="2,3,3"]
+|===
+|Question |Metric to Query |Why It Matters
+
+|Which tier is consuming the most resources?
+|`sum by (tier) (maas_tokens_consumed_total)`
+|Identify which departments need budget discussions
+
+|Are users hitting rate limits frequently?
+|`sum by (tier) (maas_rate_limit_exceeded_total)`
+|Indicates limits may be too restrictive
+
+|Which models are most popular?
+|`sum by (model) (maas_authorized_requests_total)`
+|Informs which models to scale or deprecate
+
+|What's our total monthly token cost?
+|`sum(maas_input_tokens_total)` + `sum(maas_output_tokens_total)`
+|Calculate total inference costs for budgeting
+
+|Who tried to access unauthorized models?
+|Check Authorino logs for `Forbidden` events
+|Security audit trail for compliance
+|===
+
+== What's Next
+
+With governance, rate limiting, and observability fully configured, the final module shifts perspective to model deployment—showing how to deploy generative AI models using the distributed inference runtime and publish them to the MaaS catalog with tier-based access controls.
+
+////
+Section Notes:
+- Based on design doc Module 3, Section 3.3
+- Lab format with hands-on tasks
+- Focus on metric visibility and observability (not calculations per user request)
+- Both dashboard and CLI approaches
+- Prometheus queries for real-world chargeback workflows
+- Audit trail emphasis for security/compliance
+- Verification checklist
+- Reference table for common scenarios
+////

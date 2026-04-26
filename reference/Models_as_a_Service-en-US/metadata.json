@@ -1,0 +1,27 @@
+{
+  "title": "Govern LLM Access with Models-as-a-Service on Red Hat OpenShift AI Self-Managed 3.4",
+  "source": "reference/Red_Hat_OpenShift_AI_Self-Managed-3.4-Govern_LLM_access_with_Models-as-a-Service-en-US.pdf",
+  "conversion_date": "2026-04-24",
+  "conversion_method": "claude-optimized",
+  "product": "Red Hat OpenShift AI",
+  "version": "3.4",
+  "document_type": "technical documentation",
+  "last_updated": "2026-04-22",
+  "topics": [
+    "models as a service",
+    "governance",
+    "tier-based access control",
+    "rate limiting",
+    "quota management",
+    "API key authentication",
+    "KServe integration",
+    "Kuadrant",
+    "policy enforcement",
+    "usage tracking"
+  ],
+  "chapters": 2,
+  "sections": 14,
+  "chunks_created": 0,
+  "code_blocks_tagged": 28,
+  "estimated_tokens": 10500
+}

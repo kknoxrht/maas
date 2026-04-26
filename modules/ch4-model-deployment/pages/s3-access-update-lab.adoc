@@ -1,0 +1,410 @@
+:time_estimate: 12
+
+= Lab - Updating Access Dynamically
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Tier access changes take effect immediately—no redeployment, no downtime, just instant policy enforcement across all active requests.*
+
+== Lab Objective
+
+Objective::
+Modify tier-based access control on deployed models, understand the immediate impact on users, and test access enforcement with different tier credentials.
+
+== Prerequisites
+
+* At least one model deployed and published to MaaS (from previous lab)
+* Multiple tier configurations (Free, Premium, Enterprise)
+* Access to OpenShift AI dashboard with model management permissions
+* Test Bearer tokens from different tier levels (optional but recommended)
+
+== Lab Overview
+
+In this lab, you will:
+
+1. Update tier access via the OpenShift AI dashboard
+2. Update tier access via CLI (annotation editing)
+3. Verify immediate enforcement without redeployment
+4. Test access with different tier credentials
+5. Understand the business impact of dynamic access changes
+
+== Task 1: View Current Tier Access
+
+**Step 1**: List deployed models and their current tier access:
+
+[source,bash]
+----
+$ oc get llminferenceservice -n <your-project> -o custom-columns=\
+NAME:.metadata.name,\
+TIERS:.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers
+----
+
+**Expected Output**:
+
+[source,text]
+----
+NAME                TIERS
+nemotron-nano-4b    ["free","premium","enterprise"]
+qwen-8b-fp8         ["premium","enterprise"]
+llama-3-8b          ["free","premium","enterprise"]
+----
+
+This shows which tiers can currently access each model.
+
+== Task 2: Update Access via Dashboard (UI Approach)
+
+**Scenario**: Your organization wants to restrict `nemotron-nano-4b` to Premium and Enterprise users only, removing Free tier access.
+
+**Step 1**: Log in to the OpenShift AI dashboard.
+
+**Step 2**: Navigate to **Data Science Projects → [Your Project] → Deployments**.
+
+**Step 3**: Locate `nemotron-nano-4b` and click the **⋮** (kebab menu) → **Edit**.
+
+**Step 4**: Scroll to **Advanced settings → Tier access**.
+
+**Current Setting**:
+
+[source,text]
+----
+✓ Publish as MaaS endpoint
+  Tier access:  ● All tiers         ← Current
+                ○ Specific tiers
+----
+
+**Step 5**: Change tier access:
+
+* Select **○ Specific tiers**
+* Check **✓ Premium**
+* Check **✓ Enterprise**
+* Uncheck **Free** (if it appears)
+
+**Expected UI State**:
+
+[source,text]
+----
+✓ Publish as MaaS endpoint
+  Tier access:  ○ All tiers
+                ● Specific tiers
+                  ✓ Premium
+                  ✓ Enterprise
+----
+
+**Step 6**: Click **Update**.
+
+**Immediate Result**: No pod restart occurs. The change takes effect instantly.
+
+**Verification**:
+
+Check the annotation was updated:
+
+[source,bash]
+----
+$ oc get llminferenceservice nemotron-nano-4b -n <your-project> \
+  -o jsonpath='{.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers}'
+----
+
+**Expected Output**:
+
+[source,json]
+----
+["premium","enterprise"]
+----
+
+✓ Free tier removed from access list.
+
+== Task 3: Test Immediate Enforcement
+
+**Step 1**: If you have a Free tier Bearer token, test access:
+
+[source,bash]
+----
+$ export FREE_TOKEN="your-free-tier-token"
+$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${FREE_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }'
+----
+
+**Expected Response**:
+
+[source,json]
+----
+HTTP/1.1 403 Forbidden
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}
+----
+
+✓ Free tier users are immediately blocked—no grace period, no cached access.
+
+**Step 2**: Test with Premium or Enterprise token:
+
+[source,bash]
+----
+$ export PREMIUM_TOKEN="your-premium-tier-token"
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${PREMIUM_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}],
+    "max_tokens": 20
+  }' | jq '.choices[0].message.content'
+----
+
+**Expected Output** (successful inference):
+
+[source,text]
+----
+"Hello! How can I assist you today?"
+----
+
+✓ Premium and Enterprise users retain access.
+
+== Task 4: Update Access via CLI (Annotation Editing)
+
+For production environments and GitOps workflows, update tier access using `oc patch`:
+
+**Scenario**: Open `qwen-8b-fp8` access to all tiers (currently Premium/Enterprise only).
+
+**Step 1**: Update the tier annotation:
+
+[source,bash]
+----
+$ oc patch llminferenceservice qwen-8b-fp8 -n <your-project> \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"free\",\"premium\",\"enterprise\"]"}]'
+----
+
+**NOTE**: The `~1` escapes the `/` character in the annotation key for JSON patch syntax.
+
+**Expected Output**:
+
+[source,text]
+----
+llminferenceservice.serving.kserve.io/qwen-8b-fp8 patched
+----
+
+**Verification**:
+
+[source,bash]
+----
+$ oc get llminferenceservice qwen-8b-fp8 -n <your-project> \
+  -o jsonpath='{.metadata.annotations.alpha\.maas\.opendatahub\.io/tiers}'
+----
+
+**Expected Output**:
+
+[source,json]
+----
+["free","premium","enterprise"]
+----
+
+✓ Model now accessible to all tier levels.
+
+== Task 5: Alternative CLI Approach (YAML Edit)
+
+You can also edit the full resource directly:
+
+[source,bash]
+----
+$ oc edit llminferenceservice llama-3-8b -n <your-project>
+----
+
+Modify the annotations section:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama-3-8b
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["enterprise"]'  # <1>
+spec:
+  # ... rest of spec unchanged
+----
+<1> Restrict to Enterprise tier only
+
+Save and exit. The change takes effect immediately.
+
+== Task 6: Understanding Business Impact
+
+Dynamic tier updates enable real-time business policy changes:
+
+**Scenario 1: Budget Constraints**
+
+Finance alerts that Free tier is consuming 80% of monthly token budget. Platform engineer immediately restricts expensive models to Premium+ tiers:
+
+[source,bash]
+----
+$ oc patch llminferenceservice expensive-model -n production \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"premium\",\"enterprise\"]"}]'
+----
+
+**Impact**: Free tier users get 403 Forbidden on their next request. Token consumption drops immediately.
+
+**Scenario 2: New Tier Launch**
+
+Organization creates a "Partner" tier for external collaborators. Platform engineer grants access to specific models:
+
+[source,bash]
+----
+$ oc patch llminferenceservice partner-model -n production \
+  --type='json' \
+  -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"partner\",\"enterprise\"]"}]'
+----
+
+**Impact**: Partner tier users can access the model immediately—no deployment, no waiting.
+
+**Scenario 3: Security Incident**
+
+A compromised Free tier account is detected. Platform engineer revokes all Free tier access instantly:
+
+[source,bash]
+----
+$ for model in $(oc get llminferenceservice -n production -o name); do
+  oc patch $model -n production \
+    --type='json' \
+    -p='[{"op": "replace", "path": "/metadata/annotations/alpha.maas.opendatahub.io~1tiers", "value": "[\"premium\",\"enterprise\"]"}]'
+done
+----
+
+**Impact**: All Free tier access blocked across all models within seconds.
+
+== Task 7: Monitoring Access Changes
+
+Track tier access changes over time for audit and compliance:
+
+**Step 1**: Check resource events:
+
+[source,bash]
+----
+$ oc get events -n <your-project> --field-selector involvedObject.name=nemotron-nano-4b
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+LAST SEEN   TYPE     REASON    OBJECT                            MESSAGE
+2m          Normal   Updated   llminferenceservice/nemotron...   Tier access updated: ["premium","enterprise"]
+----
+
+**Step 2**: Query Kuadrant logs for 403 Forbidden events:
+
+[source,bash]
+----
+$ oc logs -n kuadrant-system deployment/authorino --tail=100 | grep "Forbidden"
+----
+
+**Expected Output**:
+
+[source,text]
+----
+2024-04-24T11:23:45Z WARN Forbidden user=alice@example.com tier=Free model=nemotron-nano-4b reason=tier_access_denied
+----
+
+This provides an audit trail showing exactly when users lost access.
+
+== Lab Verification Checklist
+
+After completing this lab, verify:
+
+✓ You updated tier access via the OpenShift AI dashboard
+✓ You updated tier access via CLI (`oc patch` or `oc edit`)
+✓ Tier changes took effect immediately without pod restart
+✓ You tested access with different tier credentials (401/403 responses)
+✓ You understand the business scenarios for dynamic access updates
+✓ You can query audit logs showing tier enforcement
+
+== Access Control Decision Matrix
+
+[cols="2,2,3,3"]
+|===
+|User Tier |Model Tier Access |Result |HTTP Code
+
+|Free
+|`["free", "premium", "enterprise"]`
+|Access granted
+|200 OK
+
+|Free
+|`["premium", "enterprise"]`
+|Access denied
+|403 Forbidden
+
+|Premium
+|`["enterprise"]`
+|Access denied
+|403 Forbidden
+
+|Premium
+|`["free", "premium"]`
+|Access granted (highest level wins)
+|200 OK
+
+|Enterprise
+|Any tier configuration
+|Access granted (highest tier)
+|200 OK
+|===
+
+== Troubleshooting Dynamic Updates
+
+[cols="2,2,3"]
+|===
+|Issue |Cause |Solution
+
+|Tier change not taking effect
+|Typo in tier name (case-sensitive)
+|Verify tier names match exactly: `"free"` not `"Free"`
+
+|All users getting 403 Forbidden
+|Annotation syntax error (invalid JSON)
+|Check annotation format: `'["tier1","tier2"]'` with proper quotes
+
+|Cannot update via dashboard
+|Model not deployed with llm-d runtime
+|Only llm-d models support dynamic MaaS updates
+
+|Patch command fails
+|JSON path escaping error
+|Use `~1` to escape `/` in annotation key
+
+|Changes revert after pod restart
+|Annotation not persisted to CRD
+|Ensure `oc patch` or dashboard update completed successfully
+|===
+
+== What's Next
+
+With models deployed, published to MaaS, and dynamically governed by tiers, the final module shifts perspective to developers—showing how to discover models, generate authentication tokens, and integrate MaaS endpoints into applications using the OpenAI-compatible API.
+
+////
+Section Notes:
+- Based on design doc Module 4, Section 4.3
+- Focused 10-15 min lab format (streamlined)
+- Both UI and CLI approaches (oc patch and oc edit)
+- Immediate effect demonstration with verification
+- Business scenarios showing real-world impact
+- Test access with different tier credentials
+- Audit trail and monitoring guidance
+- Decision matrix for understanding access logic
+- Troubleshooting table for common issues
+////

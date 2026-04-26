@@ -1,0 +1,27 @@
+{
+  "title": "Red Hat OpenShift AI Self-Managed 3.4 Release Notes",
+  "source": "reference/Red_Hat_OpenShift_AI_Self-Managed-3.4-Release_notes-en-US.pdf",
+  "conversion_date": "2026-04-24",
+  "conversion_method": "claude-optimized",
+  "product": "Red Hat OpenShift AI",
+  "version": "3.4",
+  "document_type": "release notes",
+  "last_updated": "2026-04-22",
+  "topics": [
+    "new features",
+    "enhancements",
+    "technology preview",
+    "developer preview",
+    "deprecations",
+    "resolved issues",
+    "known issues",
+    "support removals",
+    "product features",
+    "lifecycle"
+  ],
+  "chapters": 8,
+  "sections": 35,
+  "chunks_created": 0,
+  "tables": 4,
+  "estimated_tokens": 13000
+}

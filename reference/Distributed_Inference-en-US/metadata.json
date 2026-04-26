@@ -1,0 +1,28 @@
+{
+  "title": "Deploy Models Using Distributed Inference with llm-d on Red Hat OpenShift AI Self-Managed 3.4",
+  "source": "reference/Red_Hat_OpenShift_AI_Self-Managed-3.4-Deploy_models_using_Distributed_Inference_with_llm-d-en-US.pdf",
+  "conversion_date": "2026-04-24",
+  "conversion_method": "claude-optimized",
+  "product": "Red Hat OpenShift AI",
+  "version": "3.4",
+  "document_type": "technical documentation",
+  "last_updated": "2026-04-23",
+  "topics": [
+    "distributed inference",
+    "llm-d framework",
+    "large language model deployment",
+    "vLLM runtime",
+    "autoscaling",
+    "workload variant autoscaler",
+    "scheduler configuration",
+    "KServe integration",
+    "authentication",
+    "rate limiting",
+    "multi-node deployment"
+  ],
+  "chapters": 4,
+  "sections": 18,
+  "chunks_created": 0,
+  "code_blocks_tagged": 42,
+  "estimated_tokens": 15000
+}

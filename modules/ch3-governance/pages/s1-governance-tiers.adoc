@@ -1,0 +1,274 @@
+:time_estimate: 12
+
+= Defining Governance Tiers
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Without tiers, centralized serving becomes uncontrolled consumption—tier-based access transforms the MaaS platform from unlimited resource drain to fair allocation across departments.*
+
+Objective::
+Understand MaaS tier architecture, configure default and custom tiers, and map OpenShift user groups to tier levels to enforce governance policies.
+
+== The Governance Challenge
+
+A platform engineer controls $200,000 worth of GPU infrastructure serving multiple departments. Without governance:
+
+* The marketing team runs unlimited inference requests, exhausting cluster capacity
+* The fraud detection team's critical workload gets rate-limited because resources are gone
+* Finance cannot allocate AI costs accurately because there's no consumption tracking
+* Security has no audit trail showing who accessed which models
+
+MaaS solves this through tier-based governance: every user belongs to a tier, every tier has limits, and every request is authenticated and tracked.
+
+== What Are MaaS Tiers?
+
+Tiers are **access control layers** that define:
+
+Access Level::
+Which models a user can query (Free tier can't access Enterprise-only models)
+
+Rate Limits::
+Maximum requests per minute (Free: 100 req/min, Enterprise: 1000 req/min)
+
+Token Quotas::
+Maximum tokens consumed per minute (Free: 10K tokens/min, Enterprise: 100K tokens/min)
+
+Group Mapping::
+Which OpenShift groups are assigned to each tier
+
+A developer with a Free tier Bearer token can only access models published to "Free tier and above." An Enterprise user can access all models.
+
+== Default Tier Configuration
+
+When MaaS is enabled, the platform creates three default tiers:
+
+[cols="1,1,2,2"]
+|===
+|Tier Name |Priority Level |Default Group |Typical Use Case
+
+|Free
+|Level 0
+|`system:authenticated`
+|All authenticated users, basic exploration, development
+
+|Premium
+|Level 1
+|(none by default)
+|Department teams with moderate usage needs
+
+|Enterprise
+|Level 2
+|(none by default)
+|Production workloads, critical applications, high throughput
+|===
+
+**Priority Level** determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the **highest level number**.
+
+Example: A user in both `system:authenticated` (Free, Level 0) and `premium-users` (Premium, Level 1) gets Premium tier access.
+
+== Group Assignment Logic
+
+MaaS uses OpenShift group membership to assign users to tiers:
+
+1. **User authenticates** with Bearer token
+2. **Authorino extracts** user identity and group memberships
+3. **MaaS evaluates** which tier configurations match the user's groups
+4. **Highest level wins** if the user belongs to multiple tiers
+5. **Access enforced** based on assigned tier and model configuration
+
+A platform engineer creates a group `data-science-team` in OpenShift, then maps it to the Premium tier. All members of that group automatically get Premium access.
+
+== Viewing Tiers in the Dashboard
+
+**Prerequisites**: Administrator access to the OpenShift AI dashboard with Gen AI Studio enabled.
+
+**Step 1**: Log in to the OpenShift AI dashboard.
+
+**Step 2**: In the left navigation menu, click **Settings**, then click **Tiers**.
+
+**Expected Output**: You should see the default tiers:
+
+[source,text]
+----
+Tier Name       Priority Level    Groups                    Request Limit    Token Limit
+Free            0                 system:authenticated      100/min          10,000/min
+Premium         1                 (none)                    500/min          50,000/min
+Enterprise      2                 (none)                    1,000/min        100,000/min
+----
+
+NOTE: The exact limits shown depend on your cluster configuration. Default values may vary.
+
+== Creating a Custom Tier (Dashboard)
+
+Scenario: The data science team needs a specialized tier with custom limits.
+
+**Step 1**: On the **Tiers** page, click **Create tier**.
+
+**Step 2**: Configure the tier details:
+
+* **Tier name**: `DataScience`
+* **Priority level**: `3` (higher than Enterprise)
+* **Description**: `Custom tier for data science team workloads`
+
+**Step 3**: Assign OpenShift groups:
+
+* Click **Add group**
+* Enter group name: `data-science-team`
+* Click **Add**
+
+**Step 4**: Configure rate limits:
+
+* Select **Enforce request rate limit**
+* Set **Maximum requests**: `2000`
+* Set **Time unit**: `per minute`
+
+**Step 5**: Configure token quotas:
+
+* Select **Enforce token rate limit**
+* Set **Maximum tokens**: `200000`
+* Set **Time unit**: `per minute`
+
+**Step 6**: Click **Create tier** to finalize.
+
+**Verification**: The new tier appears in the tier list with Priority Level 3.
+
+== Creating a Custom Tier (CLI)
+
+Platform engineers can also configure tiers by editing the underlying ConfigMap directly:
+
+**Step 1**: View the current tier configuration:
+
+[source,bash]
+----
+$ oc get configmap tier-to-group-mapping -n redhat-ods-applications -o yaml
+----
+
+**Expected Output**:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: tier-to-group-mapping
+  namespace: redhat-ods-applications
+data:
+  tiers: |
+    - name: Free
+      level: 0
+      groups:
+        - system:authenticated
+      rateLimits:
+        requests: 100
+        tokens: 10000
+    - name: Premium
+      level: 1
+      groups: []
+      rateLimits:
+        requests: 500
+        tokens: 50000
+----
+
+**Step 2**: Edit the ConfigMap to add a custom tier:
+
+[source,bash]
+----
+$ oc edit configmap tier-to-group-mapping -n redhat-ods-applications
+----
+
+**Step 3**: Add the new tier configuration:
+
+[source,yaml]
+----
+    - name: DataScience
+      level: 3
+      groups:
+        - data-science-team
+      rateLimits:
+        requests: 2000
+        tokens: 200000
+----
+
+**Step 4**: Save and exit. The MaaS API automatically reloads the configuration.
+
+**Verification**:
+
+[source,bash]
+----
+$ oc get configmap tier-to-group-mapping -n redhat-ods-applications -o jsonpath='{.data.tiers}' | grep -A 5 "DataScience"
+    - name: DataScience
+      level: 3
+      groups:
+        - data-science-team
+      rateLimits:
+----
+
+✓ The new tier is now active and enforced by Kuadrant.
+
+== Understanding Tier Priority Conflicts
+
+What happens when a user belongs to multiple groups?
+
+**Example Scenario**:
+
+* User `alice@example.com` belongs to:
+  - `system:authenticated` (Free tier, Level 0)
+  - `premium-users` (Premium tier, Level 1)
+  - `data-science-team` (DataScience tier, Level 3)
+
+**MaaS Behavior**: Alice is assigned to the **DataScience tier** (Level 3) because it has the highest level number.
+
+**Result**:
+* Alice gets 2000 requests/min limit (not 100 or 500)
+* Alice gets 200K tokens/min quota (not 10K or 50K)
+* Alice can access models published to "DataScience tier and above"
+
+The highest level wins—no averaging, no combining limits.
+
+== Critical Tier Management Rules
+
+IMPORTANT: **Never delete all tiers**. If you delete the last remaining tier, the dashboard will not display the "Add tier" button, preventing you from creating new tiers through the UI. You must always keep at least one tier in the system.
+
+**Best Practices**:
+
+1. **Start with defaults**: Modify default tiers before creating custom ones
+2. **Group naming**: Use clear, descriptive OpenShift group names (`fraud-detection-prod`, not `group1`)
+3. **Level gaps**: Leave gaps between levels (0, 10, 20) to allow inserting tiers later
+4. **Document mappings**: Maintain a record of which teams map to which tiers
+5. **Monitor usage**: Review tier consumption metrics before adjusting limits
+
+== Dashboard vs CLI: When to Use Each
+
+[cols="2,3,3"]
+|===
+|Approach |Best For |Limitations
+
+|Dashboard UI
+|Quick tier creation, visual overview, assigning groups
+|Requires admin UI access, limited to basic configurations
+
+|CLI (ConfigMap)
+|Automation, GitOps workflows, bulk changes, scripting
+|Requires cluster CLI access, must understand YAML structure
+
+|Combination
+|Initial setup via UI, ongoing management via GitOps
+|None—recommended approach
+|===
+
+A platform engineer might use the UI during initial testing, then migrate to GitOps-managed ConfigMaps for production tier management.
+
+== What's Next
+
+Now that tier architecture and group mapping are configured, the next section covers how to set request rate limits and token quotas, and how Kuadrant's Limitador component enforces these policies for every API request.
+
+////
+Section Notes:
+- Based on design doc Module 3, Section 3.1
+- Follows RHOAI pattern: bold italic lead, definition lists, developer vs platform engineer
+- Includes both UI and CLI approaches
+- Verification steps after configuration
+- Business narrative: fair allocation, chargeback, audit trail
+- Incorporated content from reference-context.adoc
+////

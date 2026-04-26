@@ -1,0 +1,4 @@
+* xref:index.adoc[4. Deploying Models to the MaaS Catalog]
+** xref:s1-serving-runtimes.adoc[4.1: Serving Runtimes & Distributed Inference]
+** xref:s2-publishing-lab.adoc[4.2: Lab - Publishing as a MaaS Endpoint]
+** xref:s3-access-update-lab.adoc[4.3: Lab - Updating Access Dynamically]

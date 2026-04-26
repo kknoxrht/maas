@@ -1,0 +1,416 @@
+:time_estimate: 15
+
+= Lab - Publishing as a MaaS Endpoint
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Deploying a model makes it run; publishing it to MaaS makes it governed—authentication, rate limits, and chargeback tracking activate automatically.*
+
+== Lab Objective
+
+Objective::
+Deploy a generative AI model using distributed inference, publish it to the MaaS catalog, and configure tier-based access control.
+
+== Prerequisites
+
+* OpenShift AI dashboard access with project creation permissions
+* MaaS platform components enabled (verified in Module 2)
+* At least one governance tier configured (verified in Module 3)
+* Cluster with GPU nodes available
+* LeaderWorkerSet Operator installed
+* Data science project created (or permission to create one)
+
+== Lab Overview
+
+In this lab, you will:
+
+1. Deploy a model via the OpenShift AI dashboard
+2. Enable "Publish as MaaS endpoint" during deployment
+3. Configure tier-based access control
+4. Verify the model appears in the Gen AI Studio catalog
+5. Deploy a model using CLI (YAML)
+6. Test model accessibility through the MaaS gateway
+
+== Task 1: Deploy Model via Dashboard (UI Approach)
+
+**Step 1**: Log in to the OpenShift AI dashboard.
+
+**Step 2**: Navigate to **Data Science Projects** and select your project (or create a new one).
+
+**Step 3**: Click the **Deployments** tab, then click **Deploy model**.
+
+**Step 4**: Configure the model deployment:
+
+* **Model name**: `nemotron-nano-4b`
+* **Serving runtime**: Select **Distributed inference with llm-d** (required for MaaS)
+* **Model framework**: Select **vLLM**
+* **Number of replicas**: `1`
+
+**Step 5**: Configure the model location:
+
+* **Source model location**: Select **New cluster storage** (or use existing PVC)
+* **Model path format**: Select **HuggingFace repository**
+* **Model repository**: `NVIDIA-Nemotron-3-Nano-4B-FP8`
+
+[NOTE]
+====
+You can also use `nvidia/nemotron-3-nano-4b-instruct` or other compatible models from HuggingFace. The FP8 quantized version reduces memory requirements.
+====
+
+**Step 6**: Configure resources:
+
+* **GPU**: `1` (adjust based on cluster capacity)
+* **Memory**: `16Gi`
+* **CPU**: `2`
+
+**Step 7**: Expand **Advanced settings** and enable MaaS publishing:
+
+* Check **Publish as MaaS endpoint**
+* **Tier access**: Select **All tiers** (allows Free, Premium, and Enterprise access)
+
+**Expected UI State**:
+
+[source,text]
+----
+✓ Publish as MaaS endpoint
+  Tier access:  ● All tiers
+                ○ Specific tiers
+----
+
+**Step 8**: Click **Deploy**.
+
+**Expected Output**: The deployment appears in the **Deployments** tab with status `Creating`.
+
+**Verification (Wait 3-5 minutes)**:
+
+Check deployment status:
+
+[source,bash]
+----
+$ oc get llminferenceservice -n <your-project>
+NAME                READY   URL                                           AGE
+nemotron-nano-4b    True    https://nemotron-nano-4b-<project>...         5m
+----
+
+✓ When `READY` shows `True`, the model is deployed and serving.
+
+**Step 9**: Verify MaaS catalog registration:
+
+Navigate to **Home → Gen AI Studio → Models**.
+
+**Expected Output**: `nemotron-nano-4b` appears in the model catalog with:
+
+* Model name: `nemotron-nano-4b`
+* Status: Active
+* Tier access: All tiers
+
+== Task 2: Test Model Accessibility
+
+**Step 1**: Generate a Bearer token (if you don't have one):
+
+Navigate to **Home → Gen AI Studio → API Keys → Create API key**.
+
+**Step 2**: Test model listing endpoint:
+
+[source,bash]
+----
+$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+$ export TOKEN="your-api-key-here"
+
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${TOKEN}" | jq '.data[].id'
+----
+
+**Expected Output**:
+
+[source,json]
+----
+"nemotron-nano-4b"
+----
+
+✓ The model appears in the MaaS catalog, accessible through the gateway.
+
+**Step 3**: Test inference request:
+
+[source,bash]
+----
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Explain what Red Hat OpenShift AI does in one sentence."}],
+    "max_tokens": 50
+  }' | jq '.choices[0].message.content'
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+"Red Hat OpenShift AI is an enterprise platform for developing, training, and deploying machine learning models at scale on OpenShift Container Platform."
+----
+
+✓ The model responds successfully through the MaaS gateway with authentication.
+
+== Task 3: Deploy Model via CLI (YAML Approach)
+
+For production deployments and GitOps workflows, create the LLMInferenceService directly:
+
+**Step 1**: Create a YAML file for a second model deployment:
+
+[source,bash]
+----
+$ cat > qwen-model.yaml <<EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: qwen-8b-fp8
+  namespace: <your-project>
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["premium", "enterprise"]'  # <1>
+spec:
+  replicas: 2
+  model:
+    uri: hf://RedHatAI/Qwen3-8B-FP8-dynamic
+    name: qwen-8b-fp8
+  router:
+    route: {}
+    gateway: {}  # <2>
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:
+      - --max-model-len=8192
+      - --gpu-memory-utilization=0.85
+      resources:
+        limits:
+          cpu: '4'
+          memory: 32Gi
+          nvidia.com/gpu: "1"
+        requests:
+          cpu: '2'
+          memory: 16Gi
+          nvidia.com/gpu: "1"
+EOF
+----
+<1> Restricts access to Premium and Enterprise tiers only (Free tier users get 403 Forbidden)
+<2> Registers with MaaS Gateway for governed access
+
+**Step 2**: Apply the configuration:
+
+[source,bash]
+----
+$ oc apply -f qwen-model.yaml
+llminferenceservice.serving.kserve.io/qwen-8b-fp8 created
+----
+
+**Step 3**: Monitor deployment progress:
+
+[source,bash]
+----
+$ oc get llminferenceservice qwen-8b-fp8 -w
+NAME          READY   URL                                    AGE
+qwen-8b-fp8   False   https://qwen-8b-fp8-<project>...      10s
+qwen-8b-fp8   True    https://qwen-8b-fp8-<project>...      4m30s
+----
+
+✓ When `READY` shows `True`, the model is live.
+
+**Verification**:
+
+Check MaaS catalog:
+
+[source,bash]
+----
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${TOKEN}" | jq '.data[] | select(.id=="qwen-8b-fp8")'
+----
+
+**Expected Output**:
+
+[source,json]
+----
+{
+  "id": "qwen-8b-fp8",
+  "object": "model",
+  "created": 1713984000,
+  "owned_by": "redhat-ods-applications"
+}
+----
+
+✓ The CLI-deployed model appears in the catalog with tier restrictions.
+
+== Task 4: Understanding Tier Access Control
+
+You deployed two models with different tier access:
+
+[cols="2,2,3"]
+|===
+|Model |Tier Access |Who Can Access
+
+|nemotron-nano-4b
+|All tiers
+|Free, Premium, and Enterprise users
+
+|qwen-8b-fp8
+|Premium, Enterprise
+|Only Premium and Enterprise users (Free users get 403 Forbidden)
+|===
+
+**Test Tier Restriction** (if you have a Free tier token):
+
+[source,bash]
+----
+$ export FREE_TOKEN="free-tier-user-token"
+
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${FREE_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "qwen-8b-fp8", "messages": [{"role": "user", "content": "Hello"}]}'
+----
+
+**Expected Response**:
+
+[source,json]
+----
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}
+----
+
+✓ Tier-based access control is enforced by Kuadrant.
+
+== Task 5: Deploying Additional Models
+
+**Example: Llama Model for LlamaStack**
+
+For LlamaStack integration, deploy a Llama-compatible model:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama-3-8b
+  namespace: <your-project>
+  annotations:
+    alpha.maas.opendatahub.io/tiers: '["free", "premium", "enterprise"]'
+spec:
+  replicas: 2
+  model:
+    uri: hf://meta-llama/Llama-3.1-8B-Instruct
+    name: llama-3-8b
+  router:
+    route: {}
+    gateway: {}
+    scheduler: {}
+  template:
+    containers:
+    - name: main
+      args:
+      - --max-model-len=8192
+      - --enable-prefix-caching
+      resources:
+        limits:
+          nvidia.com/gpu: "1"
+          memory: 32Gi
+----
+
+[NOTE]
+====
+Llama models may require HuggingFace authentication token if the model repository is gated. Configure the secret in your project before deployment.
+====
+
+Apply and verify:
+
+[source,bash]
+----
+$ oc apply -f llama-model.yaml
+$ oc get llminferenceservice llama-3-8b -w
+----
+
+== Lab Verification Checklist
+
+After completing this lab, verify:
+
+✓ You deployed at least one model via the OpenShift AI dashboard
+✓ You enabled "Publish as MaaS endpoint" during deployment
+✓ You configured tier-based access (all tiers vs specific tiers)
+✓ The model appears in the Gen AI Studio catalog
+✓ You deployed at least one model via CLI (YAML)
+✓ You can query models through the MaaS gateway using Bearer tokens
+✓ Tier access restrictions are enforced (403 Forbidden for restricted tiers)
+
+== Common Deployment Scenarios
+
+[cols="2,3,3"]
+|===
+|Scenario |Configuration |Result
+
+|Development/Testing
+|All tiers access, 1 replica, smaller model (4B-8B)
+|Quick deployment, accessible to all users
+
+|Production (High Availability)
+|Specific tiers, 2+ replicas, load balancing
+|Fault tolerance, governance-controlled access
+
+|Enterprise-Only Model
+|Enterprise tier only, larger model (70B)
+|Restricted to premium users, higher resource allocation
+
+|Multi-Model Catalog
+|Deploy 3-5 models with varying tier access
+|Users see different models based on their tier
+|===
+
+== Troubleshooting Common Issues
+
+[cols="2,2,3"]
+|===
+|Issue |Cause |Solution
+
+|Model stuck in `Creating` state
+|Insufficient GPU resources in cluster
+|Check `oc get nodes` for GPU availability or reduce replica count
+
+|"Publish as MaaS endpoint" option missing
+|Wrong serving runtime selected
+|Must use "Distributed inference with llm-d" runtime
+
+|Model not appearing in catalog
+|Missing MaaS annotation or gateway not configured
+|Verify `alpha.maas.opendatahub.io/tiers` annotation exists
+
+|403 Forbidden for all users
+|Model published to tier user doesn't belong to
+|Update tier access to include user's tier level
+
+|Pod OOMKilled (out of memory)
+|Model too large for GPU memory
+|Reduce `--max-model-len` or increase GPU memory allocation
+|===
+
+== What's Next
+
+Now that you've deployed models to the MaaS catalog with tier-based access, the next lab shows how to dynamically update model access—changing tier restrictions on live models without redeployment.
+
+////
+Section Notes:
+- Based on design doc Module 4, Section 4.2
+- Focused 10-15 min lab format (streamlined, not comprehensive)
+- Both UI and CLI approaches shown
+- Uses NVIDIA-Nemotron-3-Nano-4B-FP8 as primary example
+- Includes Qwen and Llama models as requested
+- Verification steps with expected outputs
+- Tier access control demonstration
+- Troubleshooting table for common issues
+- Business narrative: development vs production scenarios
+////

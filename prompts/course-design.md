@@ -113,25 +113,7 @@ To equip Platform Engineers, AI/ML Platform Administrators, and Developers with 
 
 ---
 
-### Module 3: Deploying Models to the MaaS Catalog
-
-**Module Goal**: Deploy generative AI models, configure distributed serving runtimes, and publish them to the governed catalog.
-
-**Key Sections**:
-* **3.1: Serving Runtimes & Distributed Inference**:
-    * Requirement to use "Distributed inference with llm-d" for MaaS integration.
-    * LeaderWorkerSet Operator dependencies.
-* **3.2: Publishing as a MaaS Endpoint**:
-    * Configuring "Publish as MaaS endpoint" during deployment.
-    * Assigning model access to "All tiers" vs. "Specific tiers".
-* **3.3: Updating Access Dynamically**:
-    * Modifying tier access post-deployment and understanding immediate 403 Forbidden impacts.
-
-**Learning Path**: Presentation → Model Deployment Lab → Access Update Lab
-
----
-
-### Module 4: Governance, Observability, and Chargeback
+### Module 3: Governance, Observability, and Chargeback
 
 **Module Goal**: Establish service tiers, enforce request limits, and track token consumption for cross-department billing.
 
@@ -147,6 +129,24 @@ To equip Platform Engineers, AI/ML Platform Administrators, and Developers with 
     * Calculating billing: $$Cost = (Input Tokens \times Rate_{in}) + (Output Tokens \times Rate_{out})$$.
 
 **Learning Path**: Presentation → Tier Creation Lab → Chargeback Calculation Lab
+
+---
+
+### Module 4: Deploying Models to the MaaS Catalog
+
+**Module Goal**: Deploy generative AI models, configure distributed serving runtimes, and publish them to the governed catalog.
+
+**Key Sections**:
+* **3.1: Serving Runtimes & Distributed Inference**:
+    * Requirement to use "Distributed inference with llm-d" for MaaS integration.
+    * LeaderWorkerSet Operator dependencies.
+* **3.2: Publishing as a MaaS Endpoint**:
+    * Configuring "Publish as MaaS endpoint" during deployment.
+    * Assigning model access to "All tiers" vs. "Specific tiers".
+* **3.3: Updating Access Dynamically**:
+    * Modifying tier access post-deployment and understanding immediate 403 Forbidden impacts.
+
+**Learning Path**: Presentation → Model Deployment Lab → Access Update Lab
 
 ---
 

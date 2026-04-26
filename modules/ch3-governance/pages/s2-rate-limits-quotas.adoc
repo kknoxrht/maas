@@ -1,0 +1,341 @@
+:time_estimate: 10
+
+= Rate Limits and Quotas
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Request rate limits prevent cluster brownouts from traffic spikes; token quotas prevent budget overruns from expensive long-form generation—Kuadrant enforces both automatically.*
+
+Objective::
+Configure request rate limits and token consumption quotas, understand how Kuadrant's Limitador enforces policies, and handle rate limit responses in client applications.
+
+== Why Limits Matter
+
+Without enforcement, a single user can exhaust cluster resources:
+
+**Scenario**: A developer writes a script that generates 1000 simultaneous inference requests. Without rate limits:
+
+* GPU memory fills completely within seconds
+* Other users' requests queue indefinitely
+* The cluster becomes unresponsive
+* Finance has no way to predict or control costs
+
+With MaaS rate limits and quotas, that script hits the tier's request limit after 100 requests, receives a `429 Rate Limit Exceeded` response, and must back off—protecting infrastructure for everyone else.
+
+== Request Rate Limits vs Token Quotas
+
+MaaS enforces two distinct types of limits:
+
+Request Rate Limits::
+Controls **how many API calls** a user can make per time period, regardless of request size or complexity
++
+Example: `500 requests per minute` means a user can call `/v1/chat/completions` up to 500 times in 60 seconds
+
+Token Quotas::
+Controls **how many tokens** (input + output) a user can consume per time period, preventing expensive long-form generation from draining budgets
++
+Example: `50,000 tokens per minute` means if each request uses 1000 tokens, only 50 requests will succeed before hitting the quota
+
+A developer making small, frequent requests hits the **request rate limit** first. A developer generating long documents hits the **token quota** first.
+
+== How Kuadrant Enforces Limits
+
+Kuadrant uses two components to enforce governance policies:
+
+Authorino (Authorization)::
+* Validates Bearer tokens
+* Maps users to tier levels
+* Determines model access permissions
+* Returns `401 Unauthorized` or `403 Forbidden` for policy violations
+
+Limitador (Rate Limiting)::
+* Tracks request counts per user per tier
+* Tracks token consumption per user per tier
+* Returns `429 Rate Limit Exceeded` when limits are hit
+* Includes `Retry-After` header telling clients when to retry
+
+The enforcement flow:
+
+[source,text]
+----
+1. User sends request with Bearer token
+2. Gateway API forwards to Authorino
+3. Authorino validates token and determines tier
+4. Limitador checks current request count for that tier
+5a. Under limit → Request proceeds to KServe
+5b. Over limit → Return 429 Rate Limit Exceeded
+----
+
+== Configuring Rate Limits (Dashboard)
+
+**Prerequisites**: Administrator access, at least one tier already created.
+
+**Step 1**: Navigate to **Settings → Tiers** in the OpenShift AI dashboard.
+
+**Step 2**: Click on an existing tier name (e.g., **Premium**) to edit.
+
+**Step 3**: Configure request rate limits:
+
+* Check **Enforce request rate limit**
+* Set **Maximum requests**: `500`
+* Set **Time period**: `per minute`
+
+**Step 4**: Configure token quotas:
+
+* Check **Enforce token rate limit**
+* Set **Maximum tokens**: `50000`
+* Set **Time period**: `per minute`
+
+**Step 5**: Click **Save tier**.
+
+**Verification**: The tier list shows updated limits in the **Request Limit** and **Token Limit** columns.
+
+== Configuring Rate Limits (CLI)
+
+Platform engineers can set limits by editing the tier ConfigMap directly:
+
+**Step 1**: Edit the tier-to-group-mapping ConfigMap:
+
+[source,bash]
+----
+$ oc edit configmap tier-to-group-mapping -n redhat-ods-applications
+----
+
+**Step 2**: Update the `rateLimits` section for the target tier:
+
+[source,yaml]
+----
+    - name: Premium
+      level: 1
+      groups:
+        - premium-users
+      rateLimits:
+        requestsPerMinute: 500      # <1>
+        tokensPerMinute: 50000      # <2>
+----
+<1> Maximum API requests allowed per minute
+<2> Maximum tokens (input + output) allowed per minute
+
+**Step 3**: Save and exit. Limitador reloads the configuration automatically.
+
+**Verification**:
+
+[source,bash]
+----
+$ oc get configmap tier-to-group-mapping -n redhat-ods-applications -o jsonpath='{.data.tiers}' | grep -A 7 "Premium"
+    - name: Premium
+      level: 1
+      groups:
+        - premium-users
+      rateLimits:
+        requestsPerMinute: 500
+        tokensPerMinute: 50000
+----
+
+✓ Limits are now active and enforced by Kuadrant.
+
+== Advanced Rate Limit Strategies
+
+Platform engineers can implement sophisticated limiting strategies:
+
+=== Per-Model Limits
+
+Different models have different computational costs:
+
+* Small model (7B parameters): Lower limits acceptable
+* Large model (70B parameters): Higher limits drain resources faster
+
+You can publish models to specific tiers to control access based on model size.
+
+**Example Strategy**:
+
+[source,text]
+----
+Free Tier (Level 0):
+  - Access: Small models only (Llama-3.1-7B)
+  - Limits: 100 req/min, 10K tokens/min
+
+Premium Tier (Level 1):
+  - Access: Medium models (Llama-3.1-13B)
+  - Limits: 500 req/min, 50K tokens/min
+
+Enterprise Tier (Level 2):
+  - Access: All models including large (Llama-3.1-70B)
+  - Limits: 1000 req/min, 100K tokens/min
+----
+
+=== Time-Based Policies
+
+For advanced use cases, platform engineers can implement time-based quotas:
+
+Daily Quotas::
+Limit total usage per day (e.g., 1M tokens per day) to control monthly costs
+
+Burst Allowances::
+Allow temporary spikes above the per-minute limit for legitimate use cases
+
+Off-Peak Access::
+Higher limits during nights/weekends when cluster utilization is lower
+
+NOTE: Time-based policies beyond per-minute limits require custom Kuadrant policy configurations and are an advanced topic.
+
+== Understanding Rate Limit Responses
+
+When a user exceeds their tier's limits, Kuadrant returns a `429 Rate Limit Exceeded` HTTP response:
+
+[source,bash]
+----
+$ curl -X POST https://maas.apps.cluster.example.com/v1/chat/completions \
+  -H "Authorization: Bearer ${TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "llama-3.1-8b", "messages": [...]}'
+
+HTTP/1.1 429 Too Many Requests
+Retry-After: 30
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Rate limit exceeded. Try again in 30 seconds.",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded"
+  }
+}
+----
+
+**Key Response Headers**:
+
+`429 Too Many Requests`::
+Status code indicating rate limit hit
+
+`Retry-After: 30`::
+Tells the client to wait 30 seconds before retrying
+
+A well-designed client application reads the `Retry-After` header and implements exponential backoff rather than hammering the API with retries.
+
+== Client Application Handling (Python Example)
+
+Developers should implement retry logic with exponential backoff:
+
+[source,python]
+----
+import requests
+import time
+
+def call_maas_api(url, headers, data, max_retries=3):
+    """Make MaaS API call with automatic retry on rate limit."""
+
+    for attempt in range(max_retries):
+        response = requests.post(url, headers=headers, json=data)
+
+        if response.status_code == 200:
+            return response.json()  # Success
+
+        elif response.status_code == 429:  # Rate limit hit
+            retry_after = int(response.headers.get('Retry-After', 60))
+            print(f"Rate limit exceeded. Waiting {retry_after} seconds...")
+            time.sleep(retry_after)
+            continue  # Retry after waiting
+
+        elif response.status_code == 401:
+            raise Exception("Invalid authentication token")
+
+        elif response.status_code == 403:
+            raise Exception("Forbidden: Your tier cannot access this model")
+
+        else:
+            raise Exception(f"API error: {response.status_code}")
+
+    raise Exception("Max retries exceeded")
+----
+
+This pattern:
+
+1. Detects `429` responses
+2. Reads the `Retry-After` header
+3. Waits the specified time
+4. Retries the request
+5. Handles authentication and authorization errors separately
+
+== Monitoring Limit Enforcement
+
+Platform engineers can verify that limits are being enforced:
+
+**Step 1**: Check Limitador pod logs:
+
+[source,bash]
+----
+$ oc logs -n kuadrant-system deployment/limitador -f
+----
+
+**Expected Output** (when a user hits a limit):
+
+[source,text]
+----
+2024-04-24T10:15:23Z INFO Rate limit exceeded for user=alice@example.com tier=Premium limit=requests_per_minute
+2024-04-24T10:15:23Z INFO Returning 429 response with Retry-After=45
+----
+
+**Step 2**: Query Limitador metrics (if Prometheus is configured):
+
+[source,bash]
+----
+$ oc exec -n kuadrant-system deployment/limitador -- curl -s localhost:8080/metrics | grep rate_limit
+----
+
+**Expected Output**:
+
+[source,text]
+----
+rate_limit_exceeded_total{tier="Premium"} 15
+rate_limit_requests_total{tier="Premium"} 8432
+----
+
+This shows:
+* Premium tier users have hit the rate limit 15 times
+* Premium tier has processed 8,432 total requests
+
+== Common Limit Tuning Scenarios
+
+[cols="2,2,3"]
+|===
+|Symptom |Root Cause |Solution
+
+|Users frequently hit 429 errors during normal usage
+|Limits too restrictive for actual workload
+|Increase `requestsPerMinute` or `tokensPerMinute` for the affected tier
+
+|Cluster GPUs saturated, pods OOMKilled
+|Limits too permissive, allowing resource exhaustion
+|Decrease limits or create a higher-priority tier for critical workloads
+
+|Enterprise users complain about slow responses
+|Free tier consuming too many resources
+|Lower Free tier limits, increase Enterprise tier limits
+
+|Token quota hit but request limit not
+|Users generating very long outputs
+|Decrease `tokensPerMinute` or increase `requestsPerMinute` independently
+
+|Monthly cloud costs exceed budget
+|Cumulative token usage too high
+|Implement daily quotas or reduce per-minute token limits
+|===
+
+A platform engineer monitors actual usage patterns for 2 weeks, then adjusts limits based on p95 latency, GPU utilization, and cost targets.
+
+== What's Next
+
+Now that tier-based access control and rate limiting are configured and enforced, the next section provides a hands-on lab where you'll track token consumption metrics, calculate chargeback costs, and understand the observability dashboards that make governance actionable.
+
+////
+Section Notes:
+- Based on design doc Module 3, Section 3.2
+- Follows RHOAI pattern: bold italic lead, definition lists, developer vs platform engineer
+- Includes both UI and CLI approaches
+- Python retry logic example for developers
+- Verification steps and monitoring guidance
+- Business narrative: protecting infrastructure, controlling costs
+- Troubleshooting table for common scenarios
+////

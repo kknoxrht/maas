@@ -1,0 +1,28 @@
+{
+  "title": "Red Hat AI 3: Supported Product and Hardware Configurations",
+  "source": "reference/Red_Hat_AI-3-Supported_product_and_hardware_configurations-en-US.pdf",
+  "conversion_date": "2026-04-24",
+  "conversion_method": "claude-optimized",
+  "product": "Red Hat AI",
+  "version": "3",
+  "document_type": "technical documentation",
+  "last_updated": "2026-03-23",
+  "topics": [
+    "hardware configurations",
+    "AI accelerators",
+    "NVIDIA GPUs",
+    "AMD GPUs",
+    "IBM Spyre",
+    "Google TPU",
+    "AWS Neuron",
+    "quantization formats",
+    "product compatibility",
+    "deployment environments",
+    "lifecycle policy"
+  ],
+  "chapters": 9,
+  "sections": 30,
+  "chunks_created": 3,
+  "tables": 18,
+  "estimated_tokens": 4500
+}

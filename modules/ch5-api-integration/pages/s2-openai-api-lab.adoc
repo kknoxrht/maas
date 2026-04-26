@@ -1,0 +1,579 @@
+:time_estimate: 15
+
+= Lab - Consuming the OpenAI-Compatible API
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*MaaS exposes models through the OpenAI-compatible API—existing applications built for ChatGPT or GPT-4 can switch to self-hosted models by changing the base URL and Bearer token.*
+
+== Lab Objective
+
+Objective::
+Make REST API calls to list models and generate chat completions, test models interactively in the MaaS Playground, and understand OpenAI API compatibility for seamless integration.
+
+== Prerequisites
+
+* Bearer token generated in Gen AI Studio (from previous section)
+* At least one model deployed and published to MaaS (from Module 4)
+* `curl` and `jq` installed on your workstation
+* Access to OpenShift AI dashboard with Gen AI Studio enabled
+
+== Lab Overview
+
+In this lab, you will:
+
+1. Query the `/v1/models` endpoint to discover available models
+2. Make inference requests to `/v1/chat/completions`
+3. Test models interactively in the MaaS Playground
+4. Understand OpenAI API compatibility and migration patterns
+5. Inspect request/response structure for application integration
+
+== Task 1: Set Up Environment Variables
+
+**Step 1**: Export your Bearer token:
+
+[source,bash]
+----
+$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."  # <1>
+----
+<1> Replace with your actual token from Gen AI Studio → API Keys
+
+**Step 2**: Retrieve the MaaS gateway URL:
+
+[source,bash]
+----
+$ export MAAS_URL=$(oc get gateway maas-default-gateway \
+  -n redhat-ods-applications \
+  -o jsonpath='{.status.addresses[0].value}')
+
+$ echo "MaaS Gateway: https://${MAAS_URL}"
+----
+
+**Expected Output**:
+
+[source,text]
+----
+MaaS Gateway: https://maas.apps.cluster.example.com
+----
+
+✓ These environment variables will be used throughout the lab.
+
+== Task 2: List Available Models
+
+The `/v1/models` endpoint returns all models accessible by your tier.
+
+**Step 1**: Query the models endpoint:
+
+[source,bash]
+----
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq
+----
+
+**Expected Output**:
+
+[source,json]
+----
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "nemotron-nano-4b",
+      "object": "model",
+      "created": 1713984000,
+      "owned_by": "redhat-ods-applications"
+    },
+    {
+      "id": "llama-3-8b",
+      "object": "model",
+      "created": 1713984100,
+      "owned_by": "redhat-ods-applications"
+    },
+    {
+      "id": "qwen-8b-fp8",
+      "object": "model",
+      "created": 1713984200,
+      "owned_by": "redhat-ods-applications"
+    }
+  ]
+}
+----
+
+**Response Structure**:
+
+`object`::
+Always `"list"` for this endpoint
+
+`data[]`::
+Array of available models
+
+`id`::
+The model identifier used in chat completion requests (e.g., `"model": "nemotron-nano-4b"`)
+
+`created`::
+Unix timestamp when the model was deployed
+
+`owned_by`::
+The namespace or organization that published the model
+
+**Step 2**: Extract just the model names:
+
+[source,bash]
+----
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq -r '.data[].id'
+----
+
+**Expected Output**:
+
+[source,text]
+----
+nemotron-nano-4b
+llama-3-8b
+qwen-8b-fp8
+----
+
+✓ These are the model IDs you'll use in the `"model"` field of chat completion requests.
+
+== Task 3: Generate Chat Completions
+
+The `/v1/chat/completions` endpoint sends prompts to models and receives generated responses.
+
+**Step 1**: Make a simple chat completion request:
+
+[source,bash]
+----
+$ curl -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [
+      {"role": "user", "content": "Explain what Red Hat OpenShift AI does in one sentence."}
+    ],
+    "max_tokens": 50,
+    "temperature": 0.7
+  }' | jq
+----
+
+**Expected Output**:
+
+[source,json]
+----
+{
+  "id": "chatcmpl-9abc123",
+  "object": "chat.completion",
+  "created": 1713984300,
+  "model": "nemotron-nano-4b",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Red Hat OpenShift AI is an enterprise platform for developing, training, and deploying machine learning models at scale on OpenShift Container Platform."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 18,
+    "completion_tokens": 32,
+    "total_tokens": 50
+  }
+}
+----
+
+**Response Structure**:
+
+`id`::
+Unique identifier for this completion request
+
+`model`::
+The model that generated the response
+
+`choices[0].message.content`::
+The generated text response
+
+`usage.prompt_tokens`::
+Number of tokens in your input prompt
+
+`usage.completion_tokens`::
+Number of tokens in the generated response
+
+`usage.total_tokens`::
+Sum of prompt and completion tokens (used for quota enforcement)
+
+**Step 2**: Extract just the generated text:
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "What is Kubernetes?"}],
+    "max_tokens": 30
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+Kubernetes is an open-source container orchestration platform that automates deployment, scaling, and management of containerized applications.
+----
+
+✓ This is the core integration pattern: send JSON request, extract `.choices[0].message.content`.
+
+== Task 4: Multi-Turn Conversations
+
+The API supports conversation history by including prior messages in the `messages` array.
+
+**Step 1**: Start a conversation:
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant specializing in OpenShift."},
+      {"role": "user", "content": "What is a Pod?"}
+    ],
+    "max_tokens": 50
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+A Pod is the smallest deployable unit in Kubernetes. It represents one or more containers that share storage and network resources, running on the same host.
+----
+
+**Step 2**: Continue the conversation by including the assistant's previous response:
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant specializing in OpenShift."},
+      {"role": "user", "content": "What is a Pod?"},
+      {"role": "assistant", "content": "A Pod is the smallest deployable unit in Kubernetes. It represents one or more containers that share storage and network resources, running on the same host."},
+      {"role": "user", "content": "Can a Pod contain multiple containers?"}
+    ],
+    "max_tokens": 30
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output** (example):
+
+[source,text]
+----
+Yes, a Pod can contain multiple containers. They share the same network namespace and storage volumes.
+----
+
+✓ This pattern enables context-aware applications like chatbots and interactive assistants.
+
+== Task 5: Testing in the MaaS Playground
+
+The MaaS Playground provides an interactive interface for testing models before integration.
+
+**Step 1**: Log in to the OpenShift AI dashboard.
+
+**Step 2**: Navigate to **Gen AI Studio → Playground**.
+
+**Step 3**: Select a model from the dropdown:
+
+[source,text]
+----
+Model:  [nemotron-nano-4b ▼]
+----
+
+**Step 4**: Configure generation parameters:
+
+[source,text]
+----
+Temperature:        0.7  (Higher = more creative, Lower = more deterministic)
+Max tokens:         100  (Maximum response length)
+Top P:              0.9  (Nucleus sampling threshold)
+Frequency penalty:  0.0  (Penalize repeated tokens)
+----
+
+**Step 5**: Enter a prompt in the text area:
+
+[source,text]
+----
+User: Explain the difference between a Deployment and a StatefulSet.
+----
+
+**Step 6**: Click **Send**.
+
+**Expected Output** (in the Playground interface):
+
+[source,text]
+----
+Assistant: A Deployment manages stateless applications where pods are
+interchangeable. A StatefulSet maintains persistent identities and stable
+network identifiers for each pod, making it suitable for stateful applications
+like databases.
+
+Token usage: 42 tokens
+Response time: 1.2s
+----
+
+**Playground Benefits**:
+
+* No code required for testing
+* Real-time parameter tuning (temperature, max_tokens)
+* Instant feedback on model behavior
+* Visible token consumption for quota planning
+
+== Task 6: Understanding OpenAI API Compatibility
+
+MaaS implements the OpenAI API specification, enabling seamless migration from OpenAI services.
+
+**Migrating from OpenAI to MaaS**:
+
+**Before** (OpenAI):
+
+[source,python]
+----
+import openai
+
+openai.api_key = "sk-proj-abc123..."  # OpenAI API key
+openai.api_base = "https://api.openai.com/v1"
+
+response = openai.ChatCompletion.create(
+    model="gpt-4",
+    messages=[{"role": "user", "content": "Hello"}]
+)
+----
+
+**After** (MaaS):
+
+[source,python]
+----
+import openai
+
+openai.api_key = "eyJhbGciOiJSUzI1..."  # MaaS Bearer token
+openai.api_base = "https://maas.apps.cluster.example.com/v1"
+
+response = openai.ChatCompletion.create(
+    model="nemotron-nano-4b",  # <1>
+    messages=[{"role": "user", "content": "Hello"}]
+)
+----
+<1> Change only the model name—code logic remains identical
+
+**What Changes**:
+
+* `api_key`: OpenAI key → MaaS Bearer token
+* `api_base`: `api.openai.com` → MaaS gateway URL
+* `model`: `gpt-4` → self-hosted model name (e.g., `nemotron-nano-4b`)
+
+**What Stays the Same**:
+
+* Request structure (`messages`, `max_tokens`, `temperature`)
+* Response format (`.choices[0].message.content`)
+* Error handling (401, 403, 429 status codes)
+* Client libraries (OpenAI Python SDK, LangChain, Haystack)
+
+== Task 7: Testing Tier-Based Access Control
+
+**Scenario**: Your Free tier account tries to access a Premium-only model.
+
+**Step 1**: Attempt to query `qwen-8b-fp8` (restricted to Premium/Enterprise):
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "qwen-8b-fp8",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }' | jq
+----
+
+**Expected Output** (if your tier lacks access):
+
+[source,json]
+----
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}
+----
+
+**HTTP Status Code**: `403 Forbidden`
+
+✓ This demonstrates tier-based access enforcement at the API level.
+
+**Step 2**: Switch to an accessible model:
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Hello"}]
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output**:
+
+[source,text]
+----
+Hello! How can I assist you today?
+----
+
+✓ Models published to your tier work without restrictions.
+
+== Task 8: Parameter Tuning for Different Use Cases
+
+**Use Case 1: Deterministic Factual Responses**
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "llama-3-8b",
+    "messages": [{"role": "user", "content": "What is the capital of France?"}],
+    "temperature": 0.1,
+    "max_tokens": 10
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output**:
+
+[source,text]
+----
+The capital of France is Paris.
+----
+
+**Parameters**: `temperature: 0.1` (low randomness), `max_tokens: 10` (short answer)
+
+**Use Case 2: Creative Content Generation**
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "nemotron-nano-4b",
+    "messages": [{"role": "user", "content": "Write a tagline for a cloud-native platform."}],
+    "temperature": 0.9,
+    "max_tokens": 50
+  }' | jq -r '.choices[0].message.content'
+----
+
+**Expected Output** (example, varies due to high temperature):
+
+[source,text]
+----
+"Build once, deploy everywhere—unlock infinite scale with cloud-native freedom."
+----
+
+**Parameters**: `temperature: 0.9` (high creativity), `max_tokens: 50` (longer response)
+
+== Lab Verification Checklist
+
+After completing this lab, verify:
+
+✓ You queried `/v1/models` and retrieved the list of accessible models
+✓ You made chat completion requests to `/v1/chat/completions`
+✓ You extracted generated text from the response structure
+✓ You tested multi-turn conversations with message history
+✓ You tested models interactively in the MaaS Playground
+✓ You understand OpenAI API compatibility for migration
+✓ You observed tier-based access control (403 Forbidden for restricted models)
+✓ You tuned parameters (temperature, max_tokens) for different use cases
+
+== Common API Request Patterns
+
+[cols="2,3,3"]
+|===
+|Use Case |Request Pattern |Key Parameters
+
+|Chatbot
+|Multi-turn with conversation history
+|`temperature: 0.7`, preserve full `messages` array
+
+|Q&A System
+|Single-turn factual queries
+|`temperature: 0.1`, `max_tokens: 50`
+
+|Content Generation
+|Creative writing, marketing copy
+|`temperature: 0.9`, `max_tokens: 200`
+
+|Code Completion
+|Structured output (JSON, YAML)
+|`temperature: 0.2`, `max_tokens: 500`
+
+|Summarization
+|Large input, short output
+|`temperature: 0.3`, `max_tokens: 100`
+|===
+
+== Troubleshooting Common Issues
+
+[cols="2,2,3"]
+|===
+|Issue |Cause |Solution
+
+|401 Unauthorized
+|Invalid or expired Bearer token
+|Regenerate token in Gen AI Studio → API Keys
+
+|403 Forbidden
+|Your tier lacks access to the model
+|Check model tier access in Gen AI Studio → Models
+
+|429 Too Many Requests
+|Exceeded rate limit or token quota
+|Implement retry logic (covered in next section)
+
+|500 Internal Server Error
+|Model serving pod crashed or OOMKilled
+|Contact platform team to check model health
+
+|Empty `data[]` array in `/v1/models`
+|No models published to your tier
+|Contact platform team to publish models or upgrade tier
+|===
+
+== What's Next
+
+Now that you can consume the OpenAI-compatible API and test models in the Playground, the next lab demonstrates proper error handling—implementing Python retry logic with exponential backoff for 429 Rate Limit errors, parsing the `Retry-After` header, and handling 401/403 authentication failures gracefully.
+
+////
+Section Notes:
+- Based on design doc Module 5, Section 5.2
+- Focused 10-15 minute hands-on lab format
+- Both curl and Python examples shown
+- OpenAI API compatibility emphasized for migration
+- MaaS Playground walkthrough included
+- Tier-based access control testing
+- Parameter tuning for different use cases
+- Verification steps with expected outputs
+- Troubleshooting table for common API issues
+- Prepares reader for error handling and retry logic
+////

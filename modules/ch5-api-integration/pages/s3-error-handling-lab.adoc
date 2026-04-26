@@ -1,0 +1,774 @@
+:time_estimate: 18
+
+= Lab - Error Handling & Application Patterns
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Production applications fail gracefully—401 triggers token refresh, 403 logs authorization denials, and 429 backs off exponentially before retrying.*
+
+== Lab Objective
+
+Objective::
+Implement production-ready error handling for MaaS API integration, including retry logic with exponential backoff for 429 Rate Limit errors, parsing the `Retry-After` header, and handling authentication failures gracefully.
+
+== Prerequisites
+
+* Bearer token generated in Gen AI Studio (from Section 5.1)
+* Python 3.8+ installed with `requests` library
+* At least one model deployed and published to MaaS
+* Understanding of HTTP status codes (401, 403, 429)
+
+== Lab Overview
+
+In this lab, you will:
+
+1. Understand the three primary error types (401, 403, 429)
+2. Implement Python retry logic with exponential backoff
+3. Parse and respect the `Retry-After` header
+4. Build a production-ready MaaS client with error handling
+5. Test error handling under simulated rate limit conditions
+6. Integrate graceful degradation patterns
+
+== Task 1: Understanding MaaS Error Responses
+
+MaaS returns standard HTTP status codes with structured JSON error messages.
+
+=== Error Type 1: 401 Unauthorized
+
+**Cause**: Invalid, expired, or missing Bearer token.
+
+**Example Request**:
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer invalid-token-12345" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "nemotron-nano-4b", "messages": [{"role": "user", "content": "Hello"}]}'
+----
+
+**Expected Response**:
+
+[source,json]
+----
+HTTP/1.1 401 Unauthorized
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Unauthorized: Invalid or expired token",
+    "type": "authentication_error",
+    "code": "unauthorized"
+  }
+}
+----
+
+**Handling Strategy**: Refresh token, log incident, notify user.
+
+=== Error Type 2: 403 Forbidden
+
+**Cause**: Your tier does not have access to the requested model.
+
+**Example Request** (Free tier accessing Premium-only model):
+
+[source,bash]
+----
+$ curl -s -X POST https://${MAAS_URL}/v1/chat/completions \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "qwen-8b-fp8", "messages": [{"role": "user", "content": "Hello"}]}'
+----
+
+**Expected Response**:
+
+[source,json]
+----
+HTTP/1.1 403 Forbidden
+Content-Type: application/json
+
+{
+  "error": {
+    "message": "Forbidden: Your tier does not have access to this model",
+    "type": "authorization_error",
+    "code": "forbidden"
+  }
+}
+----
+
+**Handling Strategy**: Log tier mismatch, fall back to accessible model, notify platform team.
+
+=== Error Type 3: 429 Too Many Requests
+
+**Cause**: Exceeded rate limit (requests per minute) or token quota (tokens per minute).
+
+**Example Response**:
+
+[source,json]
+----
+HTTP/1.1 429 Too Many Requests
+Content-Type: application/json
+Retry-After: 45
+
+{
+  "error": {
+    "message": "Rate limit exceeded: 500 requests per minute. Retry after 45 seconds.",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded",
+    "param": null,
+    "limit": {
+      "requests": 500,
+      "tokens": 50000,
+      "period": "1m"
+    }
+  }
+}
+----
+
+**Key Headers**:
+
+`Retry-After`::
+Number of seconds to wait before retrying (integer value in seconds)
+
+**Handling Strategy**: Exponential backoff, respect `Retry-After`, log rate limit events.
+
+== Task 2: Basic Error Handling in Python
+
+**Step 1**: Create a basic MaaS client with error detection:
+
+[source,python]
+----
+import requests
+import os
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def query_model(model, prompt):
+    """Query MaaS model with basic error handling."""
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 100
+    }
+
+    response = requests.post(url, json=payload, headers=headers)
+
+    # Check for errors
+    if response.status_code == 401:
+        raise Exception("Authentication failed: Token invalid or expired")
+    elif response.status_code == 403:
+        raise Exception(f"Access denied: Your tier cannot access model '{model}'")
+    elif response.status_code == 429:
+        raise Exception("Rate limit exceeded: Too many requests")
+    elif response.status_code != 200:
+        raise Exception(f"Unexpected error: {response.status_code} - {response.text}")
+
+    return response.json()["choices"][0]["message"]["content"]
+
+# Test the function
+if __name__ == "__main__":
+    try:
+        result = query_model("nemotron-nano-4b", "What is OpenShift?")
+        print(f"Response: {result}")
+    except Exception as e:
+        print(f"Error: {e}")
+----
+
+**Step 2**: Save as `maas_client_basic.py` and test:
+
+[source,bash]
+----
+$ export MAAS_URL="maas.apps.cluster.example.com"
+$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+$ python3 maas_client_basic.py
+----
+
+**Expected Output** (success):
+
+[source,text]
+----
+Response: OpenShift is Red Hat's enterprise Kubernetes platform that provides developer and operational tools for building, deploying, and managing containerized applications at scale.
+----
+
+**Expected Output** (authentication failure with invalid token):
+
+[source,text]
+----
+Error: Authentication failed: Token invalid or expired
+----
+
+✓ This basic client detects errors but does not retry automatically.
+
+== Task 3: Implementing Retry Logic with Exponential Backoff
+
+Production applications should retry transient failures (429 Rate Limit) with increasing delays.
+
+**Step 1**: Create a production-ready client with retry logic:
+
+[source,python]
+----
+import requests
+import os
+import time
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def query_model_with_retry(model, prompt, max_retries=3):
+    """
+    Query MaaS model with exponential backoff retry logic.
+
+    Args:
+        model: Model name (e.g., "nemotron-nano-4b")
+        prompt: User prompt
+        max_retries: Maximum retry attempts for 429 errors
+
+    Returns:
+        Generated text response
+
+    Raises:
+        Exception: For non-retryable errors (401, 403, 500)
+    """
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+    payload = {
+        "model": model,
+        "messages": [{"role": "user", "content": prompt}],
+        "max_tokens": 100
+    }
+
+    for attempt in range(max_retries + 1):
+        response = requests.post(url, json=payload, headers=headers)
+
+        # Success
+        if response.status_code == 200:
+            return response.json()["choices"][0]["message"]["content"]
+
+        # Non-retryable errors
+        if response.status_code == 401:
+            logger.error("Authentication failed: Invalid or expired token")
+            raise Exception("401 Unauthorized: Token is invalid or expired")
+
+        if response.status_code == 403:
+            error_msg = response.json().get("error", {}).get("message", "Access denied")
+            logger.error(f"Authorization failed: {error_msg}")
+            raise Exception(f"403 Forbidden: {error_msg}")
+
+        # Retryable error: Rate limit exceeded
+        if response.status_code == 429:
+            if attempt >= max_retries:
+                logger.error(f"Rate limit exceeded after {max_retries} retries")
+                raise Exception("429 Too Many Requests: Max retries exceeded")
+
+            # Parse Retry-After header (in seconds)
+            retry_after = int(response.headers.get("Retry-After", 0))
+
+            # Exponential backoff: 2^attempt seconds, or use Retry-After if provided
+            if retry_after > 0:
+                wait_time = retry_after
+                logger.warning(f"Rate limit hit. Retry-After header: {retry_after}s")
+            else:
+                wait_time = 2 ** attempt  # 1s, 2s, 4s, 8s...
+                logger.warning(f"Rate limit hit. Exponential backoff: {wait_time}s")
+
+            logger.info(f"Attempt {attempt + 1}/{max_retries + 1}: Waiting {wait_time}s before retry...")
+            time.sleep(wait_time)
+            continue
+
+        # Unexpected errors
+        logger.error(f"Unexpected error: {response.status_code} - {response.text}")
+        raise Exception(f"HTTP {response.status_code}: {response.text}")
+
+    # Should never reach here due to max_retries check above
+    raise Exception("Unexpected retry loop exit")
+
+# Test the function
+if __name__ == "__main__":
+    try:
+        result = query_model_with_retry("nemotron-nano-4b", "Explain Kubernetes Pods in 20 words.")
+        print(f"\nSuccess! Response:\n{result}\n")
+    except Exception as e:
+        print(f"\nError: {e}\n")
+----
+
+**Step 2**: Save as `maas_client_retry.py` and test:
+
+[source,bash]
+----
+$ python3 maas_client_retry.py
+----
+
+**Expected Output** (success):
+
+[source,text]
+----
+Success! Response:
+Pods are the smallest deployable units in Kubernetes, encapsulating one or more containers with shared storage and network resources.
+----
+
+**Expected Output** (rate limit with retry):
+
+[source,text]
+----
+WARNING:__main__:Rate limit hit. Retry-After header: 30s
+INFO:__main__:Attempt 1/4: Waiting 30s before retry...
+WARNING:__main__:Rate limit hit. Exponential backoff: 2s
+INFO:__main__:Attempt 2/4: Waiting 2s before retry...
+
+Success! Response:
+Pods are the smallest deployable units in Kubernetes...
+----
+
+✓ The client automatically retries on 429 errors with exponential backoff.
+
+== Task 4: Simulating Rate Limit Testing
+
+**Step 1**: Generate high-volume requests to trigger rate limits:
+
+[source,python]
+----
+import requests
+import os
+import time
+
+MAAS_URL = os.getenv("MAAS_URL")
+MAAS_TOKEN = os.getenv("MAAS_TOKEN")
+
+def stress_test_rate_limit(model, num_requests):
+    """Send burst requests to trigger rate limiting."""
+    url = f"https://{MAAS_URL}/v1/chat/completions"
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    success_count = 0
+    rate_limit_count = 0
+
+    for i in range(num_requests):
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": f"Request {i}"}],
+            "max_tokens": 10
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+        if response.status_code == 200:
+            success_count += 1
+            print(f"✓ Request {i + 1}: Success")
+        elif response.status_code == 429:
+            rate_limit_count += 1
+            retry_after = response.headers.get("Retry-After", "unknown")
+            print(f"✗ Request {i + 1}: Rate limit (Retry-After: {retry_after}s)")
+            break  # Stop on first rate limit
+        else:
+            print(f"✗ Request {i + 1}: Error {response.status_code}")
+
+    print(f"\nResults: {success_count} successful, {rate_limit_count} rate limited")
+
+if __name__ == "__main__":
+    stress_test_rate_limit("nemotron-nano-4b", num_requests=600)
+----
+
+**Step 2**: Save as `stress_test.py` and run:
+
+[source,bash]
+----
+$ python3 stress_test.py
+----
+
+**Expected Output** (example for Free tier with 100 req/min limit):
+
+[source,text]
+----
+✓ Request 1: Success
+✓ Request 2: Success
+...
+✓ Request 98: Success
+✓ Request 99: Success
+✓ Request 100: Success
+✗ Request 101: Rate limit (Retry-After: 42s)
+
+Results: 100 successful, 1 rate limited
+----
+
+✓ This confirms the tier's request limit (e.g., 100 requests per minute for Free tier).
+
+== Task 5: Production-Ready Client with Graceful Degradation
+
+**Step 1**: Build a complete client with fallback logic:
+
+[source,python]
+----
+import requests
+import os
+import time
+import logging
+from typing import Optional
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+class MaaSClient:
+    """Production-ready MaaS API client with error handling and retry logic."""
+
+    def __init__(self, base_url: str, token: str, max_retries: int = 3):
+        self.base_url = base_url.rstrip('/')
+        self.token = token
+        self.max_retries = max_retries
+        self.session = requests.Session()
+        self.session.headers.update({
+            "Authorization": f"Bearer {token}",
+            "Content-Type": "application/json"
+        })
+
+    def chat_completion(self, model: str, prompt: str,
+                        fallback_model: Optional[str] = None,
+                        **kwargs) -> dict:
+        """
+        Generate chat completion with automatic retry and fallback.
+
+        Args:
+            model: Primary model name
+            prompt: User prompt
+            fallback_model: Model to try if primary model returns 403
+            **kwargs: Additional parameters (max_tokens, temperature, etc.)
+
+        Returns:
+            dict: Complete API response with choices and usage
+        """
+        # Try primary model
+        try:
+            return self._request_with_retry(model, prompt, **kwargs)
+        except Exception as e:
+            if "403" in str(e) and fallback_model:
+                logger.warning(f"Model '{model}' forbidden. Trying fallback '{fallback_model}'")
+                return self._request_with_retry(fallback_model, prompt, **kwargs)
+            raise
+
+    def _request_with_retry(self, model: str, prompt: str, **kwargs) -> dict:
+        """Internal method with retry logic."""
+        url = f"https://{self.base_url}/v1/chat/completions"
+
+        payload = {
+            "model": model,
+            "messages": [{"role": "user", "content": prompt}],
+            **kwargs
+        }
+
+        for attempt in range(self.max_retries + 1):
+            response = self.session.post(url, json=payload)
+
+            # Success
+            if response.status_code == 200:
+                return response.json()
+
+            # Handle errors
+            if response.status_code == 401:
+                logger.error("Authentication failed: Token invalid or expired")
+                raise Exception("401 Unauthorized: Refresh your Bearer token")
+
+            if response.status_code == 403:
+                error_data = response.json().get("error", {})
+                logger.error(f"Access denied: {error_data.get('message', 'Unknown')}")
+                raise Exception(f"403 Forbidden: {error_data.get('message')}")
+
+            if response.status_code == 429:
+                if attempt >= self.max_retries:
+                    raise Exception(f"429 Too Many Requests: Exceeded {self.max_retries} retries")
+
+                retry_after = int(response.headers.get("Retry-After", 2 ** attempt))
+                logger.warning(f"Rate limit hit. Waiting {retry_after}s (attempt {attempt + 1})")
+                time.sleep(retry_after)
+                continue
+
+            # Unexpected errors
+            raise Exception(f"HTTP {response.status_code}: {response.text}")
+
+        raise Exception("Max retries exceeded")
+
+    def list_models(self) -> list:
+        """List available models."""
+        url = f"https://{self.base_url}/v1/models"
+        response = self.session.get(url)
+
+        if response.status_code != 200:
+            raise Exception(f"Failed to list models: {response.status_code}")
+
+        return [model["id"] for model in response.json()["data"]]
+
+# Usage example
+if __name__ == "__main__":
+    client = MaaSClient(
+        base_url=os.getenv("MAAS_URL"),
+        token=os.getenv("MAAS_TOKEN"),
+        max_retries=3
+    )
+
+    # List available models
+    print("Available models:")
+    for model in client.list_models():
+        print(f"  - {model}")
+
+    # Chat completion with fallback
+    try:
+        response = client.chat_completion(
+            model="qwen-8b-fp8",  # Premium-only model
+            prompt="What is OpenShift?",
+            fallback_model="nemotron-nano-4b",  # Fallback to Free tier model
+            max_tokens=50
+        )
+        print(f"\nResponse: {response['choices'][0]['message']['content']}")
+        print(f"Tokens used: {response['usage']['total_tokens']}")
+    except Exception as e:
+        logger.error(f"Request failed: {e}")
+----
+
+**Step 2**: Save as `maas_client_production.py` and test:
+
+[source,bash]
+----
+$ python3 maas_client_production.py
+----
+
+**Expected Output** (with fallback triggered):
+
+[source,text]
+----
+Available models:
+  - nemotron-nano-4b
+  - llama-3-8b
+
+2024-04-24 14:30:15 - __main__ - WARNING - Model 'qwen-8b-fp8' forbidden. Trying fallback 'nemotron-nano-4b'
+
+Response: OpenShift is Red Hat's enterprise Kubernetes platform that provides developer and operational tools for building, deploying, and managing containerized applications.
+Tokens used: 35
+----
+
+✓ The client gracefully falls back to an accessible model when tier restrictions block the primary model.
+
+== Task 6: Integrating with Application Frameworks
+
+**LangChain Integration**:
+
+[source,python]
+----
+from langchain.llms.base import LLM
+from langchain.callbacks.manager import CallbackManagerForLLMRun
+from typing import Optional, List
+import requests
+
+class MaaSLLM(LLM):
+    """LangChain wrapper for MaaS API."""
+
+    base_url: str
+    token: str
+    model: str = "nemotron-nano-4b"
+
+    def _call(
+        self,
+        prompt: str,
+        stop: Optional[List[str]] = None,
+        run_manager: Optional[CallbackManagerForLLMRun] = None,
+    ) -> str:
+        url = f"https://{self.base_url}/v1/chat/completions"
+        headers = {"Authorization": f"Bearer {self.token}"}
+        payload = {
+            "model": self.model,
+            "messages": [{"role": "user", "content": prompt}],
+            "max_tokens": 200
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()["choices"][0]["message"]["content"]
+
+    @property
+    def _llm_type(self) -> str:
+        return "maas"
+
+# Usage
+llm = MaaSLLM(base_url="maas.apps.cluster.example.com", token="your-token")
+response = llm("What is Kubernetes?")
+print(response)
+----
+
+**OpenAI SDK Integration**:
+
+[source,python]
+----
+import openai
+
+openai.api_key = os.getenv("MAAS_TOKEN")
+openai.api_base = f"https://{os.getenv('MAAS_URL')}/v1"
+
+response = openai.ChatCompletion.create(
+    model="nemotron-nano-4b",
+    messages=[{"role": "user", "content": "Explain OpenShift AI in one sentence."}],
+    max_tokens=50
+)
+
+print(response.choices[0].message.content)
+----
+
+== Lab Verification Checklist
+
+After completing this lab, verify:
+
+✓ You understand the three primary error types (401, 403, 429)
+✓ You implemented basic error detection in Python
+✓ You implemented retry logic with exponential backoff
+✓ You parse and respect the `Retry-After` header
+✓ You tested rate limit handling under simulated load
+✓ You built a production-ready client with fallback models
+✓ You understand integration with LangChain and OpenAI SDK
+
+== Error Handling Decision Matrix
+
+[cols="2,2,3,3"]
+|===
+|HTTP Code |Error Type |Retry? |Action
+
+|401
+|Unauthorized
+|No
+|Refresh Bearer token, log incident
+
+|403
+|Forbidden
+|No
+|Fall back to accessible model, log tier mismatch
+
+|429
+|Rate Limit
+|Yes (with backoff)
+|Exponential backoff, respect `Retry-After`, retry up to 3 times
+
+|500
+|Internal Server Error
+|Yes (1-2 retries)
+|Log error, contact platform team if persistent
+
+|503
+|Service Unavailable
+|Yes (with backoff)
+|Model serving pod restarting, retry after 10s
+|===
+
+== Best Practices for Production Applications
+
+**1. Token Management**:
+
+* Store tokens in secret managers (Vault, AWS Secrets Manager, Kubernetes Secrets)
+* Implement automatic token refresh before expiration
+* Never log tokens in application logs
+
+**2. Retry Logic**:
+
+* Always respect `Retry-After` header
+* Implement exponential backoff (1s → 2s → 4s → 8s)
+* Limit retries to 3-5 attempts to avoid infinite loops
+* Log all retry attempts for debugging
+
+**3. Observability**:
+
+* Track token consumption metrics (input/output tokens per request)
+* Monitor 429 rate limit frequency to adjust request patterns
+* Alert on persistent 401/403 errors (indicates configuration issues)
+
+**4. Graceful Degradation**:
+
+* Define fallback models for tier-restricted scenarios
+* Cache responses for repeated queries (respects rate limits)
+* Implement circuit breaker pattern for persistent failures
+
+**5. Cost Optimization**:
+
+* Set conservative `max_tokens` limits to avoid quota exhaustion
+* Use lower `temperature` values for deterministic tasks (reduces unnecessary token usage)
+* Batch requests when possible instead of individual API calls
+
+== Troubleshooting Production Issues
+
+[cols="2,3,3"]
+|===
+|Symptom |Likely Cause |Solution
+
+|Constant 429 errors
+|Application exceeding tier limits
+|Reduce request rate, implement caching, or upgrade tier
+
+|Sporadic 401 errors
+|Token expiring mid-operation
+|Implement token refresh before expiration (check `exp` claim in JWT)
+
+|All requests return 403
+|Model tier access changed by platform team
+|Check Gen AI Studio → Models for updated tier access
+
+|High latency despite low load
+|Inefficient retry logic causing cascading delays
+|Review backoff implementation, reduce max retries
+
+|Token quota exhausted despite low request count
+|Large `max_tokens` setting or high-volume responses
+|Reduce `max_tokens`, optimize prompts for shorter responses
+|===
+
+== Course Summary
+
+Congratulations! You have completed the Red Hat OpenShift AI Models-as-a-Service training.
+
+You can now:
+
+✓ **Evaluate MaaS Architecture**: Understand the transition from GPU silos to centralized token delivery, and articulate how MaaS prevents "Shadow AI"
+
+✓ **Administer the MaaS Platform**: Configure OpenShift AI CRDs to enable MaaS components, establish Gateway API routing, and activate the dashboard
+
+✓ **Implement Governance**: Define tiered service limits, configure group-based rate limiting, track token consumption, and automate chargeback workflows
+
+✓ **Deploy Models**: Configure distributed inference runtimes, publish models to the governed catalog, and dynamically update tier-based access control
+
+✓ **Consume Endpoints**: Navigate Gen AI Studio, generate authentication tokens, implement retry logic, and integrate models into applications
+
+Your organization has transitioned from "Private Power Generators" (siloed GPUs) to a "Municipal Utility Grid" (centralized MaaS platform) where lines of business consume AI inference as a governed, trackable, and cost-allocated utility.
+
+== Additional Resources
+
+* [Red Hat OpenShift AI Documentation](https://access.redhat.com/documentation/en-us/red_hat_openshift_ai/)
+* [KServe Model Serving](https://kserve.github.io/website/)
+* [vLLM Documentation](https://docs.vllm.ai/)
+* [OpenAI API Reference](https://platform.openai.com/docs/api-reference)
+* [Kuadrant Authentication Policies](https://docs.kuadrant.io/)
+
+////
+Section Notes:
+- Based on design doc Module 5, Section 5.3
+- Focused 15-20 minute hands-on lab format
+- Complete Python code examples with retry logic
+- Exponential backoff implementation with Retry-After parsing
+- Production-ready client with graceful degradation
+- Integration examples for LangChain and OpenAI SDK
+- Error handling decision matrix and best practices
+- Course summary and completion acknowledgment
+- Troubleshooting table for production issues
+- Additional resources for continued learning
+////

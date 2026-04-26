@@ -1,0 +1,39 @@
+:time_estimate: 5
+
+= Module 4: Deploying Models to the MaaS Catalog
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*Publishing a model to MaaS transforms it from a siloed resource into a governed utility accessible through centralized authentication and rate limiting.*
+
+== Module Goal
+
+Deploy generative AI models using distributed inference, publish them to the governed MaaS catalog, and configure dynamic tier-based access control.
+
+== Performance Objective
+
+**[PO 4] Deploy and Govern Models in the MaaS Catalog**: Configure distributed inference runtimes, publish models as MaaS endpoints with tier-based access control, and dynamically update model governance without redeployment.
+
+== What You'll Learn
+
+In this module, you will:
+
+* Understand why distributed inference with llm-d is required for MaaS integration
+* Deploy models via dashboard UI and CLI (YAML) approaches
+* Publish models to the MaaS catalog with tier-based access control
+* Configure resource allocation and vLLM optimization arguments
+* Dynamically update tier access on live models without downtime
+* Test model accessibility with different tier credentials
+
+== Module Sections
+
+This module contains three sections:
+
+* **4.1: Serving Runtimes & Distributed Inference** - Runtime architecture, LeaderWorkerSet, and LLMInferenceService structure
+* **4.2: Lab - Publishing as a MaaS Endpoint** - Hands-on model deployment with UI and CLI approaches
+* **4.3: Lab - Updating Access Dynamically** - Modify tier access on live models and verify immediate enforcement
+
+== What's Next
+
+With models deployed and governed through MaaS, the final module shifts perspective to developers—showing how to discover models in the Gen AI Studio, generate authentication tokens, and integrate MaaS endpoints into applications using the OpenAI-compatible API.

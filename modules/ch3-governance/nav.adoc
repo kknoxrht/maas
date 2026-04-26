@@ -1,0 +1,4 @@
+* xref:index.adoc[3. Governance & Observability]
+** xref:s1-governance-tiers.adoc[3.1: Defining Governance Tiers]
+** xref:s2-rate-limits-quotas.adoc[3.2: Rate Limits and Quotas]
+** xref:s3-chargeback-lab.adoc[3.3: Lab - Observability & Automated Chargeback]

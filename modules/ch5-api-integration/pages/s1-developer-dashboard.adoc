@@ -1,0 +1,357 @@
+:time_estimate: 10
+
+= The Developer Dashboard
+
+_Estimated time: *{time_estimate} minutes*._
+
+[.lead]
+*The utility grid succeeds when developers can discover models and generate credentials autonomously—without submitting tickets, waiting for platform teams, or reverse-engineering endpoint URLs.*
+
+Objective::
+Navigate the Gen AI Studio interface, discover available models in the catalog, view tier-based access limits, and generate Bearer tokens for programmatic API access.
+
+== The Developer Experience Challenge
+
+A developer needs to integrate a generative AI model into a customer-facing application. In a traditional environment:
+
+* Submit a ticket requesting access to the "GPT model server"
+* Wait 3 days for platform team to respond with custom endpoint URLs
+* Receive unclear documentation about authentication
+* Discover rate limits only after the application crashes in production
+* Re-submit tickets every time credentials expire
+
+MaaS eliminates this friction through the Gen AI Studio—a self-service dashboard where developers autonomously discover models, understand their access limits, and generate time-bound API keys.
+
+== What Is Gen AI Studio?
+
+Gen AI Studio is the **consumer interface** for MaaS. It provides:
+
+Model Catalog::
+Browse all models published to the MaaS platform with tier-based visibility (developers only see models their tier can access)
+
+Tier Information::
+View your current tier assignment, rate limits, and token quotas
+
+API Key Management::
+Generate and manage Bearer tokens for programmatic access
+
+Model Playground::
+Test models interactively before integration (covered in next section)
+
+Unlike administrative interfaces that expose cluster configuration and CRDs, Gen AI Studio is designed for developers who want to consume models—not deploy them.
+
+== Accessing Gen AI Studio
+
+**Prerequisites**:
+- OpenShift AI dashboard access
+- User account assigned to at least one tier (default: `system:authenticated` maps to Free tier)
+- MaaS platform enabled (verified in Module 2)
+
+**Step 1**: Log in to the OpenShift AI dashboard.
+
+The URL format is typically:
+
+[source,text]
+----
+https://rhods-dashboard-redhat-ods-applications.apps.<cluster-domain>
+----
+
+**Step 2**: In the left navigation menu, locate the **Gen AI Studio** section.
+
+**Expected UI State**:
+
+[source,text]
+----
+Navigation Menu:
+  Data Science Projects
+  Model Serving
+  Resources
+→ Gen AI Studio        ← This section
+    ├── Models
+    ├── Playground
+    └── API Keys
+  Settings
+  Documentation
+----
+
+If "Gen AI Studio" does not appear, the MaaS platform is not enabled. Verify `OdhDashboardConfig` settings (see Module 2, Section 2.1).
+
+== Discovering Models in the Catalog
+
+**Step 1**: Click **Gen AI Studio → Models** in the left navigation.
+
+**Expected Output**: You see a catalog of models published to MaaS:
+
+[source,text]
+----
+Available Models
+
+┌─────────────────────────────────────────────────────────────────┐
+│ nemotron-nano-4b                                                │
+│ NVIDIA Nemotron-3-Nano-4B-FP8                                   │
+│ Status: Active                                                  │
+│ Tier access: Free, Premium, Enterprise                         │
+│ Published by: data-science-team                                │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ qwen-8b-fp8                                                     │
+│ RedHatAI/Qwen3-8B-FP8-dynamic                                   │
+│ Status: Active                                                  │
+│ Tier access: Premium, Enterprise                               │
+│ Published by: nlp-team                                         │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│ llama-3-8b                                                      │
+│ Llama-3.1-8B-Instruct                                           │
+│ Status: Active                                                  │
+│ Tier access: Free, Premium, Enterprise                         │
+│ Published by: platform-team                                    │
+└─────────────────────────────────────────────────────────────────┘
+----
+
+**Key Information**:
+
+Model Name::
+The identifier used in API requests (e.g., `"model": "nemotron-nano-4b"`)
+
+Tier Access::
+Which tiers can query this model. If your tier is not listed, API requests will return `403 Forbidden`
+
+Status::
+`Active` means the model is serving. Models in `Creating` or `Failed` states are not accessible
+
+NOTE: The catalog shows **only models you have permission to access** based on your tier. An Enterprise user sees all models; a Free tier user only sees models published to "Free tier and above."
+
+== Understanding Your Tier Limits
+
+**Step 1**: Click **Settings → Tiers** in the left navigation.
+
+**Expected Output**: Your current tier assignment and limits:
+
+[source,text]
+----
+Your Current Tier: Premium (Level 1)
+
+Rate Limits:
+  Requests per minute:        500
+  Tokens per minute:          50,000
+
+Group Membership:
+  data-science-team           (Premium)
+  system:authenticated        (Free)
+
+Effective Tier: Premium (highest level wins)
+----
+
+**Understanding the Limits**:
+
+Requests per minute::
+Maximum number of API calls (e.g., `/v1/chat/completions`) you can make in 60 seconds. Exceeding this triggers `429 Too Many Requests`.
+
+Tokens per minute::
+Maximum input + output tokens consumed in 60 seconds across all requests. Exceeding this also triggers `429 Too Many Requests`.
+
+[IMPORTANT]
+====
+Both limits apply simultaneously. A single large request consuming 60,000 tokens would trigger the token quota (exceeding 50,000/min), even if you're well under the request limit.
+====
+
+== Generating Bearer Tokens (API Keys)
+
+**Step 1**: Click **Gen AI Studio → API Keys** in the left navigation.
+
+**Step 2**: Click **Create API Key**.
+
+**Step 3**: Configure the API key:
+
+* **Name**: `my-app-production-key` (descriptive name for tracking)
+* **Expiration**: `90 days` (or custom duration)
+* **Scopes**: `All models` (or restrict to specific models)
+
+**Step 4**: Click **Generate**.
+
+**Expected Output**: The dashboard displays your Bearer token **once**:
+
+[source,text]
+----
+Your API Key (save this securely):
+
+eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhbGljZUBleGFtcGxlLmNvbSIsImdyb3VwcyI6WyJkYXRhLXNjaWVuY2UtdGVhbSIsInN5c3RlbTphdXRoZW50aWNhdGVkIl0sInRpZXIiOiJwcmVtaXVtIiwiaWF0IjoxNzEzOTg0MDAwLCJleHAiOjE3MjE3NjAwMDB9.signature...
+
+⚠️  This token will not be shown again. Store it securely.
+----
+
+[WARNING]
+====
+**Security Best Practices**:
+
+* Store tokens in secret management systems (Vault, Kubernetes Secrets, AWS Secrets Manager)
+* Never commit tokens to version control (Git, SVN)
+* Rotate tokens regularly (30-90 day expiration recommended)
+* Revoke tokens immediately if compromised
+====
+
+**Step 5**: Copy the token and store it securely.
+
+**Verification**: Your API key appears in the list:
+
+[source,text]
+----
+API Keys:
+
+Name                          Created        Expires        Status
+my-app-production-key         2024-04-24     2024-07-23     Active
+legacy-app-key                2024-03-10     2024-06-08     Active
+test-integration-key          2024-04-20     2024-05-20     Active
+----
+
+== Testing Token Validity
+
+Before integrating the token into an application, verify it works:
+
+**Step 1**: Export the token as an environment variable:
+
+[source,bash]
+----
+$ export MAAS_TOKEN="eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+----
+
+**Step 2**: Query the MaaS gateway to retrieve the URL:
+
+[source,bash]
+----
+$ export MAAS_URL=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+$ echo $MAAS_URL
+maas.apps.cluster.example.com
+----
+
+**Step 3**: Test authentication with a simple `/v1/models` request:
+
+[source,bash]
+----
+$ curl -s https://${MAAS_URL}/v1/models \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" | jq '.data[].id'
+----
+
+**Expected Output** (valid token):
+
+[source,json]
+----
+"nemotron-nano-4b"
+"llama-3-8b"
+----
+
+**Error Output** (invalid or expired token):
+
+[source,json]
+----
+{
+  "error": {
+    "message": "Unauthorized: Invalid or expired token",
+    "type": "authentication_error",
+    "code": "unauthorized"
+  }
+}
+----
+
+✓ If you see model names, your token is valid and ready for application integration.
+
+== Revoking API Keys
+
+**When to Revoke**:
+
+* Token compromised or exposed in logs
+* Team member leaves the organization
+* Application decommissioned
+* Rotating credentials as part of security policy
+
+**Step 1**: Navigate to **Gen AI Studio → API Keys**.
+
+**Step 2**: Locate the key to revoke, click the **⋮** (kebab menu), and select **Revoke**.
+
+**Immediate Impact**: All API requests using this token receive `401 Unauthorized` within seconds.
+
+== Developer Dashboard vs. Platform Dashboard
+
+[cols="2,3,3"]
+|===
+|Feature |Gen AI Studio (Developer) |OpenShift AI Dashboard (Platform)
+
+|Purpose
+|Consume models via API
+|Deploy models and configure infrastructure
+
+|Audience
+|Developers, Data Scientists, Application Teams
+|Platform Engineers, Cluster Admins
+
+|Model Visibility
+|Only models accessible by your tier
+|All models in the cluster
+
+|Capabilities
+|View catalog, generate tokens, test models
+|Deploy models, configure tiers, manage resources
+
+|Access Control
+|Tier-based (Free, Premium, Enterprise)
+|RBAC-based (admin, edit, view)
+|===
+
+A developer uses Gen AI Studio to discover and consume models. A platform engineer uses the administrative dashboard to deploy models and configure governance.
+
+== Common Discovery Patterns
+
+**Scenario 1: Finding the Right Model**
+
+Developer: "I need a small, fast model for product description generation."
+
+Gen AI Studio workflow:
+
+1. Browse **Models** catalog
+2. Filter by model size (e.g., 4B-8B parameters)
+3. Check tier access (ensure your tier can use it)
+4. Test in Playground (next section) before integration
+5. Generate API key and integrate
+
+**Scenario 2: Understanding Access Restrictions**
+
+Developer: "Why am I getting 403 Forbidden for `qwen-8b-fp8`?"
+
+Gen AI Studio workflow:
+
+1. Navigate to **Models** and locate `qwen-8b-fp8`
+2. Check **Tier access**: Shows "Premium, Enterprise"
+3. Navigate to **Settings → Tiers** and check your tier: Shows "Free (Level 0)"
+4. Contact platform team to request Premium access or use a different model
+
+**Scenario 3: Token Expiration**
+
+Developer: "My application stopped working after 90 days."
+
+Gen AI Studio workflow:
+
+1. Navigate to **API Keys**
+2. Locate expired key: Shows "Status: Expired"
+3. Generate new key with same scopes
+4. Update application secrets with new token
+5. Revoke old token for audit trail
+
+== What's Next
+
+Now that you can discover models and generate credentials, the next lab section demonstrates how to consume the OpenAI-compatible API—making REST calls to `/v1/models` and `/v1/chat/completions`, testing models in the MaaS Playground, and understanding the API request/response structure.
+
+////
+Section Notes:
+- Based on design doc Module 5, Section 5.1
+- Developer perspective (not platform engineer)
+- Focused on Gen AI Studio navigation and token generation
+- Business narrative: eliminating ticket-driven access requests
+- Security best practices for token management
+- Verification steps with expected outputs
+- Clear distinction: consumer dashboard vs platform dashboard
+- Troubleshooting scenarios for common access issues
+- Prepares reader for hands-on API integration labs
+////

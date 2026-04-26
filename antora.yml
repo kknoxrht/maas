@@ -6,7 +6,7 @@ nav:
 - modules/LABENV/nav.adoc
 - modules/ch1-utility-ai/nav.adoc
 - modules/ch2-platform-admin/nav.adoc
-- modules/ch3-model-deployment/nav.adoc
-- modules/ch4-governance/nav.adoc
+- modules/ch3-governance/nav.adoc
+- modules/ch4-model-deployment/nav.adoc
 - modules/ch5-api-integration/nav.adoc
 - modules/appendix/nav.adoc
