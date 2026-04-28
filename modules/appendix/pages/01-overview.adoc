@@ -1,0 +1,105 @@
+= Workshop overview
+include::partial$_attributes.adoc[]
+
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== Your role and mission
+
+You're a Platform Engineer at ChocoTech Industries, a modern chocolate manufacturing company, and you've been assigned to solve a critical infrastructure challenge affecting multiple business units.
+
+ChocoTech has teams across Quality Control, R&D, Marketing, and Supply Chain all trying to leverage AI for their operations. However, each team purchased their own GPU infrastructure, leading to the "GPU Silo Crisis."
+
+**Your assignment**: Design and implement a Models as a Service (MaaS) platform on Red Hat OpenShift AI to transform fragmented GPU resources into a centralized, governed model hub.
+
+**The objective**: Enable lines of business to access generative AI models through a self-service catalog with proper governance, eliminating resource waste and accelerating business innovation.
+
+== Success criteria for your mission
+
+By the end of this workshop, you'll have practical MaaS implementation skills to address ChocoTech's GPU infrastructure challenges:
+
+* Understand the business impact of the GPU silo crisis and articulate how MaaS prevents "Shadow AI" → **eliminate redundant deployments and resource waste**
+* Configure the MaaS platform through OpenShift AI operator CRDs → **establish centralized model serving infrastructure**
+* Deploy models using distributed inference with llm-d and vLLM → **enable efficient GPU utilization across multiple accelerators**
+* Implement governance tiers with rate limiting and quotas using Kuadrant → **ensure fair resource allocation and compliance**
+* Generate usage metrics and chargeback reports → **provide visibility into model consumption and justify infrastructure costs**
+* Integrate models into applications via OpenAI-compatible APIs → **enable developers to consume AI capabilities without infrastructure complexity**
+
+**Technical outcome**: You'll have hands-on experience deploying and operating a production-ready MaaS platform that solves real business challenges.
+
+**Business benefit**: Centralized model catalog with governed access that reduces costs, improves compliance, and accelerates AI application development.
+
+== Target audience
+This workshop is designed for:
+
+* Platform Engineers responsible for GPU infrastructure and AI platform operations
+* AI/ML Platform Administrators managing model serving and governance
+* Developers building agentic applications that consume AI models
+* Technical professionals evaluating MaaS adoption for enterprise AI initiatives
+
+== What you need to succeed
+You should have:
+
+* Red Hat OpenShift administration experience - you've managed clusters and operators
+* Kubernetes fundamentals - you understand pods, services, and custom resources
+* Basic GPU concepts - you know why AI workloads need accelerators
+* API integration knowledge - you've worked with REST APIs and authentication tokens
+* Access to a computer with internet connectivity and SSH client
+
+== ChocoTech Industries' GPU infrastructure challenges
+
+**The situation**: ChocoTech Industries has invested heavily in AI across multiple business units, but their decentralized approach created serious operational problems.
+
+**Current state**: Four teams independently purchased and deployed GPU infrastructure:
+
+* **Quality Control team**: Running computer vision models for defect detection on 2x A100 GPUs
+* **R&D team**: Testing recipe optimization and flavor prediction models on 4x L40S GPUs
+* **Marketing team**: Analyzing customer sentiment and demand forecasting on 2x L4 GPUs
+* **Supply Chain team**: Running inventory prediction models on 2x L40S GPUs
+
+**Operational pain points identified**:
+
+* **GPU under-utilization and over-provisioning**: Quality Control's GPUs sit idle 60% of the time while R&D waits weeks for capacity, leading to unnecessary $200,000+ hardware purchases
+* **Misallocation of engineering expertise**: Data scientists spend 40% of their time debugging CUDA drivers, Docker containers, and Kubernetes manifests instead of tuning models and analyzing data
+* **Redundant model deployments**: All four teams independently downloaded and deployed Llama-3 8B, wasting 32GB of storage and compute capacity per deployment
+* **Security "Black Boxes"**: Without a centralized API gateway, there is zero visibility into who is sending what data to which model, making audit logs and PII filtering nearly impossible to enforce for compliance
+* **No way to track usage or forecast needs**: Finance cannot justify GPU infrastructure costs without visibility into model usage across users, applications, and different models
+
+**The opportunity**: MaaS transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane where centralized IT manages the inference strategy, hardware allocation, and governance policies while lines of business consume AI capabilities via tokens.
+
+**Technical perspective**: "We need to transition from hardware management to token delivery. MaaS provides the wiring layer (KServe, Kuadrant, Gateway API) and governance framework (tiers, rate limits, quotas) to make this shift possible."
+
+== Your vision of success
+
+If MaaS implementation succeeds for ChocoTech, here's the potential impact:
+
+**Immediate improvements** (short-term):
+
+* **Eliminated redundancy**: Single Llama-3 8B deployment serves all four teams → 75% reduction in storage and compute waste
+* **Fair resource allocation**: Tier-based quotas prevent Quality Control from monopolizing GPUs while R&D waits → balanced access across business units
+* **Complete audit trail**: Every API request logged with user identity, model accessed, and tokens consumed → compliance requirements satisfied
+* **Simplified developer experience**: Marketing team integrates models via OpenAI-compatible API in hours instead of weeks → faster time to value
+
+**Strategic benefits** (longer-term):
+
+* **Accurate chargeback**: Token-based consumption tracking enables Finance to bill departments based on actual usage → justify infrastructure investments
+* **Centralized catalog governance**: Platform team controls which models are available, preventing "Shadow AI" deployments → standardization and security
+* **Better resource utilization**: Autoscaling and distributed inference maximize GPU efficiency → infrastructure costs reduced by 40-50%
+* **Accelerated innovation**: Developers focus on building applications instead of managing infrastructure → increased team productivity and business agility
+
+**Success metric**: ChocoTech can demonstrate to leadership that MaaS reduced GPU infrastructure costs, improved compliance posture, and accelerated AI application delivery across all business units.
+
+== Common questions
+
+**"Can we integrate MaaS with our existing AI models without major changes?"**
+→ Yes. Module 3 demonstrates deploying existing models from Hugging Face and custom model repositories using llm-d and vLLM serving runtimes
+
+**"What about security and compliance considerations?"**
+→ Module 4 covers governance policies including rate limiting, tier-based access control, and audit logging through the Kuadrant policy layer
+
+**"How does this integrate with our current application development workflows?"**
+→ Module 5 shows OpenAI-compatible API integration that works with existing LangChain, LlamaIndex, and custom application frameworks
+
+**"Is MaaS adoption sustainable for our team with limited Kubernetes expertise?"**
+→ The workshop demonstrates operator-based configuration through OpenShift AI CRDs, minimizing low-level Kubernetes knowledge requirements while providing self-service capabilities via the dashboard

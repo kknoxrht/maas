@@ -1,4 +1,4 @@
-= Red Hat OpenShift AI: Solving the GPU Silo with MaaS Enablement
+= Solving the GPU Silo with Model as a Service (MaaS)
 :navtitle: Home
 
 [.lead]

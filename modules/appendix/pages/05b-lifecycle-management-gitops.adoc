@@ -1,0 +1,771 @@
+= Exercise 6: Production lifecycle management and GitOps
+
+ChocoTech's Quality Control team has been successfully using Llama-3 8B for defect analysis for several weeks. Now they want to upgrade to a new version that has been fine-tuned on chocolate manufacturing defects.
+
+"We can't risk downtime," explains the QC Director. "Our production line depends on real-time defect detection. Can we test the new model with 10% of traffic first, then gradually roll it out if it performs well?"
+
+This is a classic production deployment challenge: how do you safely update AI models without disrupting business-critical workloads?
+
+In this exercise, you'll learn production-grade model lifecycle management including version management, canary deployments, GitOps integration with Argo CD, and rollback procedures.
+
+== Version management strategy
+
+Production AI systems require disciplined version management for models, just like application code.
+
+=== Semantic versioning for models
+
+Use semantic versioning to track model releases:
+
+* **v1.0.0** - Initial production release
+* **v1.1.0** - Minor improvement (fine-tuning, hyperparameter optimization)
+* **v2.0.0** - Major change (architecture change, new training data)
+
+**ChocoTech versioning example:**
+
+----
+Model Storage Path Structure:
+s3://chocotech-models/
+├── llama3-8b-defect-analysis/
+│   ├── v1.0.0/  (Base Llama-3 8B Instruct)
+│   ├── v1.1.0/  (Fine-tuned on chocolate defect images - 500 examples)
+│   └── v2.0.0/  (Fine-tuned on chocolate defect images - 5000 examples + multimodal)
+----
+
+=== Deploying multiple versions simultaneously
+
+Create separate LLMInferenceService resources for each version:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v1
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  model:
+    name: llama3-8b-defect-analysis
+    source: s3
+    storage:
+      path: s3://chocotech-models/llama3-8b-defect-analysis/v1.0.0/
+      key: model-storage-connection
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 2
+    maxReplicas: 5
+  maasConfig:
+    publishToGenAIStudio: true
+    tierAccess:
+      - gold
+      - platinum
+----
+
+Notice the `app.kubernetes.io/version` label tracks the semantic version, while the resource name includes the version (`llama3-defect-v1`).
+
+=== Verification: Deploy v1 and v2 side-by-side
+
+For this exercise, simulate having two versions by deploying the same Llama-3 8B model with different names (in production, these would be different model versions):
+
+Create v1 deployment:
+
+[source,role="execute"]
+----
+cat > llama3-defect-v1.yaml <<EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v1
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "1.0.0"
+    environment: production
+spec:
+  model:
+    name: meta-llama/Meta-Llama-3-8B-Instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 1
+    maxReplicas: 2
+  maasConfig:
+    publishToGenAIStudio: false
+    tierAccess:
+      - gold
+      - platinum
+EOF
+oc apply -f llama3-defect-v1.yaml
+----
+
+Create v2 deployment (canary version):
+
+[source,role="execute"]
+----
+cat > llama3-defect-v2.yaml <<EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v2
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "2.0.0"
+    environment: canary
+spec:
+  model:
+    name: meta-llama/Meta-Llama-3-8B-Instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 1
+    maxReplicas: 1
+  maasConfig:
+    publishToGenAIStudio: false
+    tierAccess:
+      - gold
+      - platinum
+EOF
+oc apply -f llama3-defect-v2.yaml
+----
+
+Wait for both deployments to be ready:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready llminferenceservice/llama3-defect-v1 -n chocotech-models --timeout=600s
+oc wait --for=condition=ready llminferenceservice/llama3-defect-v2 -n chocotech-models --timeout=600s
+----
+
+Verify both versions are running:
+
+[source,role="execute"]
+----
+oc get llminferenceservice -n chocotech-models -l app.kubernetes.io/name=llama3-defect-analysis
+----
+
+Expected output:
+
+----
+NAME               READY   REASON   AGE
+llama3-defect-v1   True    Ready    5m
+llama3-defect-v2   True    Ready    3m
+----
+
+You now have two versions deployed simultaneously, ready for canary traffic splitting.
+
+== Canary deployments with traffic splitting
+
+Canary deployments gradually shift traffic from the old version to the new version, allowing you to monitor performance and catch issues before full rollout.
+
+=== Traffic splitting with Gateway API
+
+OpenShift AI MaaS uses Gateway API HTTPRoute resources for traffic management. Create a canary route that splits traffic between v1 (90%) and v2 (10%):
+
+[source,role="execute"]
+----
+cat > llama3-defect-canary-route.yaml <<EOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: llama3-defect-canary
+  namespace: chocotech-models
+spec:
+  parentRefs:
+    - name: maas-default-gateway
+      namespace: redhat-ods-applications
+  hostnames:
+    - "llama3-defect.apps.{cluster_domain}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1/
+      backendRefs:
+        - name: llama3-defect-v1-predictor-00001
+          port: 8080
+          weight: 90
+        - name: llama3-defect-v2-predictor-00001
+          port: 8080
+          weight: 10
+EOF
+oc apply -f llama3-defect-canary-route.yaml
+----
+
+**How canary traffic splitting works:**
+
+----
+Incoming Requests (100%)
+         │
+         ▼
+    MaaS Gateway
+         │
+    ┌────┴────┐
+    │         │
+   90%       10%
+    │         │
+    ▼         ▼
+  v1.0.0    v2.0.0
+(Production) (Canary)
+----
+
+90% of requests go to the stable v1 deployment, while 10% are routed to the new v2 canary version.
+
+=== Monitoring canary performance
+
+During the canary period, monitor key metrics:
+
+**Success rate:**
+
+[source,role="execute"]
+----
+# Count successful requests for v1
+oc logs -l app.kubernetes.io/version=1.0.0 -n chocotech-models | grep "HTTP/1.1 200" | wc -l
+
+# Count successful requests for v2
+oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models | grep "HTTP/1.1 200" | wc -l
+----
+
+**Error rate:**
+
+[source,role="execute"]
+----
+# Count errors for v2 canary
+oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models | grep -E "HTTP/1.1 [45][0-9]{2}" | wc -l
+----
+
+**Latency comparison:**
+
+Check average response times in model logs or use Prometheus metrics (covered in Module 4):
+
+----
+# Example PromQL query for latency comparison
+histogram_quantile(0.95,
+  rate(vllm_llmd_request_duration_seconds_bucket{version="2.0.0"}[5m])
+)
+----
+
+**ChocoTech canary success criteria:**
+
+* Error rate < 2% for v2 canary
+* P95 latency < 500ms for v2 canary
+* Quality Control team manually validates defect detection accuracy on test images
+* Monitor for 2 hours before promotion decision
+
+=== Promoting canary to production
+
+If canary metrics meet success criteria, gradually increase traffic to v2:
+
+**Increase canary to 50%:**
+
+[source,role="execute"]
+----
+oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v1-predictor-00001", "port": 8080, "weight": 50},
+          {"name": "llama3-defect-v2-predictor-00001", "port": 8080, "weight": 50}
+        ]
+      }
+    ]
+  }
+}'
+----
+
+**After monitoring 50/50 split for 1 hour, promote to 100% v2:**
+
+[source,role="execute"]
+----
+oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v2-predictor-00001", "port": 8080, "weight": 100}
+        ]
+      }
+    ]
+  }
+}'
+----
+
+Once v2 is fully promoted and stable, you can safely delete the v1 deployment:
+
+[source,role="execute"]
+----
+oc delete llminferenceservice llama3-defect-v1 -n chocotech-models
+----
+
+=== Rolling back a failed canary
+
+If the canary version shows problems (high error rate, poor quality, latency spikes), immediately roll back to 100% v1:
+
+[source,role="execute"]
+----
+oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v1-predictor-00001", "port": 8080, "weight": 100}
+        ]
+      }
+    ]
+  }
+}'
+----
+
+Then investigate the v2 deployment issue before attempting another canary.
+
+== GitOps integration with Argo CD
+
+For production environments, use GitOps to manage model deployments declaratively from a Git repository.
+
+=== Git repository structure
+
+Create a Git repository with environment-based structure:
+
+----
+chocotech-maas-models/
+├── README.md
+├── base/
+│   ├── kustomization.yaml
+│   └── llminferenceservice-template.yaml
+├── environments/
+│   ├── dev/
+│   │   ├── kustomization.yaml
+│   │   └── model-config.yaml
+│   ├── staging/
+│   │   ├── kustomization.yaml
+│   │   └── model-config.yaml
+│   └── production/
+│       ├── kustomization.yaml
+│       └── model-config.yaml
+└── versions/
+    ├── v1.0.0/
+    │   └── model-metadata.yaml
+    └── v2.0.0/
+        └── model-metadata.yaml
+----
+
+=== Base LLMInferenceService template
+
+Create a reusable template with placeholders:
+
+[source,yaml]
+----
+# base/llminferenceservice-template.yaml
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: MODEL_NAME
+  namespace: NAMESPACE
+  labels:
+    app.kubernetes.io/name: MODEL_APP_NAME
+    app.kubernetes.io/version: MODEL_VERSION
+    environment: ENVIRONMENT
+spec:
+  model:
+    name: MODEL_HF_NAME
+    source: MODEL_SOURCE
+  runtime:
+    name: vllm
+    version: VLLM_VERSION
+  resources:
+    limits:
+      nvidia.com/gpu: GPU_COUNT
+    requests:
+      nvidia.com/gpu: GPU_COUNT
+      memory: MEMORY_REQUEST
+  scaling:
+    minReplicas: MIN_REPLICAS
+    maxReplicas: MAX_REPLICAS
+  maasConfig:
+    publishToGenAIStudio: PUBLISH_TO_CATALOG
+    tierAccess: TIER_ACCESS_LIST
+----
+
+=== Environment-specific overlays
+
+Production environment overlay with Kustomize:
+
+[source,yaml]
+----
+# environments/production/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: chocotech-models-prod
+
+resources:
+  - ../../base/llminferenceservice-template.yaml
+
+patches:
+  - target:
+      kind: LLMInferenceService
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: llama3-defect-v2
+      - op: replace
+        path: /metadata/labels/app.kubernetes.io~1version
+        value: "2.0.0"
+      - op: replace
+        path: /spec/model/name
+        value: meta-llama/Meta-Llama-3-8B-Instruct
+      - op: replace
+        path: /spec/resources/limits/nvidia.com~1gpu
+        value: 1
+      - op: replace
+        path: /spec/scaling/minReplicas
+        value: 3
+      - op: replace
+        path: /spec/scaling/maxReplicas
+        value: 10
+      - op: replace
+        path: /spec/maasConfig/publishToGenAIStudio
+        value: true
+----
+
+Development environment uses lower resource requests:
+
+[source,yaml]
+----
+# environments/dev/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: chocotech-models-dev
+
+resources:
+  - ../../base/llminferenceservice-template.yaml
+
+patches:
+  - target:
+      kind: LLMInferenceService
+    patch: |-
+      - op: replace
+        path: /spec/scaling/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/scaling/maxReplicas
+        value: 2
+      - op: replace
+        path: /spec/maasConfig/publishToGenAIStudio
+        value: false
+----
+
+=== Argo CD Application for automated sync
+
+Create an Argo CD Application to continuously sync the Git repository to the cluster:
+
+[source,yaml]
+----
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chocotech-models-production
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chocotech/maas-models.git
+    targetRevision: main
+    path: environments/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: chocotech-models-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m
+----
+
+**How GitOps workflow works for ChocoTech:**
+
+----
+1. Data Scientist commits new model version to Git
+   ├─> Git: environments/production/kustomization.yaml (updated model path)
+
+2. Argo CD detects change
+   ├─> Compares Git state vs cluster state
+   ├─> Identifies drift: model version v1.0.0 → v2.0.0
+
+3. Argo CD syncs automatically
+   ├─> Applies Kustomize overlay
+   ├─> Updates LLMInferenceService in cluster
+
+4. OpenShift AI operator reconciles
+   ├─> Downloads new model version
+   ├─> Performs rolling update
+   ├─> Updates MaaS catalog
+
+5. Platform Engineer monitors sync status
+   ├─> Argo CD dashboard shows sync health
+   ├─> Model deployment progresses: Downloading → Loading → Ready
+----
+
+Apply the Argo CD application (if Argo CD is installed):
+
+NOTE: This step requires OpenShift GitOps operator. If not installed, skip this section and use manual `oc apply` workflow.
+
+[source,role="execute"]
+----
+cat > argocd-chocotech-models.yaml <<EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chocotech-models-production
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chocotech/maas-models.git
+    targetRevision: main
+    path: environments/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: chocotech-models
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+EOF
+# Only apply if OpenShift GitOps is installed
+oc apply -f argocd-chocotech-models.yaml
+----
+
+=== Rollback with GitOps
+
+To rollback a bad deployment using GitOps:
+
+**Option 1: Git revert (recommended)**
+
+[source,bash]
+----
+cd chocotech-maas-models
+git log --oneline
+# Identify the commit that introduced the bad version
+git revert abc123
+git push origin main
+# Argo CD automatically syncs the rollback
+----
+
+**Option 2: Manual sync to previous commit**
+
+In Argo CD UI:
+
+1. Navigate to `chocotech-models-production` application
+2. Click "History and Rollback"
+3. Select previous successful deployment
+4. Click "Rollback"
+
+Argo CD reverts the cluster state to match the selected Git commit.
+
+== Automated testing in CI/CD pipeline
+
+Integrate model validation into your GitOps pipeline before production deployment:
+
+[source,yaml]
+----
+# .github/workflows/model-validation.yaml
+name: Validate Model Deployment
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'environments/production/**'
+
+jobs:
+  validate-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Validate Kustomize manifests
+        run: |
+          kustomize build environments/production > rendered.yaml
+          kubectl apply --dry-run=client -f rendered.yaml
+
+      - name: Test model inference (staging environment)
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: |
+          # Test that model responds correctly
+          response=$(curl -X POST "$STAGING_API_URL/v1/chat/completions" \
+            -H "Authorization: Bearer $STAGING_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+              "messages": [{"role": "user", "content": "Test query"}],
+              "max_tokens": 50
+            }')
+
+          # Verify response contains expected fields
+          echo "$response" | jq -e '.choices[0].message.content' || exit 1
+
+      - name: Performance benchmark
+        run: |
+          # Run load test to ensure latency requirements
+          # Example: 100 requests, P95 latency < 500ms
+          ./scripts/benchmark-model.sh --requests 100 --p95-threshold 500
+
+      - name: Comment PR with validation results
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Model validation passed. Safe to merge.'
+            })
+----
+
+This CI/CD pipeline ensures that:
+
+* Kustomize manifests are syntactically valid
+* Model responds correctly to test queries
+* Performance meets latency requirements
+* Pull requests show validation status before merge
+
+== Best practices for production lifecycle management
+
+**Version management:**
+
+* Always use semantic versioning for model releases
+* Keep at least one previous version deployed for instant rollback
+* Store model artifacts in versioned S3/PVC paths
+* Tag LLMInferenceService resources with version labels
+
+**Canary deployments:**
+
+* Start with 10% canary traffic, monitor for at least 1 hour
+* Define success criteria before deployment (error rate, latency, quality metrics)
+* Gradually increase canary traffic: 10% → 25% → 50% → 100%
+* Have rollback plan ready before starting canary
+
+**GitOps adoption:**
+
+* Use Git as the single source of truth for all model deployments
+* Separate environments (dev/staging/production) with different configurations
+* Enable automated sync for non-production, require approval for production
+* Use Kustomize overlays for environment-specific configuration
+
+**Monitoring and observability:**
+
+* Track model version in all logs and metrics
+* Monitor error rates, latency (TTFT, TPOT), and GPU utilization per version
+* Set up alerts for canary failure conditions
+* Retain logs for at least 30 days for incident investigation
+
+**Change management:**
+
+* Test model changes in dev → staging → production progression
+* Require peer review for production model updates
+* Document rollback procedures and test them regularly
+* Schedule model updates during low-traffic periods
+
+== Learning checkpoint
+
+You should now be able to:
+
+* ✓ Deploy multiple model versions simultaneously using semantic versioning
+* ✓ Implement canary deployments with traffic splitting via Gateway API
+* ✓ Monitor canary performance and make promotion decisions
+* ✓ Roll back failed deployments quickly
+* ✓ Use GitOps (Argo CD) for declarative model lifecycle management
+* ✓ Structure Git repositories for environment-based model configuration
+* ✓ Integrate automated testing into CI/CD pipelines
+
+**ChocoTech production readiness:**
+
+Quality Control now has confidence that model updates won't disrupt their production defect detection system. They can safely test new fine-tuned models with canary deployments, monitor quality metrics, and roll back if issues arise - all without manual intervention.
+
+== Troubleshooting
+
+**Issue:** Canary traffic is not splitting correctly (all traffic goes to one version)
+
+**Solution:**
+
+. Verify HTTPRoute weights sum to 100: `oc get httproute llama3-defect-canary -n chocotech-models -o yaml | grep weight`
+. Check that both backend services exist: `oc get svc -n chocotech-models | grep llama3-defect`
+. Verify Gateway API is routing through MaaS gateway: `oc describe httproute llama3-defect-canary -n chocotech-models`
+. Test with `curl` and observe response headers to confirm version distribution
+
+**Issue:** Argo CD Application stuck in "OutOfSync" state
+
+**Solution:**
+
+. Check Argo CD application health: `oc get application chocotech-models-production -n openshift-gitops -o yaml`
+. Common causes:
+  * Kustomize build errors: Run `kustomize build environments/production` locally to validate
+  * Namespace doesn't exist: Argo CD should create it, but verify with `oc get namespace chocotech-models-prod`
+  * Resource conflicts: Check if resources already exist from manual deployment
+. Force sync in Argo CD UI or via CLI: `argocd app sync chocotech-models-production --force`
+
+**Issue:** Model rollback via Git revert doesn't trigger re-deployment
+
+**Solution:**
+
+. Verify Argo CD automated sync is enabled: `oc get application chocotech-models-production -n openshift-gitops -o jsonpath='{.spec.syncPolicy.automated}'`
+. Check Argo CD is monitoring the correct branch: `oc get application chocotech-models-production -n openshift-gitops -o jsonpath='{.spec.source.targetRevision}'`
+. Manually trigger sync if needed: `argocd app sync chocotech-models-production`
+. Verify Git commit was pushed to remote: `git log origin/main`
+
+**Issue:** New model version downloads successfully but fails to load with CUDA errors
+
+**Solution:**
+
+. Check GPU availability on node: `oc describe node -l nvidia.com/gpu.present=true | grep "Allocated resources" -A 10`
+. Verify vLLM version compatibility with model: Some models require specific vLLM versions
+. Check model logs for detailed error: `oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models --tail=100`
+. Common causes: insufficient VRAM, incompatible quantization, model architecture not supported by vLLM
+
+**Issue:** CI/CD pipeline fails model validation even though model works locally
+
+**Solution:**
+
+. Verify staging environment has sufficient resources: Model may be resource-constrained in staging
+. Check API key is valid and has correct tier access: Expired or wrong tier tokens cause 401/403 errors
+. Validate test query is appropriate for model: Complex queries may timeout in validation pipeline
+. Check network connectivity from CI/CD runner to staging cluster
+. Review GitHub Actions logs for specific error messages

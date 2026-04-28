@@ -1,0 +1,673 @@
+= Module 5: API integration and consumer experience
+include::partial$_attributes.adoc[]
+
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+A developer from ChocoTech's Marketing team approaches you with excitement. "We've been building a customer sentiment analysis application using OpenAI's ChatGPT API," she explains. "Can we switch to using the internal MaaS models instead? We want to keep customer data on-premises and reduce external API costs."
+
+This is exactly the use case MaaS enables. Your task is to show the development team how to generate API tokens, integrate models using the OpenAI-compatible API, and implement proper error handling for rate limits.
+
+In this module, you'll navigate the Gen AI Studio interface, generate Bearer tokens for authentication, consume models via the OpenAI-compatible API, and implement retry logic for production applications.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Navigate the Gen AI Studio dashboard to discover available models
+* Generate API tokens with proper scope and expiration settings
+* Make REST API calls to `/v1/models` and `/v1/chat/completions` endpoints
+* Implement OpenAI-compatible API integration in existing applications
+* Handle rate limiting responses (429 status) with exponential backoff retry logic
+* Understand token consumption tracking and quota management
+
+== Exercise 1: Generate API tokens in Gen AI Studio
+
+Before making API calls, developers need to generate Bearer tokens for authentication. Gen AI Studio provides a self-service interface for token generation.
+
+API tokens authenticate users and determine their tier-based access level and quotas.
+
+=== Navigate to Gen AI Studio
+
+. Open the OpenShift AI dashboard: {rhoai_dashboard_url}
+. Log in with your credentials:
+  * Username: {user}
+  * Password: {password}
+. Click **Gen AI Studio** in the left navigation menu
+
+You should see the Gen AI Studio interface with three tabs:
+
+* **Models** - Discover available models in the catalog
+* **API tokens** - Generate Bearer tokens for authentication
+* **Usage** - View token consumption and quota status
+
+=== Explore the model catalog
+
+Click on the **Models** tab to see the catalog of available models.
+
+You should see the models you deployed in Module 3:
+
+----
+Model: meta-llama/Meta-Llama-3-8B-Instruct
+Status: Available
+Tier Access: Bronze, Silver, Gold, Platinum
+Endpoint: /v1/chat/completions
+
+Model: nvidia/nemotron-4-8b-instruct
+Status: Available
+Tier Access: Bronze, Silver
+Endpoint: /v1/chat/completions
+----
+
+Notice that models show which tiers can access them. Since your user is in the chocotech-quality-control group (Platinum tier), you can access all models.
+
+// TODO: Add screenshot of Gen AI Studio model catalog
+image::genai-studio-models-catalog.png[Gen AI Studio Models tab showing available models with tier access information,link=self,window=blank,width=800,title="Gen AI Studio Model Catalog"]
+
+=== Generate an API token
+
+Click on the **API tokens** tab.
+
+Click the **Generate new token** button.
+
+Configure the token:
+
+* **Token name**: `marketing-sentiment-app`
+* **Description**: `Token for Marketing team sentiment analysis application`
+* **Expiration**: `30 days` (or select appropriate expiration for your use case)
+* **Scope**: `Full access` (all models available to your tier)
+
+Click **Generate**.
+
+The dashboard displays your Bearer token:
+
+----
+Token: eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiJhZG1pbiIsImdyb3VwcyI6WyJjaG9jb3RlY2gtcXVhbGl0eS1jb250cm9sIl0sInRpZXIiOiJwbGF0aW51bSIsImV4cCI6MTcxNzE4MDgwMH0...
+----
+
+IMPORTANT: Copy this token immediately and store it securely. For security reasons, it will not be shown again.
+
+Click **Copy token** to copy it to your clipboard.
+
+=== Verify token details
+
+The API tokens tab shows your active tokens:
+
+----
+Token Name: marketing-sentiment-app
+Created: 2026-04-28 14:00:00
+Expires: 2026-05-28 14:00:00
+Last Used: Never
+Status: Active
+----
+
+You can revoke tokens at any time by clicking the **Revoke** button.
+
+=== Verification
+
+Confirm token generation:
+
+* Successfully navigated to Gen AI Studio interface
+* Viewed model catalog showing available models and tier access
+* Generated an API token with appropriate name and expiration
+* Copied Bearer token for use in API calls
+* Token appears in the API tokens list with Active status
+
+== Exercise 2: Consume models via OpenAI-compatible API
+
+Now that you have a Bearer token, you'll make REST API calls to list models and generate chat completions.
+
+MaaS exposes models through the OpenAI-compatible API, enabling existing applications built for ChatGPT or GPT-4 to switch to self-hosted models by changing the base URL and Bearer token.
+
+=== Set up environment variables
+
+Save your Bearer token as an environment variable:
+
+[source,role="execute"]
+----
+export MAAS_TOKEN="<paste-your-token-here>"
+----
+
+Replace `<paste-your-token-here>` with the actual token you copied from Gen AI Studio.
+
+Get the MaaS gateway URL:
+
+[source,role="execute"]
+----
+export MAAS_URL=$(oc get route maas-default-gateway -n redhat-ods-applications -o jsonpath='{.spec.host}')
+----
+
+Verify the environment variables:
+
+[source,role="execute"]
+----
+echo "MaaS Gateway: https://${MAAS_URL}"
+echo "Token starts with: ${MAAS_TOKEN:0:20}..."
+----
+
+Expected output:
+
+----
+MaaS Gateway: https://maas-default-gateway.apps.{cluster_domain}
+Token starts with: eyJhbGciOiJSUzI1Ni...
+----
+
+=== List available models
+
+Query the `/v1/models` endpoint to discover available models:
+
+[source,role="execute"]
+----
+curl -s -X GET "https://${MAAS_URL}/v1/models" \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" | jq
+----
+
+Expected output (formatted JSON):
+
+----
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "object": "model",
+      "created": 1714345678,
+      "owned_by": "chocotech-models"
+    },
+    {
+      "id": "nvidia/nemotron-4-8b-instruct",
+      "object": "model",
+      "created": 1714345690,
+      "owned_by": "chocotech-models"
+    }
+  ]
+}
+----
+
+This lists all models your tier can access. The API format matches OpenAI's `/v1/models` endpoint exactly.
+
+=== Generate a chat completion
+
+Make an inference request to `/v1/chat/completions`:
+
+[source,role="execute"]
+----
+curl -s -X POST "https://${MAAS_URL}/v1/chat/completions" \
+  -H "Authorization: Bearer ${MAAS_TOKEN}" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+    "messages": [
+      {
+        "role": "system",
+        "content": "You are a helpful assistant for ChocoTech Industries, a chocolate manufacturer."
+      },
+      {
+        "role": "user",
+        "content": "What quality control metrics should we track for chocolate production?"
+      }
+    ],
+    "max_tokens": 200,
+    "temperature": 0.7
+  }' | jq
+----
+
+Expected output (formatted JSON):
+
+----
+{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1714345700,
+  "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "For chocolate production quality control, you should track:\n\n1. Cocoa butter percentage and consistency\n2. Temperature during tempering (ideal: 27-31°C)\n3. Particle size distribution (ideally <20 microns)\n4. Moisture content (<2% for milk chocolate)\n5. Visual defect detection (blooming, cracks, color inconsistencies)\n6. Taste panel scores\n7. Packaging seal integrity\n\nThese metrics ensure consistent product quality and help identify issues early in the production process."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 45,
+    "completion_tokens": 127,
+    "total_tokens": 172
+  }
+}
+----
+
+The response includes:
+
+* **content**: The model's generated response
+* **usage**: Token consumption (prompt_tokens + completion_tokens = total_tokens)
+* **finish_reason**: Why generation stopped (stop = natural completion, length = max_tokens reached)
+
+=== Verification
+
+Confirm API functionality:
+
+* Successfully authenticated with Bearer token
+* `/v1/models` endpoint returns catalog of available models
+* `/v1/chat/completions` endpoint generates inference responses
+* Response format matches OpenAI API structure exactly
+* Token usage is tracked and returned in the response
+
+== Exercise 3: Implement retry logic for rate limiting
+
+Production applications must handle rate limiting responses (429 status) gracefully using exponential backoff retry logic.
+
+When users exceed their tier's rate limit or quota, Kuadrant returns `429 Rate Limit Exceeded` with a `Retry-After` header indicating when to retry.
+
+=== Understand rate limit responses
+
+Make multiple rapid requests to trigger rate limiting (Bronze tier: 100 req/min):
+
+[source,role="execute"]
+----
+for i in {1..10}; do
+  curl -s -w "\nHTTP Status: %{http_code}\n" -X POST "https://${MAAS_URL}/v1/chat/completions" \
+    -H "Authorization: Bearer ${MAAS_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "messages": [{"role": "user", "content": "Hi"}],
+      "max_tokens": 10
+    }' | head -5
+  sleep 0.5
+done
+----
+
+If you exceed rate limits, you'll see:
+
+----
+HTTP Status: 429
+
+{
+  "error": {
+    "message": "Rate limit exceeded. Retry after 45 seconds.",
+    "type": "rate_limit_exceeded",
+    "code": 429
+  }
+}
+----
+
+The response includes:
+
+* HTTP status `429 Rate Limit Exceeded`
+* `Retry-After` header with seconds to wait
+* Error message explaining the limit
+
+=== Implement exponential backoff retry logic
+
+Create a Python script with proper retry logic:
+
+[source,role="execute"]
+----
+cat > maas_client_with_retry.py <<'EOF'
+#!/usr/bin/env python3
+import os
+import time
+import requests
+from typing import Optional
+
+MAAS_URL = f"https://{os.getenv('MAAS_URL')}"
+MAAS_TOKEN = os.getenv('MAAS_TOKEN')
+
+def chat_completion_with_retry(
+    model: str,
+    messages: list,
+    max_retries: int = 3,
+    initial_backoff: float = 1.0
+) -> Optional[dict]:
+    """
+    Make chat completion request with exponential backoff retry logic.
+
+    Args:
+        model: Model identifier
+        messages: List of chat messages
+        max_retries: Maximum number of retry attempts
+        initial_backoff: Initial backoff delay in seconds
+
+    Returns:
+        API response dict or None if all retries failed
+    """
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": 200
+    }
+
+    backoff = initial_backoff
+
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.post(
+                f"{MAAS_URL}/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+
+            # Success
+            if response.status_code == 200:
+                return response.json()
+
+            # Rate limit exceeded
+            elif response.status_code == 429:
+                if attempt < max_retries:
+                    # Get retry-after header if present, otherwise use exponential backoff
+                    retry_after = int(response.headers.get('Retry-After', backoff))
+                    print(f"Rate limit exceeded. Retrying after {retry_after} seconds (attempt {attempt + 1}/{max_retries})")
+                    time.sleep(retry_after)
+                    backoff *= 2  # Exponential backoff for next attempt
+                else:
+                    print(f"Rate limit exceeded. Max retries ({max_retries}) reached.")
+                    return None
+
+            # Unauthorized or forbidden
+            elif response.status_code in [401, 403]:
+                print(f"Authentication error: {response.status_code}")
+                print(response.json())
+                return None
+
+            # Other errors
+            else:
+                print(f"API error: {response.status_code}")
+                print(response.json())
+                return None
+
+        except requests.exceptions.Timeout:
+            print(f"Request timeout (attempt {attempt + 1}/{max_retries})")
+            if attempt < max_retries:
+                time.sleep(backoff)
+                backoff *= 2
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            return None
+
+    return None
+
+# Test the retry logic
+if __name__ == "__main__":
+    print("Testing MaaS API with retry logic...\n")
+
+    result = chat_completion_with_retry(
+        model="meta-llama/Meta-Llama-3-8B-Instruct",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant for ChocoTech Industries."},
+            {"role": "user", "content": "What are the benefits of dark chocolate?"}
+        ],
+        max_retries=3,
+        initial_backoff=1.0
+    )
+
+    if result:
+        print("Success!")
+        print(f"Response: {result['choices'][0]['message']['content']}")
+        print(f"\nTokens used: {result['usage']['total_tokens']}")
+    else:
+        print("Failed to get response after retries.")
+EOF
+
+chmod +x maas_client_with_retry.py
+----
+
+Run the script:
+
+[source,role="execute"]
+----
+python3 maas_client_with_retry.py
+----
+
+Expected output:
+
+----
+Testing MaaS API with retry logic...
+
+Success!
+Response: Dark chocolate offers several health benefits for consumers:
+
+1. Rich in antioxidants (flavonoids) that support heart health
+2. May improve blood flow and lower blood pressure
+3. Contains minerals like iron, magnesium, and zinc
+4. May enhance brain function and mood
+5. Lower sugar content compared to milk chocolate
+
+At ChocoTech Industries, we emphasize the quality of cocoa beans and minimal processing to preserve these beneficial compounds.
+
+Tokens used: 156
+----
+
+=== Verification
+
+Confirm retry logic implementation:
+
+* Script handles 429 rate limit responses gracefully
+* Exponential backoff increases wait time between retries
+* `Retry-After` header is respected when present
+* Maximum retry attempts prevent infinite loops
+* Successful response after rate limit delay
+
+== Exercise 4: OpenAI API compatibility and migration patterns
+
+MaaS uses the OpenAI-compatible API format, making it easy to migrate existing applications from OpenAI to self-hosted models.
+
+Applications built for ChatGPT or GPT-4 can switch to MaaS models by changing two parameters: base URL and API key.
+
+=== OpenAI SDK compatibility
+
+Install the OpenAI Python SDK:
+
+[source,role="execute"]
+----
+pip install openai
+----
+
+Create a migration example showing how to switch from OpenAI to MaaS:
+
+[source,role="execute"]
+----
+cat > openai_to_maas_migration.py <<'EOF'
+#!/usr/bin/env python3
+import os
+from openai import OpenAI
+
+# BEFORE: Using OpenAI ChatGPT
+# client = OpenAI(
+#     api_key=os.getenv("OPENAI_API_KEY")
+# )
+
+# AFTER: Using MaaS (only two changes required)
+client = OpenAI(
+    base_url=f"https://{os.getenv('MAAS_URL')}/v1",  # Change 1: MaaS gateway URL
+    api_key=os.getenv("MAAS_TOKEN")                   # Change 2: MaaS Bearer token
+)
+
+# The rest of the code remains identical
+response = client.chat.completions.create(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",  # Use MaaS model instead of gpt-4
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant for ChocoTech Industries."},
+        {"role": "user", "content": "How can we reduce production waste in chocolate manufacturing?"}
+    ],
+    max_tokens=200,
+    temperature=0.7
+)
+
+print("Response from MaaS model:")
+print(response.choices[0].message.content)
+print(f"\nTokens used: {response.usage.total_tokens}")
+EOF
+
+chmod +x openai_to_maas_migration.py
+----
+
+Run the migration example:
+
+[source,role="execute"]
+----
+python3 openai_to_maas_migration.py
+----
+
+Expected output:
+
+----
+Response from MaaS model:
+To reduce production waste in chocolate manufacturing, consider these strategies:
+
+1. Implement precise temperature control during tempering to reduce rejections
+2. Optimize ingredient batching to minimize excess materials
+3. Reprocess chocolate scrap and trimmings back into production
+4. Use predictive quality control to catch defects earlier
+5. Train staff on proper handling to reduce breakage
+6. Implement just-in-time inventory management
+7. Monitor and optimize packaging material usage
+
+These approaches can significantly reduce waste while maintaining product quality.
+
+Tokens used: 148
+----
+
+=== Migration checklist for existing applications
+
+**For applications using OpenAI SDK**:
+
+. Change `base_url` to MaaS gateway endpoint
+. Replace OpenAI API key with MaaS Bearer token
+. Update model names (gpt-4 → meta-llama/Meta-Llama-3-8B-Instruct)
+. Test error handling for tier-specific rate limits
+. No other code changes required
+
+**For applications using direct REST API calls**:
+
+. Replace `https://api.openai.com/v1` with `https://<maas-gateway>/v1`
+. Replace `Authorization: Bearer sk-...` with MaaS Bearer token
+. Update model identifiers in request payloads
+. API request/response format remains identical
+
+=== Verification
+
+Confirm OpenAI compatibility:
+
+* OpenAI Python SDK works with MaaS without code changes (except base_url and api_key)
+* Existing applications can migrate by changing two configuration parameters
+* Request/response format matches OpenAI API exactly
+* Same SDK patterns work for both OpenAI and MaaS
+
+== Troubleshooting
+
+**Issue**: API returns 401 Unauthorized
+
+**Solution**:
+
+. Verify Bearer token is valid and not expired in Gen AI Studio → API tokens
+. Check token is correctly set in environment variable: `echo ${MAAS_TOKEN:0:20}`
+. Ensure Authorization header format: `Authorization: Bearer <token>` (not `Bearer: <token>`)
+. Verify token was copied correctly (no extra spaces or newlines)
+
+**Issue**: API returns 403 Forbidden
+
+**Solution**:
+
+. Your tier does not have access to the requested model
+. Check model's tier access in Gen AI Studio → Models tab
+. Verify your user group membership: `oc get user {user} -o yaml | grep groups`
+. Check which tier your group is assigned to
+. Request access from Platform Engineer to upgrade tier or publish model to your tier
+
+**Issue**: API returns 429 Rate Limit Exceeded immediately
+
+**Solution**:
+
+. You've exhausted your tier's quota (requests/min or tokens/min)
+. Check usage in Gen AI Studio → Usage tab
+. Implement exponential backoff retry logic (see Exercise 3)
+. Request tier upgrade from Platform Engineer if usage is legitimate
+. Check `Retry-After` header for when quota resets
+
+**Issue**: OpenAI SDK raises "Connection refused" error
+
+**Solution**:
+
+. Verify MaaS gateway route exists: `oc get route maas-default-gateway -n redhat-ods-applications`
+. Check MAAS_URL environment variable is correct: `echo $MAAS_URL`
+. Verify network connectivity from client to OpenShift cluster
+. Check for firewall or proxy blocking HTTPS traffic
+. Test with curl first to isolate SDK vs connectivity issues
+
+**Issue**: Model inference returns empty or truncated response
+
+**Solution**:
+
+. Check `max_tokens` parameter - may be too low for complete response
+. Increase `max_tokens` to allow longer completions (e.g., 500 or 1000)
+. Check `finish_reason` in response - if "length", tokens limit was hit
+. Verify model is healthy: `oc get llminferenceservice -n chocotech-models`
+. Check model pod logs for inference errors: `oc logs -l app=llama-3-8b -n chocotech-models`
+
+**Issue**: Requests timing out after 30 seconds
+
+**Solution**:
+
+. Large models or long prompts may take time to generate responses
+. Increase request timeout in client code (e.g., `timeout=60`)
+. Check model pod CPU/GPU utilization - may be overloaded
+. Consider using streaming responses for better user experience
+. Check for model pod issues: `oc get pods -n chocotech-models`
+
+== Learning outcomes
+
+By completing this module, you should now understand:
+
+* ✓ How to navigate Gen AI Studio to discover models and generate API tokens
+* ✓ The OpenAI-compatible API structure and endpoint patterns (`/v1/models`, `/v1/chat/completions`)
+* ✓ How to implement exponential backoff retry logic for production applications
+* ✓ How tier-based rate limiting and quotas affect API responses
+* ✓ Migration patterns for switching applications from OpenAI to self-hosted MaaS models
+* ✓ Token consumption tracking and quota management for cost visibility
+
+== Module summary
+
+You've successfully demonstrated the developer experience for consuming MaaS models via the OpenAI-compatible API.
+
+**What you accomplished for ChocoTech**:
+
+* Enabled Marketing team to switch from external OpenAI API to internal MaaS models
+* Generated API tokens with appropriate expiration and scope for application integration
+* Demonstrated OpenAI SDK compatibility for minimal migration effort
+* Implemented retry logic for production-ready error handling
+* Provided developers with self-service access to AI capabilities without infrastructure complexity
+
+**Developer experience benefits**:
+
+* **Self-service**: Developers generate API tokens without Platform Engineer involvement
+* **Familiar API**: OpenAI-compatible format reduces learning curve and enables code reuse
+* **Production-ready**: Rate limiting and retry patterns ensure reliable applications
+* **Cost visibility**: Token consumption tracking enables application-level budget management
+
+**Your journey progress**:
+
+ChocoTech now has a complete MaaS platform with governance, observability, and developer self-service capabilities. From GPU silo crisis to centralized model hub, you've transformed how the organization delivers AI capabilities.
+
+**What you've built**:
+
+* Module 1: Understood the GPU silo problem and MaaS architecture
+* Module 2: Configured the MaaS platform through OpenShift AI operator
+* Module 3: Deployed models with distributed inference to the catalog
+* Module 4: Implemented governance tiers, rate limiting, and chargeback
+* Module 5: Enabled developer API integration with OpenAI compatibility
+
+**Next steps**:
+
+The Conclusion will summarize key learning outcomes, provide reference links to Red Hat OpenShift AI documentation, and outline paths for further exploration including model optimization, fine-tuning, and production deployment patterns.

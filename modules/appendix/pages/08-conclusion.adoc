@@ -1,0 +1,271 @@
+= Conclusion
+include::partial$_attributes.adoc[]
+
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== Workshop recap
+
+Congratulations! You've successfully transformed ChocoTech Industries' fragmented GPU infrastructure into a centralized, governed Models as a Service platform.
+
+**What you accomplished**:
+
+You began with a critical business problem: expensive GPU hardware trapped in team silos, creating simultaneous idle capacity and project bottlenecks. ChocoTech's Quality Control GPUs sat unused while R&D waited weeks for capacity, and Finance had no visibility into AI infrastructure costs.
+
+Through five comprehensive modules, you implemented a complete MaaS solution:
+
+**Module 1 - Architecture foundation**:
+
+* Identified the GPU silo crisis and its business impact on ChocoTech
+* Mapped the three-layer MaaS architecture (Gateway API, Kuadrant, KServe)
+* Verified foundational components (GPU operators, OpenShift AI, Service Mesh)
+* Understood the complete request flow from API client to model serving
+
+**Module 2 - Platform administration**:
+
+* Configured MaaS through DataScienceCluster CRD operator-driven deployment
+* Enabled Gen AI Studio dashboard for self-service model access
+* Verified Gateway API resources and Kuadrant policy components
+* Activated the web interface for model discovery and token generation
+
+**Module 3 - Model deployment**:
+
+* Deployed generative AI models using LLMInferenceService with distributed inference
+* Published models to the MaaS catalog with tier-based access control
+* Demonstrated LeaderWorkerSet for multi-GPU model serving
+* Managed a multi-model catalog serving different business units
+
+**Module 4 - Governance and observability**:
+
+* Defined four governance tiers aligned with ChocoTech's business priorities
+* Configured rate limiting and token quotas using Kuadrant policies
+* Deployed Grafana for observability into model usage and GPU utilization
+* Enabled Finance to perform chargeback based on actual token consumption
+
+**Module 5 - API integration**:
+
+* Generated API tokens through Gen AI Studio self-service interface
+* Consumed models via OpenAI-compatible API with minimal migration effort
+* Implemented exponential backoff retry logic for production applications
+* Demonstrated OpenAI SDK compatibility for existing application integration
+
+== Learning outcomes
+
+By completing this workshop, you've gained practical skills across Platform Engineering and Developer domains:
+
+**Platform Engineering outcomes**:
+
+* ✓ How to diagnose and articulate the GPU silo crisis business problem
+* ✓ Configure Red Hat OpenShift AI operator CRDs to enable MaaS components
+* ✓ Deploy models using distributed inference with llm-d and vLLM runtimes
+* ✓ Implement governance tiers with Kuadrant for multi-tenant resource allocation
+* ✓ Deploy observability dashboards for GPU utilization and token consumption tracking
+* ✓ Generate chargeback reports for Finance based on actual usage by department
+
+**Developer outcomes**:
+
+* ✓ Navigate Gen AI Studio to discover models and generate API tokens
+* ✓ Integrate models into applications using OpenAI-compatible APIs
+* ✓ Implement retry logic for rate limiting and quota management
+* ✓ Migrate existing OpenAI-based applications to self-hosted models
+* ✓ Understand token consumption patterns and quota management
+
+**Architectural outcomes**:
+
+* ✓ The three-layer MaaS architecture (Gateway API, Kuadrant, KServe) and separation of concerns
+* ✓ How distributed inference with LeaderWorkerSet enables multi-GPU model serving
+* ✓ The difference between standalone KServe deployment and MaaS-integrated deployment
+* ✓ Request flow from API client through routing, policy enforcement, and model serving layers
+
+== Business impact for ChocoTech Industries
+
+Your MaaS implementation delivers measurable value across ChocoTech's organization:
+
+**Eliminated waste and redundancy**:
+
+* Single Llama-3 8B deployment serves all four teams (75% reduction in storage and compute waste)
+* Centralized catalog prevents redundant model deployments
+* GPU utilization increased from 40% to 85% through fair resource allocation
+
+**Fair resource allocation**:
+
+* Quality Control's production workload no longer competes with Marketing's exploratory queries
+* Tier-based quotas ensure balanced access across business units
+* Platform Engineer controls model availability and access policies
+
+**Cost visibility and chargeback**:
+
+* Finance can justify AI infrastructure expansion with usage data by department
+* Token-based consumption enables accurate cross-department billing
+* Infrastructure costs reduced by 40-50% through better resource utilization
+
+**Compliance and security**:
+
+* Complete audit trail of every API request with user identity tracking
+* PII filtering and access control via API gateway enforcement
+* Tier-based access prevents unauthorized model access
+
+**Accelerated innovation**:
+
+* Developers focus on building applications instead of managing infrastructure
+* Self-service model access reduces time-to-value from weeks to hours
+* OpenAI-compatible API enables code reuse and minimal migration effort
+
+== Production deployment considerations
+
+When deploying MaaS in production environments, consider these additional factors:
+
+**High availability**:
+
+* Deploy KServe InferenceService with multiple replicas for fault tolerance
+* Configure Gateway API with multiple ingress controllers for redundancy
+* Use persistent storage for model caching to reduce download times
+
+**Security hardening**:
+
+* Enable mutual TLS (mTLS) between Gateway API and KServe services
+* Implement network policies to restrict pod-to-pod communication
+* Use Red Hat OpenShift certificate management for automatic rotation
+* Enable audit logging for all API requests
+
+**Performance optimization**:
+
+* Use model quantization (int8, int4) to reduce GPU memory requirements
+* Configure vLLM prefix-caching for improved inference latency
+* Deploy models closer to consuming applications (edge vs datacenter)
+* Monitor GPU utilization and scale worker replicas based on load
+
+**Monitoring and alerting**:
+
+* Set up Prometheus alerts for GPU memory exhaustion
+* Monitor token consumption rate by tier for capacity planning
+* Alert on rate limit exceeded patterns (may indicate tier misconfiguration)
+* Track model inference latency and error rates
+
+**Disaster recovery**:
+
+* Back up MaaS tier configurations and rate limit policies
+* Document model deployment procedures and configurations
+* Maintain separate staging environment for testing operator upgrades
+* Plan for GPU node failures and model replica redistribution
+
+== Next steps and learning paths
+
+Continue your MaaS journey with these advanced topics:
+
+**Intermediate - Model optimization**:
+
+* Quantization techniques for reducing model size and improving inference speed
+* Fine-tuning models on domain-specific data (e.g., ChocoTech manufacturing processes)
+* Prompt engineering best practices for production applications
+* Model evaluation with lm-eval-harness for quality assurance
+
+**Advanced - Multi-cluster deployments**:
+
+* Federated model serving across multiple OpenShift clusters
+* Cross-cluster load balancing for high-availability inference
+* Model replication and synchronization strategies
+* Disaster recovery across geographic regions
+
+**Certification and community**:
+
+* Red Hat Certified Specialist in AI (upcoming certification program)
+* OpenShift AI community forums and GitHub repositories
+* Contribute to upstream KServe, Kuadrant, and vLLM projects
+* Join Red Hat Developer community for AI/ML practitioners
+
+**Related workshops**:
+
+* Generic GPU enablement on OpenShift (prerequisite knowledge)
+* LLMOps workflows with OpenShift Pipelines and GitOps
+* Building agentic applications with LangChain and OpenShift AI
+* Observability and monitoring for AI workloads with Grafana
+
+== References
+
+This workshop was built using official Red Hat OpenShift AI documentation and SME guidance from field solution architects.
+
+**Red Hat OpenShift AI documentation**:
+
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4[Red Hat OpenShift AI 3.4 Documentation^]
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/govern_llm_access_with_models-as-a-service/index[Govern LLM Access with Models-as-a-Service^]
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/deploy_models_using_distributed_inference_with_llm-d/index[Deploy Models Using Distributed Inference with llm-d^]
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/deploying_models/index[Deploying Models on OpenShift AI^]
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/monitoring_your_ai_systems/index[Monitoring Your AI Systems^]
+
+**Red Hat AI product information**:
+
+* link:https://access.redhat.com/articles/rhoai-supported-configs[Red Hat OpenShift AI Supported Configurations^]
+* link:https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[Red Hat OpenShift AI Product Page^]
+* link:https://developers.redhat.com/products/openshift-ai/overview[Red Hat Developer - OpenShift AI Resources^]
+
+**Component documentation**:
+
+* link:https://kserve.github.io/website/latest/[KServe Documentation^]
+* link:https://docs.kuadrant.io/[Kuadrant Documentation^]
+* link:https://gateway-api.sigs.k8s.io/[Kubernetes Gateway API Documentation^]
+* link:https://docs.vllm.ai/en/latest/[vLLM Documentation^]
+* link:https://github.com/kubernetes-sigs/lws[LeaderWorkerSet GitHub Repository^]
+
+**OpenShift platform resources**:
+
+* link:https://docs.openshift.com/container-platform/4.20/welcome/index.html[Red Hat OpenShift Container Platform 4.20 Documentation^]
+* link:https://docs.openshift.com/container-platform/4.20/virt/about_virt/about-virt.html[OpenShift Service Mesh Documentation^]
+* link:https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html[NVIDIA GPU Operator Documentation^]
+
+**Model repositories and tools**:
+
+* link:https://huggingface.co/models[Hugging Face Model Hub^]
+* link:https://platform.openai.com/docs/api-reference[OpenAI API Reference^] (for compatibility context)
+* link:https://python.langchain.com/docs/introduction/[LangChain Documentation^] (for application integration)
+
+**Community and support**:
+
+* link:https://access.redhat.com/support[Red Hat Customer Portal^]
+* link:https://developers.redhat.com/[Red Hat Developer Portal^]
+* link:https://github.com/opendatahub-io[OpenDataHub Community GitHub^]
+
+== Workshop feedback
+
+We value your feedback to improve this workshop content.
+
+**What worked well?**
+
+* Which modules were most valuable for your learning objectives?
+* What hands-on exercises helped solidify your understanding?
+* Were the ChocoTech Industries scenarios relatable and effective?
+
+**What could be improved?**
+
+* Which concepts need more explanation or examples?
+* What troubleshooting scenarios did you encounter that weren't covered?
+* What additional topics would you like to see included?
+
+**Share your feedback**:
+
+* Submit feedback via Showroom feedback interface
+* Open issues on workshop repository (link provided by facilitator)
+* Contact Red Hat Developer community forums
+
+== Final thoughts
+
+You've completed a comprehensive journey from understanding the GPU silo crisis to implementing a production-ready Models as a Service platform.
+
+The skills you've developed enable you to:
+
+* Transform fragmented GPU infrastructure into centralized, governed model serving
+* Configure Red Hat OpenShift AI for multi-tenant AI workloads
+* Deploy and manage generative AI models with proper governance and observability
+* Enable developers to consume AI capabilities through self-service APIs
+* Justify AI infrastructure investments with usage data and chargeback
+
+**The path forward**:
+
+MaaS is not just about centralizing GPU resources. It's about transforming how organizations deliver AI capabilities. Platform Engineers shift from hardware managers to service providers. Developers shift from infrastructure experts to application builders. Finance shifts from blind budget allocation to data-driven chargeback.
+
+ChocoTech Industries started with four teams, four GPU silos, and no visibility. They now have one platform, governed access, complete observability, and a foundation for scaling AI across the entire organization.
+
+Your journey doesn't end here. As generative AI continues to evolve, the principles you've learned - centralized serving, tier-based governance, token tracking, and developer self-service - will remain foundational to enterprise AI operations.
+
+Thank you for completing this workshop. Go build amazing AI applications!

@@ -1,0 +1,424 @@
+= Exercise 1: Choosing the right model for your workload
+
+Before deploying models to the MaaS platform, you need to understand which model architectures and capabilities match specific business requirements.
+
+ChocoTech's Platform Engineering team receives competing requests from four departments:
+
+* **Quality Control**: "We need a model that can analyze defect images and explain the root cause with detailed reasoning."
+* **Marketing**: "We need fast content generation for social media posts. Speed matters more than perfection."
+* **R&D**: "We want to deploy Llama-3 70B for recipe optimization, but we only have GPUs with 24GB VRAM."
+* **Supply Chain**: "We need basic chatbot capabilities for vendor inquiries. Keep it cost-effective."
+
+Each department has different requirements for model architecture, capabilities, and performance characteristics. Choosing the wrong model wastes GPU resources and fails to meet business needs.
+
+In this exercise, you'll learn how to evaluate models based on architecture (dense vs. sparse), capabilities (reasoning vs. non-reasoning), and hardware constraints to make informed deployment decisions.
+
+== Model architecture: Dense vs. sparse models
+
+Model architecture fundamentally impacts GPU memory consumption, inference speed, and deployment complexity.
+
+=== Dense models
+
+Dense models use **all parameters** for every inference operation.
+
+**Characteristics:**
+
+* Every parameter is active for every token
+* Predictable memory footprint
+* Consistent inference latency
+* Simpler deployment architecture
+
+**Examples:**
+
+* GPT-3, GPT-4
+* Llama 2, Llama 3
+* Mistral 7B
+* Granite 3.0
+* Most traditional transformer models
+
+**GPU impact:**
+
+* Memory usage = model size + KV cache + activations
+* For a 7B parameter model in FP16: approximately 14GB base memory
+* Additional memory for batch processing and KV cache
+* Memory bandwidth is the primary bottleneck
+
+**ChocoTech use case:**
+
+Marketing's content generation workload uses Llama-3 8B (dense model). The predictable memory footprint (16GB) fits comfortably on a single A10 GPU (24GB), and consistent latency ensures reliable social media post generation.
+
+=== Sparse models (Mixture of Experts)
+
+Sparse models activate only a **subset of parameters** per token using a routing mechanism.
+
+**Characteristics:**
+
+* Only a fraction of experts are active per token
+* More total parameters with less compute per token
+* Variable latency depending on routing decisions
+* Complex deployment with expert-parallelism
+
+**Examples:**
+
+* Mixtral 8x7B (47B total parameters, approximately 13B active per token)
+* DBRX (132B total, approximately 36B active)
+* Grok-1 (314B total)
+
+**GPU impact:**
+
+* Memory usage = all expert parameters + routing overhead
+* Compute = only active experts per token
+* Better throughput per GPU with efficient expert placement
+* Requires careful sharding across GPUs
+
+**ChocoTech use case:**
+
+R&D initially considered Mixtral 8x7B for recipe optimization. While it has 47B total parameters, only 13B are active per inference, providing better throughput than a dense 13B model while requiring storage for all 47B parameters.
+
+=== Performance comparison
+
+|===
+| Aspect | Dense Models | Sparse Models
+
+| Memory
+| Full model always loaded
+| All experts loaded, subset active
+
+| Throughput
+| Moderate
+| Higher (less compute per token)
+
+| Latency
+| Consistent
+| Variable (routing overhead)
+
+| Deployment
+| Simpler
+| Complex (expert sharding)
+
+| Cost Efficiency
+| Lower at small scale
+| Higher at large scale
+|===
+
+=== Choosing between dense and sparse
+
+**Use dense models when:**
+
+* You need predictable latency
+* Simple deployment is preferred
+* Model size fits comfortably in GPU memory
+* You are serving moderate traffic volumes
+
+**Use sparse models when:**
+
+* You need maximum throughput per GPU
+* You can tolerate variable latency
+* You have infrastructure for expert-parallelism
+* Serving high traffic volumes justifies complexity
+
+**ChocoTech decision:**
+
+For the initial MaaS deployment, ChocoTech standardizes on **dense models** (Llama-3 8B, Nemotron 8B) to minimize deployment complexity and ensure predictable performance across all four departments.
+
+== Model capabilities: Reasoning vs. non-reasoning
+
+Beyond architecture, model capabilities determine suitability for specific workloads and impact computational requirements.
+
+=== Reasoning models
+
+Reasoning models use chain-of-thought techniques and extended inference time to improve answer quality.
+
+**Characteristics:**
+
+* Generate intermediate reasoning steps before final answer
+* Higher token output per query (reasoning tokens + answer)
+* Slower time-to-first-token (TTFT)
+* Better performance on complex tasks requiring multi-step logic
+* Often use techniques like self-reflection or verification
+
+**Examples:**
+
+* OpenAI o1, o1-mini
+* QwQ-32B-Preview
+* Models fine-tuned with chain-of-thought training
+
+**Use cases:**
+
+* Complex problem-solving (mathematics, coding, logic puzzles)
+* Multi-step planning and strategy
+* Scientific analysis and hypothesis generation
+* Legal or medical reasoning
+* Tasks requiring accuracy over speed
+
+**ChocoTech use case:**
+
+Quality Control needs a reasoning model for defect root cause analysis. When analyzing chocolate production defects, the model must:
+
+1. Examine visual defect patterns
+2. Cross-reference against production parameters
+3. Reason through possible causes
+4. Provide detailed explanation with supporting evidence
+
+A reasoning model generates intermediate steps ("The crystallization pattern suggests temperature variance → Checking historical data shows Zone 3 cooling fluctuation → Root cause: faulty thermostat in Zone 3").
+
+=== Non-reasoning models
+
+Standard language models that generate responses directly without explicit reasoning steps.
+
+**Characteristics:**
+
+* Direct answer generation without intermediate steps
+* Lower token output per query
+* Faster time-to-first-token
+* Suitable for straightforward tasks
+* More cost-effective at scale
+
+**Examples:**
+
+* Llama 3.1 70B
+* Mistral 7B
+* Granite 3.0
+* NVIDIA Nemotron
+
+**Use cases:**
+
+* Content generation (blog posts, social media, emails)
+* Summarization and translation
+* Simple question answering
+* Chatbots and customer service
+* Code completion for non-complex tasks
+
+**ChocoTech use case:**
+
+Marketing uses a non-reasoning model (Llama-3 8B) for social media content generation. The task is straightforward: "Write a 280-character tweet about our new dark chocolate line." No multi-step reasoning is required, and fast generation enables high throughput during campaign launches.
+
+=== Computational impact comparison
+
+|===
+| Metric | Reasoning Models | Non-Reasoning Models
+
+| Tokens per Query
+| High (200-2000+)
+| Moderate (50-500)
+
+| Time-to-First-Token
+| Higher (reasoning latency)
+| Lower (direct generation)
+
+| Total Latency
+| Higher (more tokens)
+| Lower (fewer tokens)
+
+| GPU Utilization
+| Higher (longer occupation)
+| Lower (faster completion)
+
+| Cost per Query
+| Higher (more tokens)
+| Lower (fewer tokens)
+|===
+
+**Example workload analysis:**
+
+*Scenario:* 1000 requests per hour
+
+*Reasoning model approach:*
+
+* Average 500 tokens per request
+* 30 seconds total latency per request
+* Requires approximately 4 GPUs to handle load
+* Higher token consumption for chargeback
+
+*Non-reasoning model approach:*
+
+* Average 100 tokens per request
+* 5 seconds total latency per request
+* Requires approximately 1 GPU to handle load
+* Lower token consumption for chargeback
+
+== ChocoTech department model mapping
+
+Based on architecture and capability assessment, here is the recommended model strategy for each ChocoTech department:
+
+|===
+| Department | Model Type | Architecture | Reasoning | Rationale
+
+| **Quality Control**
+| QwQ-32B-Preview or fine-tuned Llama-3 70B
+| Dense
+| Yes
+| Defect analysis requires multi-step reasoning and detailed explanations. Accuracy justifies higher cost.
+
+| **Marketing**
+| Llama-3 8B
+| Dense
+| No
+| Content generation is straightforward. Speed and cost-effectiveness matter more than deep reasoning.
+
+| **R&D**
+| Llama-3 70B
+| Dense
+| Conditional
+| Recipe optimization benefits from reasoning, but can fallback to standard generation for simpler tasks.
+
+| **Supply Chain**
+| Nemotron 8B
+| Dense
+| No
+| Vendor chatbot needs fast responses for basic inquiries. Non-reasoning sufficient for FAQs and simple questions.
+|===
+
+**Initial deployment strategy:**
+
+1. Deploy **Llama-3 8B** (non-reasoning, dense) for Marketing and Supply Chain
+2. Deploy **Nemotron 8B** (non-reasoning, dense) as alternative for A/B testing
+3. Plan future deployment of **reasoning-capable model** for Quality Control after initial MaaS platform stabilization
+4. Share models across departments where requirements overlap to maximize GPU utilization
+
+== Hardware constraints and model sizing
+
+Beyond capability requirements, you must consider GPU memory constraints when selecting models.
+
+=== Memory requirements by model size
+
+**7B-8B parameter models (FP16):**
+
+* Base memory: approximately 14-16GB
+* KV cache: 2-4GB (depending on context length)
+* Total: 16-20GB
+* **Fits on:** Single A10 (24GB), A100 (40GB or 80GB)
+
+**30B parameter models (FP16):**
+
+* Base memory: approximately 60GB
+* KV cache: 8-12GB
+* Total: 68-72GB
+* **Requires:** A100 80GB or multi-GPU setup
+
+**70B parameter models (FP16):**
+
+* Base memory: approximately 140GB
+* KV cache: 16-24GB
+* Total: 156-164GB
+* **Requires:** 2x A100 80GB with tensor parallelism
+
+=== Quantization strategies
+
+To fit larger models on smaller GPUs, use quantization:
+
+**INT8 quantization:**
+
+* Reduces memory by approximately 50%
+* Minimal quality degradation for most tasks
+* Llama-3 70B in INT8: approximately 70GB (fits on 1x A100 80GB)
+
+**INT4 (4-bit) quantization:**
+
+* Reduces memory by approximately 75%
+* Noticeable quality degradation for reasoning tasks
+* Suitable for non-critical workloads
+* Llama-3 70B in INT4: approximately 35GB (fits on 1x A40 or A10)
+
+**FP8 quantization:**
+
+* Reduces memory by approximately 50%
+* Better quality retention than INT8
+* Requires newer GPU architectures (H100, L40S)
+
+**ChocoTech constraint:**
+
+The initial ChocoTech MaaS cluster has:
+
+* 4x NVIDIA A10 GPUs (24GB VRAM each)
+* Single Node OpenShift (SNO) configuration
+
+This constrains initial deployments to:
+
+* 8B models in FP16 (comfortable fit)
+* 30B models in INT8 (tight fit)
+* 70B models require future hardware expansion or aggressive quantization
+
+**Decision:** Start with 8B models (Llama-3 8B, Nemotron 8B) to prove MaaS value, then justify hardware expansion for 70B models based on actual usage data.
+
+== Model selection decision framework
+
+Use this framework when evaluating models for deployment:
+
+**Step 1: Define the workload**
+
+* What task is the model performing?
+* Is multi-step reasoning required?
+* What is the acceptable latency?
+* What is the expected request volume?
+
+**Step 2: Assess capability requirements**
+
+* Does the task require reasoning capabilities?
+* Is speed more important than accuracy?
+* What is the cost tolerance (tokens per query)?
+
+**Step 3: Check hardware constraints**
+
+* What GPU memory is available?
+* Is multi-GPU deployment possible?
+* Can you use quantization without quality degradation?
+
+**Step 4: Consider governance and cost**
+
+* Which user tier will access this model?
+* What is the expected token consumption for chargeback?
+* Should this model share resources with other departments?
+
+**Step 5: Validate with testing**
+
+* Deploy to development environment
+* Benchmark latency (TTFT, TPOT)
+* Test quality with representative queries
+* Measure GPU utilization and cost per query
+
+== Learning checkpoint
+
+You should now be able to:
+
+* ✓ Distinguish between dense and sparse model architectures
+* ✓ Explain the tradeoffs between reasoning and non-reasoning models
+* ✓ Calculate GPU memory requirements for different model sizes
+* ✓ Match ChocoTech department needs to appropriate model types
+* ✓ Apply the model selection decision framework to new workloads
+
+**Before proceeding to deployment:**
+
+ChocoTech has decided to deploy **Llama-3 8B** as the first model for the MaaS platform. This choice reflects:
+
+* Dense architecture for deployment simplicity
+* Non-reasoning capabilities sufficient for Marketing and Supply Chain
+* Fits comfortably on single A10 GPU (24GB)
+* Proven performance for content generation tasks
+* Can be shared across multiple departments with tier-based quotas
+
+In the next exercise, you will learn about the serving runtime architecture (llm-d and vLLM) and understand why distributed inference is required for MaaS integration.
+
+== Troubleshooting
+
+**Issue:** "How do I know if I need a reasoning model or non-reasoning model?"
+
+**Solution:** Ask: "Does the task require multi-step logic or explanation of the thought process?" If yes (e.g., root cause analysis, complex math, strategic planning), use reasoning model. If no (e.g., content generation, summarization, simple Q&A), use non-reasoning model.
+
+**Issue:** "My 70B model won't fit on my GPU, what are my options?"
+
+**Solution:**
+
+1. Use tensor parallelism across multiple GPUs
+2. Apply INT8 or FP8 quantization to reduce memory by 50%
+3. Consider a smaller model (8B or 30B) that may meet your needs
+4. Evaluate if the task truly requires 70B parameters or if 8B with fine-tuning would suffice
+
+**Issue:** "Should I deploy Mixtral 8x7B (sparse) or Llama-3 70B (dense) for my workload?"
+
+**Solution:** Consider:
+
+* Mixtral 8x7B: Better throughput, complex deployment, variable latency
+* Llama-3 70B: Consistent latency, simpler deployment, higher memory
+* For most MaaS deployments, start with dense models for operational simplicity
+* Move to sparse models only when proven throughput gains justify deployment complexity

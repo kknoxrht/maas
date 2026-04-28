@@ -1,0 +1,5 @@
+name: modules
+title: Red Hat OpenShift AI - Models as a Service Enablement
+version: main
+nav:
+  - modules/ROOT/nav.adoc

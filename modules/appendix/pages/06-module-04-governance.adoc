@@ -1,0 +1,739 @@
+= Module 4: Governance, observability, and chargeback
+include::partial$_attributes.adoc[]
+
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+ChocoTech's Finance department raises a critical concern during your status update meeting. "We need to track which teams are consuming GPU resources," the CFO states. "Marketing is requesting additional budget for AI infrastructure, but we have no data showing their current usage or justifying the expansion."
+
+Meanwhile, the Quality Control team complains: "Our defect detection models are getting rate-limited during production shifts. Is Marketing's chatbot consuming all the capacity?"
+
+Your task is to implement governance policies that ensure fair resource allocation, track usage for chargeback, and provide observability into model consumption patterns.
+
+In this module, you'll configure governance tiers with rate limiting and quotas using Kuadrant, monitor GPU utilization and token consumption with Grafana, and generate chargeback reports for Finance.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Define governance tiers (bronze, silver, gold, platinum) with different access levels and quotas
+* Map OpenShift user groups to tier levels for automatic access control
+* Configure rate limiting and token quotas using Kuadrant RateLimitPolicy
+* Deploy Grafana dashboards to monitor model usage and GPU utilization
+* Generate chargeback reports showing token consumption by department and model
+* Implement comprehensive security hardening for production MaaS deployment
+* Troubleshoot policy enforcement issues using Kuadrant component logs
+
+== Exercise 1: Understanding MaaS governance tiers
+
+Before configuring governance, you need to understand how tier-based access control works and why it's critical for multi-tenant model serving.
+
+Without tiers, centralized serving becomes uncontrolled consumption. Tier-based access transforms the MaaS platform from an unlimited resource drain to fair allocation across departments.
+
+=== The governance challenge at ChocoTech
+
+ChocoTech controls $500,000 worth of GPU infrastructure serving four departments:
+
+* **Quality Control**: Defect detection (critical, production workload)
+* **R&D**: Recipe optimization (important, but not real-time)
+* **Marketing**: Sentiment analysis (high volume, non-critical)
+* **Supply Chain**: Inventory prediction (batch processing)
+
+**Without governance**:
+
+* Marketing runs unlimited chatbot queries, exhausting GPU capacity
+* Quality Control's critical defect detection gets rate-limited during production shifts
+* Finance cannot allocate AI costs accurately (no consumption tracking)
+* Security has no audit trail showing who accessed which models
+
+**With MaaS governance**:
+
+* Each department is assigned a tier with appropriate rate limits and quotas
+* Quality Control gets "Platinum" tier with high limits and priority access
+* Marketing gets "Bronze" tier with moderate limits appropriate for their use case
+* Finance can perform chargeback based on actual token consumption by department
+* Security has complete audit logs of every API request with user identity
+
+=== What are MaaS tiers?
+
+Tiers are access control layers that define:
+
+**Access level**::
+Which models a user can query (Bronze tier can't access Platinum-only models)
+
+**Rate limits**::
+Maximum requests per minute (Bronze: 100 req/min, Platinum: 10,000 req/min)
+
+**Token quotas**::
+Maximum tokens consumed per minute (Bronze: 10,000 tokens/min, Platinum: 1,000,000 tokens/min)
+
+**Group mapping**::
+Which OpenShift groups are assigned to each tier
+
+**Priority level**::
+Determines access hierarchy when users belong to multiple groups across different tiers
+
+Example: A developer with a Bronze tier Bearer token can only access models published to "Bronze tier and above." A Platinum user can access all models.
+
+=== Default tier structure for ChocoTech
+
+You'll configure four tiers aligned with ChocoTech's business priorities:
+
+[cols="1,1,2,2"]
+|===
+|Tier Name |Priority Level |Target Department |Rate Limit (req/min)
+
+|Bronze
+|Level 0
+|Marketing (exploratory)
+|100 requests/min, 10K tokens/min
+
+|Silver
+|Level 1
+|Supply Chain (batch)
+|500 requests/min, 50K tokens/min
+
+|Gold
+|Level 2
+|R&D (development)
+|2,000 requests/min, 200K tokens/min
+
+|Platinum
+|Level 3
+|Quality Control (production)
+|10,000 requests/min, 1M tokens/min
+|===
+
+Priority Level determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the highest level number.
+
+=== Group assignment logic
+
+MaaS uses OpenShift group membership to assign users to tiers:
+
+. User authenticates with Bearer token
+. Authorino (Kuadrant authentication component) extracts user identity and group memberships from OpenShift OAuth
+. MaaS evaluates which tier configurations match the user's groups
+. Highest priority level wins if the user belongs to multiple tiers
+. Access is enforced based on assigned tier and model configuration
+. Limitador (Kuadrant rate limiting component) tracks consumption and enforces quotas
+
+A Platform Engineer creates a group `chocotech-quality-control` in OpenShift, then maps it to the Platinum tier. All members of that group automatically get Platinum access with highest rate limits.
+
+=== Verification of tier prerequisites
+
+Verify that Kuadrant components are running (deployed when MaaS was enabled in Module 2):
+
+[source,role="execute"]
+----
+oc get pods -n kuadrant-system
+----
+
+Expected output:
+
+----
+NAME                          READY   STATUS    RESTARTS   AGE
+authorino-xxx                 1/1     Running   0          2d
+limitador-xxx                 1/1     Running   0          2d
+----
+
+Check for existing tier configurations:
+
+[source,role="execute"]
+----
+oc get maastier -n redhat-ods-applications
+----
+
+You may see default tiers or this may be empty if tiers haven't been configured yet.
+
+== Exercise 2: Create OpenShift groups for ChocoTech departments
+
+You'll create OpenShift groups representing ChocoTech's four departments and assign users to them.
+
+Group-based tier assignment enables automatic access control as team membership changes.
+
+=== Create department groups
+
+Create a group for the Quality Control team (Platinum tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-quality-control
+----
+
+Create a group for the R&D team (Gold tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-rd
+----
+
+Create a group for the Supply Chain team (Silver tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-supply-chain
+----
+
+Create a group for the Marketing team (Bronze tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-marketing
+----
+
+Verify groups were created:
+
+[source,role="execute"]
+----
+oc get groups | grep chocotech
+----
+
+Expected output:
+
+----
+chocotech-quality-control   <none>
+chocotech-rd                <none>
+chocotech-supply-chain      <none>
+chocotech-marketing         <none>
+----
+
+=== Assign the admin user to Quality Control (Platinum tier)
+
+For testing purposes, assign your admin user to the highest tier:
+
+[source,role="execute"]
+----
+oc adm groups add-users chocotech-quality-control {user}
+----
+
+Verify membership:
+
+[source,role="execute"]
+----
+oc get group chocotech-quality-control -o yaml
+----
+
+You should see your user listed under `users`.
+
+=== Verification
+
+Confirm group setup:
+
+* Four OpenShift groups created representing ChocoTech departments
+* Groups follow naming convention: chocotech-<department>
+* Admin user is member of chocotech-quality-control group
+* Groups are ready for tier mapping
+
+== Exercise 3: Configure governance tiers and rate limiting
+
+Now you'll create MaaSTier custom resources that map OpenShift groups to tier levels with rate limits and quotas.
+
+Tier configuration is declarative, using custom resources managed by the MaaS operator.
+
+=== Create the Platinum tier (Quality Control)
+
+Create a manifest for the highest tier:
+
+[source,role="execute"]
+----
+cat > tier-platinum.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: platinum
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 3
+  groups:
+    - chocotech-quality-control
+  rateLimit:
+    requestsPerMinute: 10000
+    tokensPerMinute: 1000000
+  quotas:
+    dailyTokenLimit: 100000000
+  description: "Production workloads - Quality Control team defect detection"
+EOF
+----
+
+Apply the tier configuration:
+
+[source,role="execute"]
+----
+oc apply -f tier-platinum.yaml
+----
+
+=== Create the Gold tier (R&D)
+
+[source,role="execute"]
+----
+cat > tier-gold.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: gold
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 2
+  groups:
+    - chocotech-rd
+  rateLimit:
+    requestsPerMinute: 2000
+    tokensPerMinute: 200000
+  quotas:
+    dailyTokenLimit: 20000000
+  description: "Development workloads - R&D team recipe optimization"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-gold.yaml
+----
+
+=== Create the Silver tier (Supply Chain)
+
+[source,role="execute"]
+----
+cat > tier-silver.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: silver
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 1
+  groups:
+    - chocotech-supply-chain
+  rateLimit:
+    requestsPerMinute: 500
+    tokensPerMinute: 50000
+  quotas:
+    dailyTokenLimit: 5000000
+  description: "Batch workloads - Supply Chain inventory prediction"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-silver.yaml
+----
+
+=== Create the Bronze tier (Marketing)
+
+[source,role="execute"]
+----
+cat > tier-bronze.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: bronze
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 0
+  groups:
+    - chocotech-marketing
+  rateLimit:
+    requestsPerMinute: 100
+    tokensPerMinute: 10000
+  quotas:
+    dailyTokenLimit: 1000000
+  description: "Exploratory workloads - Marketing sentiment analysis"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-bronze.yaml
+----
+
+=== Verify tier configuration
+
+List all configured tiers:
+
+[source,role="execute"]
+----
+oc get maastier -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME        PRIORITY   GROUPS                        AGE
+platinum    3          chocotech-quality-control     2m
+gold        2          chocotech-rd                  2m
+silver      1          chocotech-supply-chain        2m
+bronze      0          chocotech-marketing           2m
+----
+
+Check that Kuadrant RateLimitPolicy resources were created:
+
+[source,role="execute"]
+----
+oc get ratelimitpolicy -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                    AGE
+maas-tier-platinum      2m
+maas-tier-gold          2m
+maas-tier-silver        2m
+maas-tier-bronze        2m
+----
+
+These RateLimitPolicy resources are automatically created by the MaaS operator based on your MaaSTier configurations.
+
+=== Verification
+
+Confirm tier and policy configuration:
+
+* Four MaaSTier resources created with correct priority levels
+* Groups properly mapped to tiers
+* RateLimitPolicy resources created for each tier
+* Limitador pod is healthy and ready to enforce quotas
+
+// TODO: Add screenshot of tier configuration
+image::maas-tiers-configuration.png[MaaSTier resources showing priority levels and group mappings,link=self,window=blank,width=800,title="Governance Tiers Configuration"]
+
+== Exercise 4: Deploy Grafana for observability
+
+ChocoTech's Finance department needs visibility into model usage for chargeback. You'll deploy Grafana dashboards to monitor token consumption and GPU utilization.
+
+Grafana provides the observability layer for tracking model usage across user tiers and different models.
+
+=== Install Grafana operator (if not already installed)
+
+Check if Grafana operator is installed:
+
+[source,role="execute"]
+----
+oc get csv -n openshift-operators | grep grafana
+----
+
+If not installed, install the Grafana operator from OperatorHub:
+
+[source,role="execute"]
+----
+cat > grafana-operator-subscription.yaml <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: grafana-operator
+  namespace: openshift-operators
+spec:
+  channel: v5
+  name: grafana-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-operator-subscription.yaml
+----
+
+Wait for the operator to be ready:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready pod -l name=grafana-operator -n openshift-operators --timeout=300s
+----
+
+=== Create Grafana instance for MaaS monitoring
+
+Create a Grafana instance in the OpenShift AI namespace:
+
+[source,role="execute"]
+----
+cat > grafana-instance.yaml <<EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: maas-grafana
+  namespace: redhat-ods-applications
+  labels:
+    dashboards: "maas"
+spec:
+  config:
+    security:
+      admin_user: admin
+      admin_password: chocotech123
+    server:
+      root_url: https://maas-grafana.apps.{cluster_domain}
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-instance.yaml
+----
+
+Wait for Grafana to deploy:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready pod -l app=grafana -n redhat-ods-applications --timeout=300s
+----
+
+=== Create Grafana data source for Prometheus
+
+Configure Grafana to query OpenShift's Prometheus for metrics:
+
+[source,role="execute"]
+----
+cat > grafana-datasource.yaml <<EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDataSource
+metadata:
+  name: prometheus-maas
+  namespace: redhat-ods-applications
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "maas"
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+      timeInterval: "5s"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-datasource.yaml
+----
+
+=== Access Grafana dashboard
+
+Get the Grafana route URL:
+
+[source,role="execute"]
+----
+oc get route maas-grafana -n redhat-ods-applications -o jsonpath='{.spec.host}'
+----
+
+Expected output:
+
+----
+maas-grafana-redhat-ods-applications.apps.{cluster_domain}
+----
+
+. Open the Grafana URL in your browser
+. Log in with:
+  * Username: `admin`
+  * Password: `chocotech123`
+
+You should see the Grafana home page.
+
+=== Verification
+
+Confirm Grafana deployment:
+
+* Grafana operator is installed and healthy
+* Grafana instance pod is Running in redhat-ods-applications namespace
+* Grafana route exists and is accessible
+* Grafana data source is configured to query Prometheus
+* Successfully logged into Grafana web interface
+
+// TODO: Add screenshot of Grafana login and dashboard
+image::grafana-maas-dashboard.png[Grafana dashboard showing MaaS token consumption and GPU utilization metrics,link=self,window=blank,width=800,title="Grafana Observability Dashboard for MaaS"]
+
+Note: Creating comprehensive Grafana dashboards with token consumption by tier, model usage patterns, and GPU utilization requires Prometheus metrics from Kuadrant and KServe. Dashboard JSON configuration would be provided by the MaaS platform team.
+
+== Exercise 5: Generate chargeback reports
+
+Now that governance and observability are configured, you can generate chargeback reports for Finance showing token consumption by department.
+
+Token-based consumption tracking enables Finance to bill departments based on actual usage rather than infrastructure allocation.
+
+=== Query token consumption metrics
+
+Use Prometheus to query token consumption by tier:
+
+[source,role="execute"]
+----
+oc exec -n openshift-monitoring prometheus-k8s-0 -- promtool query instant \
+  http://localhost:9090 \
+  'sum(rate(maas_tokens_consumed_total[1h])) by (tier, model)'
+----
+
+This returns token consumption rate by tier and model over the last hour.
+
+Example output:
+
+----
+tier="platinum", model="llama-3-8b"    125000 tokens/hour
+tier="gold", model="llama-3-8b"         45000 tokens/hour
+tier="bronze", model="nemotron-8b"      12000 tokens/hour
+----
+
+=== Calculate chargeback costs
+
+Define cost per 1,000 tokens for internal chargeback:
+
+* Bronze tier: $0.001 per 1,000 tokens
+* Silver tier: $0.002 per 1,000 tokens
+* Gold tier: $0.003 per 1,000 tokens
+* Platinum tier: $0.005 per 1,000 tokens
+
+Example calculation for Quality Control (Platinum tier):
+
+----
+Tokens consumed (24 hours): 125,000 tokens/hour x 24 hours = 3,000,000 tokens
+Cost: (3,000,000 / 1,000) x $0.005 = $15.00 per day
+Monthly estimate: $15.00 x 30 = $450.00
+----
+
+Marketing (Bronze tier):
+
+----
+Tokens consumed (24 hours): 12,000 tokens/hour x 24 hours = 288,000 tokens
+Cost: (288,000 / 1,000) x $0.001 = $0.29 per day
+Monthly estimate: $0.29 x 30 = $8.70
+----
+
+This demonstrates that Quality Control's production workload justifies their Platinum tier allocation, while Marketing's exploratory use appropriately stays in Bronze tier.
+
+=== Create a chargeback report
+
+Generate a simple chargeback report:
+
+[source,role="execute"]
+----
+cat > chargeback-report.sh <<'EOF'
+#!/bin/bash
+echo "ChocoTech Industries - MaaS Chargeback Report"
+echo "Generated: $(date)"
+echo ""
+echo "Department          Tier      Tokens (24h)    Cost/Day    Monthly Est."
+echo "--------------------------------------------------------------------------------"
+echo "Quality Control     Platinum  3,000,000       \$15.00     \$450.00"
+echo "R&D                 Gold      1,080,000       \$3.24      \$97.20"
+echo "Supply Chain        Silver      480,000       \$0.96      \$28.80"
+echo "Marketing           Bronze      288,000       \$0.29      \$8.70"
+echo "--------------------------------------------------------------------------------"
+echo "Total Monthly Cost:                                     \$584.70"
+EOF
+chmod +x chargeback-report.sh
+----
+
+Run the report:
+
+[source,role="execute"]
+----
+./chargeback-report.sh
+----
+
+This simple report demonstrates the concept. In production, you would integrate Prometheus metrics with your organization's billing system or create automated Grafana reports.
+
+=== Verification
+
+Confirm chargeback capability:
+
+* Prometheus metrics show token consumption by tier and model
+* Token consumption rates can be queried and aggregated
+* Chargeback calculations based on tier pricing are possible
+* Reports can demonstrate which departments are consuming GPU resources
+* Finance has visibility into AI infrastructure costs by business unit
+
+== Troubleshooting
+
+**Issue**: RateLimitPolicy not enforcing quotas (requests succeeding beyond limits)
+
+**Solution**:
+
+. Verify Limitador pod is healthy: `oc get pods -n kuadrant-system | grep limitador`
+. Check RateLimitPolicy is correctly configured: `oc describe ratelimitpolicy -n redhat-ods-applications`
+. Verify AuthPolicy is configured to extract user tier: `oc get authpolicy -n redhat-ods-applications`
+. Check Limitador logs for policy evaluation: `oc logs -l app=limitador -n kuadrant-system`
+
+**Issue**: User assigned to wrong tier (expected Platinum, getting Bronze)
+
+**Solution**:
+
+. Verify user group membership: `oc get user {user} -o yaml | grep -A 5 groups`
+. Check MaaSTier configuration: `oc get maastier platinum -o yaml`
+. Ensure group name matches exactly in tier spec
+. Priority level determines tier when user belongs to multiple groups (highest wins)
+. Check Authorino logs for user tier resolution: `oc logs -l app=authorino -n kuadrant-system`
+
+**Issue**: Grafana cannot connect to Prometheus data source
+
+**Solution**:
+
+. Verify Prometheus is accessible from Grafana namespace
+. Check GrafanaDataSource status: `oc describe grafanadatasource prometheus-maas -n redhat-ods-applications`
+. Verify Thanos Querier service exists: `oc get svc thanos-querier -n openshift-monitoring`
+. Test connectivity: `oc exec -n redhat-ods-applications deployment/maas-grafana -- curl -k https://thanos-querier.openshift-monitoring.svc.cluster.local:9091/api/v1/query?query=up`
+
+**Issue**: Token consumption metrics not appearing in Prometheus
+
+**Solution**:
+
+. Verify KServe and Kuadrant are exposing metrics
+. Check ServiceMonitor resources: `oc get servicemonitor -n redhat-ods-applications`
+. Verify Prometheus is scraping MaaS metrics: Query `up{job="maas-api"}` in Prometheus UI
+. Check MaaS API pod logs for metric export: `oc logs -l app=maas-api -n redhat-ods-applications | grep metrics`
+
+**Issue**: MaaSTier resource created but RateLimitPolicy not generated
+
+**Solution**:
+
+. Check MaaS operator logs: `oc logs -n redhat-ods-operator deployment/rhods-operator | grep -i maastier`
+. Verify Kuadrant CRDs are installed: `oc get crd | grep kuadrant`
+. Check MaaSTier status for reconciliation errors: `oc get maastier platinum -o yaml | grep -A 10 status`
+. Verify RBAC permissions for MaaS operator to create RateLimitPolicy resources
+
+include::06a-security-hardening.adoc[leveloffset=+1]
+
+== Learning outcomes
+
+By completing this module, you should now understand:
+
+* ✓ How tier-based governance prevents uncontrolled resource consumption in multi-tenant environments
+* ✓ The relationship between OpenShift groups, MaaSTier resources, and Kuadrant policies
+* ✓ How to configure rate limiting and token quotas using declarative tier definitions
+* ✓ The role of Authorino in user tier resolution and Limitador in quota enforcement
+* ✓ How to deploy Grafana for observability into model usage patterns
+* ✓ How to generate chargeback reports based on token consumption by department
+* ✓ How to implement comprehensive security hardening across nine critical areas
+* ✓ How to meet compliance requirements (SOC 2, ISO 27001, NIST AI RMF) for production AI systems
+
+== Module summary
+
+You've successfully implemented governance policies that ensure fair resource allocation at ChocoTech and provided Finance with visibility into AI infrastructure costs.
+
+**What you accomplished for ChocoTech**:
+
+* Created four tier levels aligned with business priorities (Bronze/Silver/Gold/Platinum)
+* Mapped department groups to tiers with appropriate rate limits and quotas
+* Deployed Grafana for observability into token consumption and GPU utilization
+* Enabled Finance to perform chargeback based on actual usage by department
+* Prevented uncontrolled consumption through tier-based rate limiting
+* Implemented production security hardening meeting SOC 2 and ISO 27001 requirements
+* Obtained CISO approval for production deployment after comprehensive security review
+
+**Business impact realized**:
+
+* **Fair allocation**: Quality Control's production workload no longer competes with Marketing's exploratory queries
+* **Cost visibility**: Finance can justify AI infrastructure expansion with usage data
+* **Accurate billing**: Departments are billed based on actual consumption, not infrastructure allocation
+* **Audit compliance**: Complete trail of who accessed which models with user identity tracking
+
+**Your journey progress**:
+
+ChocoTech now has a fully governed MaaS platform with observability and chargeback capabilities. The final step is enabling developers to integrate models into their applications.
+
+**Next steps**:
+
+Module 5 will guide you through the developer experience - navigating Gen AI Studio, generating API tokens, integrating models into applications using OpenAI-compatible APIs, and implementing retry logic for rate limit handling.

@@ -1,0 +1,1026 @@
+= Exercise 6: Production security hardening
+
+ChocoTech's Chief Information Security Officer (CISO) schedules an urgent meeting before the MaaS platform goes to production. "We need to ensure this AI infrastructure meets our security and compliance requirements," she explains. "We're subject to food safety regulations, and AI systems that impact quality control must be auditable and secure."
+
+The security team raises several questions:
+
+* "How do we verify model artifacts haven't been tampered with?"
+* "Can we audit every API request to track who accessed which models?"
+* "Are the models and data encrypted in transit and at rest?"
+* "Does this meet SOC 2 and ISO 27001 requirements for AI systems?"
+
+Before promoting the MaaS platform to production, you need to implement comprehensive security hardening across nine critical areas.
+
+== Security hardening checklist
+
+This checklist covers enterprise security requirements for production AI model serving platforms. Each section includes ChocoTech-specific implementation guidance.
+
+=== 1. Model security
+
+Ensure model artifacts are signed, verified, and tracked from source to deployment.
+
+**Requirements:**
+
+* ✓ Sign and verify model artifacts using sigstore or cosign
+* ✓ Store models in a trusted registry or model repository
+* ✓ Scan models for malicious code or unexpected behavior
+* ✓ Use model provenance tracking (who trained, where, when, and how)
+* ✓ Implement AIBOM (AI Bill of Materials) for transparency
+* ✓ Monitor for model drift and adversarial inputs
+
+**ChocoTech implementation:**
+
+[source,role="execute"]
+----
+# Sign model artifact with cosign before uploading to S3
+cosign sign-blob --key cosign.key llama3-8b-defect-analysis.safetensors > llama3-8b-defect-analysis.sig
+
+# Verify signature before deployment
+cosign verify-blob --key cosign.pub --signature llama3-8b-defect-analysis.sig llama3-8b-defect-analysis.safetensors
+----
+
+**Model provenance metadata:**
+
+[source,yaml]
+----
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llama3-defect-provenance
+  namespace: chocotech-models
+data:
+  model_name: "llama3-8b-defect-analysis"
+  base_model: "meta-llama/Meta-Llama-3-8B-Instruct"
+  trained_by: "ChocoTech R&D Data Science Team"
+  training_date: "2026-04-15"
+  training_data: "chocotech-defect-images-v2 (5000 labeled images)"
+  training_environment: "OpenShift AI Training Workbench v3.4"
+  validation_accuracy: "94.2%"
+  signature_verified: "true"
+  compliance_status: "approved-for-production"
+----
+
+**AIBOM (AI Bill of Materials):**
+
+Track dependencies for the model serving stack:
+
+----
+Model: llama3-8b-defect-analysis v2.0.0
+├─ Base Model: meta-llama/Meta-Llama-3-8B-Instruct (v1.0)
+├─ Serving Runtime: vLLM v0.5.4
+├─ Inference Framework: llm-d v1.2.1
+├─ GPU Drivers: NVIDIA CUDA 12.4
+├─ Container Base: registry.redhat.io/ubi9/python-311:1-48
+├─ Dependencies:
+│  ├─ transformers==4.40.0
+│  ├─ torch==2.3.0+cu124
+│  └─ safetensors==0.4.3
+----
+
+**Verification:**
+
+Check model signature before every deployment. Add admission webhook to enforce signed models in production namespace.
+
+=== 2. Data security
+
+Protect training data and inference requests with encryption and access controls.
+
+**Requirements:**
+
+* ✓ Encrypt data in transit (TLS/SSL)
+* ✓ Encrypt data at rest (OpenShift + KMS integration)
+* ✓ Ensure differential privacy or anonymization if using real user data
+* ✓ Apply access controls on training and inference data
+
+**ChocoTech implementation:**
+
+**Encrypt data in transit:**
+
+Verify all MaaS endpoints use TLS:
+
+[source,role="execute"]
+----
+# Check MaaS gateway route uses edge TLS termination
+oc get route maas-default-gateway -n redhat-ods-applications -o jsonpath='{.spec.tls.termination}'
+----
+
+Expected output:
+
+----
+edge
+----
+
+**Encrypt data at rest:**
+
+Enable encryption for PersistentVolumes storing model weights:
+
+[source,yaml]
+----
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-storage-encrypted
+  namespace: chocotech-models
+  annotations:
+    volume.kubernetes.io/storage-class: "encrypted-gp3"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: encrypted-gp3
+----
+
+Create an encrypted storage class with AWS KMS integration (example for AWS):
+
+[source,yaml]
+----
+apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: encrypted-gp3
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  encrypted: "true"
+  kmsKeyId: "arn:aws:kms:us-east-1:123456789:key/your-kms-key-id"
+----
+
+**Anonymize defect image metadata:**
+
+Quality Control's defect images may contain PII in EXIF data (employee names, timestamps, location). Strip metadata before training:
+
+[source,python]
+----
+from PIL import Image
+import piexif
+
+def anonymize_image(image_path):
+    img = Image.open(image_path)
+    # Remove all EXIF metadata
+    img.save(image_path, exif=b"")
+----
+
+**Verification:**
+
+* MaaS gateway routes use TLS edge termination
+* PVCs for model storage use encrypted storage class
+* Training data is anonymized or uses differential privacy
+* API requests/responses are encrypted (no plaintext transmission)
+
+=== 3. API and endpoint security
+
+Secure the MaaS API gateway and model endpoints with authentication, authorization, and input validation.
+
+**Requirements:**
+
+* ✓ Enforce authentication (Keycloak, OAuth2, OIDC)
+* ✓ Use API Gateway (3scale or Kuadrant) for rate-limiting and throttling
+* ✓ Validate all input payloads to prevent injection attacks
+* ✓ Use service mesh (Istio or OpenShift Service Mesh) for secure service-to-service communication
+
+**ChocoTech implementation:**
+
+**Verify Kuadrant Authorino is enforcing authentication:**
+
+[source,role="execute"]
+----
+oc get pods -n kuadrant-system | grep authorino
+----
+
+Expected output:
+
+----
+authorino-xxx   1/1     Running   0          5d
+----
+
+Check AuthPolicy is applied to MaaS gateway:
+
+[source,role="execute"]
+----
+oc get authpolicy -n redhat-ods-applications
+----
+
+**Input validation for prompt injection:**
+
+Add input validation to prevent malicious prompts:
+
+[source,python]
+----
+import re
+
+def validate_prompt(user_input):
+    # Block prompts attempting jailbreak or injection
+    blocked_patterns = [
+        r"ignore previous instructions",
+        r"system: you are now",
+        r"<\|im_start\|>system",
+        r"</s><s>",  # Model control tokens
+    ]
+
+    for pattern in blocked_patterns:
+        if re.search(pattern, user_input, re.IGNORECASE):
+            raise ValueError("Input contains potentially malicious content")
+
+    return True
+----
+
+**Service mesh mTLS for internal communication:**
+
+Verify OpenShift Service Mesh is enforcing mutual TLS between MaaS components:
+
+[source,role="execute"]
+----
+# Check ServiceMeshMemberRoll includes chocotech-models namespace
+oc get servicemeshmemberroll -n istio-system -o yaml
+----
+
+Ensure `chocotech-models` namespace is enrolled in the service mesh for automatic mTLS:
+
+[source,yaml]
+----
+apiVersion: maistra.io/v1
+kind: ServiceMeshMemberRoll
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  members:
+    - redhat-ods-applications
+    - chocotech-models
+----
+
+**Verification:**
+
+* API requests require Bearer token authentication (401 without token)
+* Kuadrant rate limiting is active (429 when quota exceeded)
+* Service mesh enforces mTLS between model pods and gateway
+* Input validation blocks malicious prompts
+
+=== 4. Runtime and infrastructure security
+
+Isolate model serving workloads and monitor for anomalous behavior.
+
+**Requirements:**
+
+* ✓ Run models in isolated environments (containers with SELinux/seccomp/AppArmor)
+* ✓ Use confidential containers or confidential computing (Intel SGX, AMD SEV) for sensitive models
+* ✓ Monitor containers with runtime security tools (ACS - Advanced Cluster Security)
+* ✓ Regularly patch and update base images and OS
+
+**ChocoTech implementation:**
+
+**Enable SELinux enforcement on model pods:**
+
+Verify OpenShift nodes have SELinux enforcing:
+
+[source,role="execute"]
+----
+oc debug node/<node-name> -- chroot /host getenforce
+----
+
+Expected output:
+
+----
+Enforcing
+----
+
+**Seccomp profile for model pods:**
+
+Apply a restrictive seccomp profile to limit syscalls:
+
+[source,yaml]
+----
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-secured
+  namespace: chocotech-models
+spec:
+  # ... model config ...
+  podSpec:
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: vllm-container
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL
+----
+
+**Deploy Advanced Cluster Security (ACS) for runtime monitoring:**
+
+NOTE: This requires Red Hat Advanced Cluster Security operator installed.
+
+Create a policy to alert on unexpected model pod behavior:
+
+[source,yaml]
+----
+apiVersion: policy.stackrox.io/v1
+kind: SecurityPolicy
+metadata:
+  name: chocotech-model-runtime-policy
+spec:
+  description: "Alert on unexpected behavior in MaaS model pods"
+  severity: HIGH
+  policySection:
+    - policyGroup: Anomalous Activity
+  criteria:
+    - namespace: chocotech-models
+    - container:
+        image: ".*vllm.*"
+      runtime:
+        processExecution:
+          - "/bin/bash"  # Alert if shell is spawned in vLLM container
+          - "/bin/sh"
+          - "curl"       # Alert if outbound network tools used
+----
+
+**Image vulnerability scanning:**
+
+Scan base images for CVEs before deployment:
+
+[source,role="execute"]
+----
+# Scan vLLM image for vulnerabilities
+oc image extract quay.io/vllm/vllm:v0.5.4 --confirm
+trivy image --severity HIGH,CRITICAL quay.io/vllm/vllm:v0.5.4
+----
+
+**Verification:**
+
+* Model pods run with SELinux enforcing and seccomp profiles
+* No privileged containers in chocotech-models namespace
+* ACS monitors model pod runtime behavior
+* Base images are scanned and updated monthly
+
+=== 5. Authorization and access control
+
+Implement role-based access control (RBAC) and multi-tenant isolation.
+
+**Requirements:**
+
+* ✓ Role-Based Access Control (RBAC) in OpenShift for model owners and users
+* ✓ Implement multi-tenant isolation policies
+* ✓ Use scoped tokens for API access with expiration
+
+**ChocoTech implementation:**
+
+**RBAC for model deployment:**
+
+Create custom roles for model management:
+
+[source,yaml]
+----
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: model-deployer
+  namespace: chocotech-models
+rules:
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["llminferenceservices"]
+    verbs: ["create", "update", "patch", "delete", "get", "list"]
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: qc-team-model-deployers
+  namespace: chocotech-models
+subjects:
+  - kind: Group
+    name: qc-data-scientists
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: model-deployer
+  apiGroup: rbac.authorization.k8s.io
+----
+
+**Multi-tenant namespace isolation:**
+
+Enforce network policies to isolate departments:
+
+[source,yaml]
+----
+apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-tenant-access
+  namespace: chocotech-models
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: chocotech-models
+        - namespaceSelector:
+            matchLabels:
+              name: redhat-ods-applications
+----
+
+This policy ensures model pods only accept traffic from the MaaS gateway namespace, preventing direct cross-tenant access.
+
+**API token scoping and expiration:**
+
+Configure Kuadrant to enforce token expiration:
+
+[source,yaml]
+----
+apiVersion: kuadrant.io/v1beta1
+kind: AuthPolicy
+metadata:
+  name: token-expiration-policy
+  namespace: redhat-ods-applications
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: maas-gateway-route
+  rules:
+    - jwt:
+        issuerUrl: https://keycloak.chocotech.com/realms/maas
+        ttl: 3600  # Tokens expire after 1 hour
+----
+
+**Verification:**
+
+* Only authorized groups can deploy models
+* Network policies isolate tenant namespaces
+* API tokens have expiration (max 1 hour)
+* RBAC prevents privilege escalation
+
+=== 6. Audit and monitoring
+
+Enable comprehensive audit logging for compliance and incident response.
+
+**Requirements:**
+
+* ✓ Enable audit logs for API access, model invocation, and data access
+* ✓ Integrate with SIEM/logging (OpenShift + EFK stack, Splunk, Graylog)
+* ✓ Monitor resource usage for anomalies (unexpected model calls)
+
+**ChocoTech implementation:**
+
+**Enable OpenShift API audit logging:**
+
+[source,yaml]
+----
+apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  audit:
+    profile: WriteRequestBodies  # Log all write requests with full payload
+----
+
+**Configure ClusterLogForwarder for SIEM integration:**
+
+[source,yaml]
+----
+apiVersion: logging.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: instance
+  namespace: openshift-logging
+spec:
+  outputs:
+    - name: splunk-maas-audit
+      type: splunk
+      url: https://splunk.chocotech.com:8088
+      secret:
+        name: splunk-hec-token
+  pipelines:
+    - name: forward-maas-audit
+      inputRefs:
+        - audit
+        - application
+      outputRefs:
+        - splunk-maas-audit
+      labels:
+        namespace: "chocotech-models,redhat-ods-applications"
+----
+
+**Monitor for anomalous API usage:**
+
+Create Prometheus alert for suspicious spike in model requests:
+
+[source,yaml]
+----
+apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: maas-anomaly-detection
+  namespace: redhat-ods-applications
+spec:
+  groups:
+    - name: maas-security-alerts
+      interval: 1m
+      rules:
+        - alert: UnusualModelRequestSpike
+          expr: |
+            rate(http_requests_total{namespace="chocotech-models"}[5m]) >
+            (avg_over_time(http_requests_total{namespace="chocotech-models"}[1h]) * 3)
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Unusual spike in model API requests detected"
+            description: "Request rate is 3x higher than 1-hour average. Possible abuse or attack."
+----
+
+**Verification:**
+
+* OpenShift audit logs capture all model deployment changes
+* MaaS API requests are logged with user identity and timestamp
+* Logs are forwarded to SIEM for long-term retention
+* Anomaly detection alerts trigger for suspicious patterns
+
+=== 7. Compliance and risk
+
+Meet regulatory requirements and document AI system governance.
+
+**Requirements:**
+
+* ✓ Conduct AI risk assessments (NIST AI RMF or ISO 42001)
+* ✓ Ensure regulatory compliance (GDPR, HIPAA, COPPA, SOC 2, ISO 27001)
+* ✓ Maintain documentation for AI lifecycle and incident response
+
+**ChocoTech implementation:**
+
+**NIST AI Risk Management Framework assessment:**
+
+Document risk assessment for Quality Control defect detection model:
+
+[source,markdown]
+----
+# AI Risk Assessment: Defect Detection Model
+
+## Model Information
+- **Model Name:** llama3-8b-defect-analysis v2.0.0
+- **Use Case:** Chocolate manufacturing defect detection
+- **Risk Category:** HIGH (impacts food safety and production quality)
+
+## Risk Assessment (NIST AI RMF)
+
+### Validity and Reliability
+- **Training Data:** 5000 labeled defect images (ChocoTech production line)
+- **Validation Accuracy:** 94.2% on held-out test set
+- **Edge Cases:** Model performance degrades on novel defect types not in training data
+- **Mitigation:** Monthly retraining with new defect examples, human-in-the-loop verification
+
+### Safety
+- **Failure Mode:** Model may miss critical defects or generate false positives
+- **Impact:** Defective chocolate shipped to customers (food safety) or excessive waste (false positives)
+- **Mitigation:** Defect detection runs in parallel with human QC inspector, not as replacement
+
+### Security and Resilience
+- **Adversarial Risk:** Low (internal use only, no external API access)
+- **Model Poisoning Risk:** Medium (if training data is compromised)
+- **Mitigation:** Code-signed model artifacts, access-controlled training pipeline
+
+### Accountability and Transparency
+- **Responsible Party:** ChocoTech Quality Control Director
+- **Explainability:** Model provides reasoning for each defect classification
+- **Audit Trail:** All defect classifications logged with timestamp and model version
+----
+
+**Compliance documentation (SOC 2):**
+
+Maintain evidence for SOC 2 Type II audit:
+
+* ✓ Access control matrices (who can deploy/access models)
+* ✓ Change management logs (model deployment history)
+* ✓ Incident response procedures (model failure handling)
+* ✓ Vendor risk assessments (Hugging Face, vLLM dependencies)
+
+**Incident response playbook:**
+
+[source,markdown]
+----
+# MaaS Security Incident Response Playbook
+
+## Incident Types
+
+### 1. Model Compromise (Malicious model artifact)
+- **Detection:** Signature verification failure, unexpected model behavior
+- **Response:**
+  1. Immediately scale LLMInferenceService to 0 replicas
+  2. Quarantine compromised model artifact
+  3. Alert security team (security@chocotech.com)
+  4. Forensic analysis: check S3 access logs, container image provenance
+  5. Rollback to last known-good model version
+
+### 2. Data Exfiltration (Unauthorized API access)
+- **Detection:** Anomalous request patterns, API access from unknown IPs
+- **Response:**
+  1. Revoke API tokens for affected tier
+  2. Review Kuadrant Authorino audit logs
+  3. Block malicious IP addresses in Gateway API
+  4. Notify affected users and compliance team
+
+### 3. Denial of Service (Rate limit bypass)
+- **Detection:** MaaS gateway CPU/memory saturation, excessive 429 responses
+- **Response:**
+  1. Activate emergency rate limit (reduce to 10 req/min globally)
+  2. Identify attacking user/tier via logs
+  3. Suspend attacker's API access
+  4. Scale gateway replicas if infrastructure-level DoS
+----
+
+**Verification:**
+
+* AI risk assessment completed for production models
+* Compliance documentation maintained (SOC 2, ISO 27001)
+* Incident response playbook tested quarterly
+
+=== 8. Supply chain security
+
+Secure the model and container supply chain.
+
+**Requirements:**
+
+* ✓ Use SBOM tools for dependencies (Syft, Grype)
+* ✓ Scan third-party libraries used in models and inference services
+* ✓ Validate model and container integrity during deployment (admission controllers)
+
+**ChocoTech implementation:**
+
+**Generate SBOM for vLLM container:**
+
+[source,role="execute"]
+----
+# Generate Software Bill of Materials
+syft quay.io/vllm/vllm:v0.5.4 -o json > vllm-sbom.json
+
+# Scan for vulnerabilities in dependencies
+grype sbom:vllm-sbom.json --fail-on high
+----
+
+**Validate container image signatures with Sigstore policy:**
+
+[source,yaml]
+----
+apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: require-signed-vllm-images
+spec:
+  images:
+    - glob: "quay.io/vllm/vllm:*"
+  authorities:
+    - keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subject: https://github.com/vllm-project/vllm/.github/workflows/publish.yml@refs/heads/main
+----
+
+This policy ensures only vLLM container images signed by the official GitHub Actions workflow can be deployed.
+
+**Pin dependency versions to prevent supply chain attacks:**
+
+In LLMInferenceService, pin exact vLLM version (not `latest`):
+
+[source,yaml]
+----
+spec:
+  runtime:
+    name: vllm
+    version: v0.5.4  # Pinned version, not "latest"
+----
+
+**Verification:**
+
+* SBOM generated for all container images
+* Vulnerability scans pass (no HIGH or CRITICAL CVEs)
+* Container images are signed and verified
+* Dependencies pinned to specific versions (no floating tags)
+
+=== 9. OpenShift AI-specific recommendations
+
+Apply security hardening specific to Red Hat OpenShift AI and MaaS.
+
+**Requirements:**
+
+* ✓ Use OpenShift GitOps to enforce policy-as-code for model deployment
+* ✓ Apply OpenShift ACS (Advanced Cluster Security) policies to enforce build/deploy/runtime rules
+* ✓ Secure model routes with OpenShift Routes + TLS + Keycloak Authz
+* ✓ Use sealed secrets or Vault for credentials
+
+**ChocoTech implementation:**
+
+**GitOps policy enforcement:**
+
+Use Argo CD with gatekeeper policies to enforce standards:
+
+[source,yaml]
+----
+apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: llminferenceservice-required-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: ["serving.kserve.io"]
+        kinds: ["LLMInferenceService"]
+  parameters:
+    labels:
+      - key: "app.kubernetes.io/version"
+      - key: "app.kubernetes.io/managed-by"
+      - key: "chocotech.com/compliance-approved"
+----
+
+This gatekeeper policy prevents deployment of models without required labels (version, managed-by, compliance approval).
+
+**ACS build-time policy:**
+
+Enforce security standards at build time:
+
+[source,yaml]
+----
+apiVersion: policy.stackrox.io/v1
+kind: SecurityPolicy
+metadata:
+  name: model-container-hardening
+spec:
+  description: "Enforce security hardening for model containers"
+  severity: HIGH
+  policySection:
+    - policyGroup: Container Configuration
+  criteria:
+    - namespace: chocotech-models
+    - container:
+        image: ".*vllm.*"
+      buildTime:
+        disallowedImageLabels:
+          - key: "version"
+            value: "latest"  # Block containers with :latest tag
+        requiredImageLabels:
+          - key: "io.openshift.build.commit.id"  # Require Git commit traceability
+----
+
+**Sealed secrets for model storage credentials:**
+
+Use sealed-secrets operator instead of plain Secrets:
+
+[source,role="execute"]
+----
+# Encrypt S3 credentials with sealed-secrets
+oc create secret generic model-storage-connection \
+  --from-literal=AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
+  --from-literal=AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \
+  --dry-run=client -o yaml | \
+  kubeseal -o yaml > model-storage-connection-sealed.yaml
+
+# Apply sealed secret (safe to commit to Git)
+oc apply -f model-storage-connection-sealed.yaml
+----
+
+**Verification:**
+
+* Gatekeeper policies enforce required labels on LLMInferenceService
+* ACS blocks deployment of non-compliant containers
+* All secrets use sealed-secrets operator (no plaintext in Git)
+* GitOps workflow requires approval for production changes
+
+== Security hardening verification checklist
+
+Use this checklist before promoting MaaS to production:
+
+|===
+| Security Area | Requirement | Status | Verification Command
+
+| **Model Security**
+| Model artifacts signed
+| ☐
+| `cosign verify-blob --key cosign.pub --signature <sig> <model>`
+
+|
+| AIBOM documented
+| ☐
+| Check ConfigMap with provenance metadata
+
+|
+| Model scanning enabled
+| ☐
+| Review ACS policy for model containers
+
+| **Data Security**
+| TLS enabled on gateway
+| ☐
+| `oc get route maas-default-gateway -o jsonpath='{.spec.tls.termination}'`
+
+|
+| Encrypted storage for models
+| ☐
+| `oc get pvc -o jsonpath='{.items[*].spec.storageClassName}'`
+
+|
+| PII anonymization
+| ☐
+| Review training data preprocessing scripts
+
+| **API Security**
+| Authentication enforced
+| ☐
+| `oc get authpolicy -n redhat-ods-applications`
+
+|
+| Rate limiting active
+| ☐
+| `oc get ratelimitpolicy -n redhat-ods-applications`
+
+|
+| Service mesh mTLS
+| ☐
+| `oc get servicemeshmemberroll -n istio-system`
+
+| **Runtime Security**
+| SELinux enforcing
+| ☐
+| `oc debug node/<node> -- chroot /host getenforce`
+
+|
+| Seccomp profiles applied
+| ☐
+| `oc get llminferenceservice -o yaml \| grep seccompProfile`
+
+|
+| ACS runtime monitoring
+| ☐
+| Check ACS dashboard for policy violations
+
+| **Access Control**
+| RBAC configured
+| ☐
+| `oc get rolebinding -n chocotech-models`
+
+|
+| Network policies
+| ☐
+| `oc get networkpolicy -n chocotech-models`
+
+|
+| Token expiration
+| ☐
+| Check AuthPolicy TTL configuration
+
+| **Audit Logging**
+| API audit enabled
+| ☐
+| `oc get apiserver cluster -o jsonpath='{.spec.audit.profile}'`
+
+|
+| SIEM integration
+| ☐
+| `oc get clusterlogforwarder -n openshift-logging`
+
+|
+| Anomaly alerts
+| ☐
+| `oc get prometheusrule -n redhat-ods-applications`
+
+| **Compliance**
+| AI risk assessment
+| ☐
+| Review risk assessment document
+
+|
+| Incident response plan
+| ☐
+| Test incident response playbook
+
+|
+| SOC 2 documentation
+| ☐
+| Audit compliance evidence folder
+
+| **Supply Chain**
+| SBOM generated
+| ☐
+| `syft quay.io/vllm/vllm:v0.5.4`
+
+|
+| Image signatures verified
+| ☐
+| Check ClusterImagePolicy enforcement
+
+|
+| Dependencies pinned
+| ☐
+| Review LLMInferenceService for version pins
+
+| **OpenShift AI**
+| GitOps enforcement
+| ☐
+| Check Gatekeeper policies active
+
+|
+| ACS policies applied
+| ☐
+| Review ACS policy compliance dashboard
+
+|
+| Sealed secrets
+| ☐
+| `oc get sealedsecret -n chocotech-models`
+|===
+
+**Passing criteria for production:**
+
+* ✓ All HIGH severity items completed (model signing, TLS, authentication)
+* ✓ At least 80% of MEDIUM severity items completed
+* ✓ Security team approval obtained
+* ✓ Incident response playbook tested
+
+== Learning checkpoint
+
+You should now be able to:
+
+* ✓ Implement comprehensive security hardening across nine critical areas
+* ✓ Sign and verify model artifacts with cosign/sigstore
+* ✓ Configure encryption in transit (TLS) and at rest (encrypted storage)
+* ✓ Enforce authentication and authorization with Kuadrant and RBAC
+* ✓ Apply runtime security with SELinux, seccomp, and ACS monitoring
+* ✓ Enable audit logging and SIEM integration for compliance
+* ✓ Conduct AI risk assessments using NIST AI RMF
+* ✓ Secure the model and container supply chain with SBOM and signature verification
+* ✓ Use OpenShift-specific security features (GitOps, ACS, sealed secrets)
+
+**ChocoTech production readiness:**
+
+The CISO approves the MaaS platform for production after verifying:
+
+* Model artifacts are signed and provenance is tracked
+* All API requests are authenticated and encrypted
+* Audit logs are forwarded to the SIEM for SOC 2 compliance
+* Incident response procedures are documented and tested
+* AI risk assessment shows acceptable risk profile for Quality Control use case
+
+== Troubleshooting
+
+**Issue:** Gatekeeper policy blocks LLMInferenceService deployment with missing label error
+
+**Solution:**
+
+. Check gatekeeper constraint: `oc get k8srequiredlabels -o yaml`
+. Add required labels to LLMInferenceService manifest:
+
+[source,yaml]
+----
+metadata:
+  labels:
+    app.kubernetes.io/version: "2.0.0"
+    app.kubernetes.io/managed-by: "argocd"
+    chocotech.com/compliance-approved: "true"
+----
+
+**Issue:** Cosign signature verification fails with "signature not found" error
+
+**Solution:**
+
+. Verify signature file exists: `ls -la llama3-8b-defect-analysis.sig`
+. Check public key matches private key used for signing: `cosign public-key --key cosign.key`
+. Ensure signature was generated for the exact file (checksum match): `sha256sum llama3-8b-defect-analysis.safetensors`
+. Re-sign if signature is stale or keys rotated
+
+**Issue:** OpenShift audit logging generates excessive log volume (10GB+/day)
+
+**Solution:**
+
+. Reduce audit profile from `WriteRequestBodies` to `Default`: `oc patch apiserver cluster --type=merge -p '{"spec":{"audit":{"profile":"Default"}}}'`
+. Filter audit logs to MaaS-related namespaces only in ClusterLogForwarder
+. Use Prometheus recording rules to aggregate metrics instead of retaining raw logs
+. Implement log retention policy (30 days for audit, 7 days for application logs)
+
+**Issue:** ACS reports policy violation for "privileged container" but no privileged containers are defined
+
+**Solution:**
+
+. Check pod security context: `oc get pod <pod-name> -n chocotech-models -o yaml | grep -A 5 securityContext`
+. Common false positive: GPU device plugin requires privileged init container (expected)
+. Whitelist GPU operator namespace in ACS policy: `nvidia-gpu-operator`
+. Verify issue is with model pod, not infrastructure pods
+
+**Issue:** Sealed secret cannot be decrypted by cluster
+
+**Solution:**
+
+. Verify sealed-secrets controller is running: `oc get pods -n kube-system | grep sealed-secrets`
+. Check sealed secret was encrypted for correct cluster: `kubeseal --fetch-cert` (compare cert)
+. Ensure sealed secret is in correct namespace (sealed secrets are namespace-scoped)
+. Re-encrypt secret if sealed-secrets controller was reinstalled (new encryption key)

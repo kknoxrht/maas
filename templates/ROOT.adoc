@@ -87,7 +87,7 @@ For documentation about Product, see either its https://docs.redhat.com/en/docum
 
 == Author
 
-*Fernando Lozano* +
+*Course Author Name Here* +
 Training Content Architect +
 Red Hat - Product Portfolio Marketing & Learning
 

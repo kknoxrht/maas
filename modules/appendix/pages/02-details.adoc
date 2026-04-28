@@ -1,0 +1,196 @@
+= Workshop details
+include::partial$_attributes.adoc[]
+
+:toc:
+:toc-placement: preamble
+:icons: font
+
+== Timing and schedule
+
+=== Full workshop (3-4 hours)
+
+* **Module 1**: The shift to utility AI and architecture foundation (45 minutes)
+* **Module 2**: Administering the MaaS platform (50 minutes)
+* **Module 3**: Deploying models to the MaaS catalog (55 minutes)
+* **Module 4**: Governance, observability, and chargeback (50 minutes)
+* **Module 5**: API integration and consumer experience (40 minutes)
+* **Break time**: 10 minutes between modules recommended
+
+=== Abbreviated workshop (2 hours)
+
+* **Module 1**: Architecture and business value (25 minutes)
+* **Module 2**: Platform administration essentials (35 minutes)
+* **Module 3**: Basic model deployment (40 minutes)
+* **Module 4**: Governance overview only (20 minutes)
+* **Module 5**: API integration demonstration (20 minutes, optional)
+
+== Technical requirements
+
+=== Software versions
+
+* Red Hat OpenShift {ocp_version} or later
+* Red Hat OpenShift AI {rhoai_version} or later
+* OpenShift AI operator channel: `fast-3.x` or `stable-3.x`
+* NVIDIA GPU operator (latest/stable)
+* OpenShift Service Mesh operator (required for Gateway API)
+* Web browser (Chrome, Firefox, Safari, Edge)
+
+=== Hardware requirements
+
+**Critical**: This lab requires a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
+
+* **Minimum GPU configuration**: 1x NVIDIA GPU with {gpu_memory} VRAM
+* **Recommended GPU configuration**: 2x NVIDIA GPUs with 24GB+ VRAM each
+* **GPU models supported**: A100, L40S, L4, H100 (NVIDIA certified accelerators)
+* **Purpose**: Deploy multiple models simultaneously (Llama Stack, Nemotron) with distributed inference
+
+**Why multiple GPUs matter for this lab**:
+
+* Demonstrates distributed inference with LeaderWorkerSet
+* Shows realistic multi-tenant model serving scenarios
+* Enables proper load balancing and autoscaling demonstrations
+
+=== Environment access
+Participants need access to:
+
+* Red Hat OpenShift cluster (provided during workshop)
+* OpenShift AI dashboard (pre-deployed)
+* Terminal access via Showroom interface
+* Code editor (Showroom embedded editor)
+* OpenShift CLI (`oc`) pre-installed on bastion
+
+=== Network requirements
+
+* Internet connectivity for downloading container images from quay.io and registry.redhat.io
+* Access to Hugging Face model repositories (models.huggingface.co)
+* OpenShift cluster ingress accessible via HTTPS
+* Showroom interface access (splits view with console and terminal)
+
+== Environment setup
+
+=== Pre-workshop checklist
+
+The following components should be pre-configured before the workshop starts:
+
+□ **OpenShift cluster deployed** - SNO with GPU nodes configured
+
+□ **GPU operators installed** - NVIDIA GPU operator and Node Feature Discovery
+
+□ **OpenShift AI operator installed** - Channel: fast-3.x or stable-3.x
+
+□ **Service Mesh operator installed** - Required for Gateway API routing
+
+□ **KServe components deployed** - Model serving infrastructure ready
+
+□ **GPU driver verification** - NVIDIA drivers loaded and tested
+
+□ **OpenShift CLI available** - `oc` command accessible from terminal
+
+□ **Showroom interface configured** - Split view with console, AI dashboard, terminal, editor tabs
+
+=== Setup validation
+
+Participants should run these commands at the start of the workshop to verify environment readiness:
+
+Check OpenShift login:
+[source,role="execute"]
+----
+oc whoami
+----
+
+Verify OpenShift AI operator:
+[source,role="execute"]
+----
+oc get csv -n redhat-ods-operator | grep rhods
+----
+
+Check GPU nodes:
+[source,role="execute"]
+----
+oc get nodes -l nvidia.com/gpu.present=true
+----
+
+Verify GPU operator pods:
+[source,role="execute"]
+----
+oc get pods -n nvidia-gpu-operator
+----
+
+Check KServe components:
+[source,role="execute"]
+----
+oc get pods -n redhat-ods-applications | grep kserve
+----
+
+== Troubleshooting guide
+
+=== Common setup issues
+
+**Problem**: "oc command not found"
+
+→ **Solution**: Verify terminal session is connected to bastion host, `oc` should be pre-installed
+
+**Problem**: "Unable to connect to OpenShift cluster"
+
+→ **Solution**: Verify cluster ingress is accessible, check Showroom environment variables are populated
+
+**Problem**: "OpenShift AI operator not found"
+
+→ **Solution**: Check operator installation in `redhat-ods-operator` namespace: `oc get csv -n redhat-ods-operator`
+
+**Problem**: "GPU nodes not detected"
+
+→ **Solution**: Verify GPU operator installation and node labels: `oc describe node | grep nvidia`
+
+**Problem**: "KServe pods failing to start"
+
+→ **Solution**: Check Service Mesh operator is installed, verify knative-serving namespace exists
+
+=== During workshop support
+
+* Encourage participants to use Showroom split view (console + terminal side-by-side)
+* OpenShift AI dashboard tab provides GUI alternative for most tasks
+* Have backup cluster access credentials ready for authentication issues
+* Use OpenShift web terminal as fallback for SSH connectivity problems
+* Monitor GPU utilization to prevent resource exhaustion: `oc adm top nodes`
+
+== Follow-up resources
+
+=== Next steps for participants
+
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/{rhoai_version}[Red Hat OpenShift AI Documentation^]
+* link:https://developers.redhat.com/products/openshift-ai/overview[Red Hat Developer - OpenShift AI Resources^]
+* link:https://access.redhat.com/articles/rhoai-supported-configs[Red Hat OpenShift AI Supported Configurations^]
+* link:https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[Red Hat OpenShift AI Product Page^]
+
+=== Additional learning paths
+
+* **Intermediate**: Model optimization, quantization, and fine-tuning on OpenShift AI
+* **Advanced**: Multi-cluster model serving, federated learning, and custom serving runtimes
+* **Certification**: Red Hat Certified Specialist in AI (upcoming certification program)
+* **Community**: OpenShift AI community forums and GitHub repositories
+
+=== Related workshops
+
+* Generic GPU enablement on OpenShift (prerequisite knowledge)
+* LLMOps workflows with OpenShift Pipelines and GitOps
+* Building agentic applications with LangChain and OpenShift AI
+* Observability and monitoring for AI workloads
+
+== Authors and contributors
+
+**Primary Author**: Red Hat Technical Marketing - AI/ML Practice
+
+**Last Updated**: April 2026
+
+**Workshop Version**: 1.0
+
+**Based on**: Red Hat OpenShift AI 3.3+ MaaS capabilities
+
+**Contact Information**:
+
+* Workshop feedback: Submit via Showroom feedback interface
+* Technical questions: Red Hat Customer Portal or Red Hat Developer community
+* Content updates: GitHub issues on workshop repository (link provided by facilitator)
+
+**Acknowledgments**: This workshop incorporates SME guidance from Red Hat OpenShift AI product engineering and field solution architects working with enterprise AI deployments.

@@ -16,12 +16,10 @@
 ** xref:04-module-02-platform-admin.adoc#exercise-4-access-the-openshift-ai-dashboard[Exercise 4: Access the OpenShift AI Dashboard]
 
 * xref:05-module-03-model-deployment.adoc[Module 3: Deploying Models to the MaaS Catalog]
-** xref:05a-model-selection-strategy.adoc[Exercise 1: Choosing the Right Model]
-** xref:05-module-03-model-deployment.adoc#exercise-2-understanding-serving-runtimes-and-distributed-inference[Exercise 2: Understanding Serving Runtimes]
-** xref:05-module-03-model-deployment.adoc#exercise-3-deploy-your-first-model-with-distributed-inference[Exercise 3: Deploy Your First Model]
-** xref:05-module-03-model-deployment.adoc#exercise-4-publish-model-to-the-maas-catalog[Exercise 4: Publish Model to Catalog]
-** xref:05-module-03-model-deployment.adoc#exercise-5-deploy-a-second-model-for-multi-model-catalog[Exercise 5: Deploy a Second Model]
-** xref:05b-lifecycle-management-gitops.adoc[Exercise 6: Production Lifecycle Management]
+** xref:05-module-03-model-deployment.adoc#exercise-1-understanding-serving-runtimes-and-distributed-inference[Exercise 1: Understanding Serving Runtimes]
+** xref:05-module-03-model-deployment.adoc#exercise-2-deploy-your-first-model-with-distributed-inference[Exercise 2: Deploy Your First Model]
+** xref:05-module-03-model-deployment.adoc#exercise-3-publish-model-to-the-maas-catalog[Exercise 3: Publish Model to Catalog]
+** xref:05-module-03-model-deployment.adoc#exercise-4-deploy-a-second-model-for-multi-model-catalog[Exercise 4: Deploy a Second Model]
 
 * xref:06-module-04-governance.adoc[Module 4: Governance, Observability, and Chargeback]
 ** xref:06-module-04-governance.adoc#exercise-1-understanding-maas-governance-tiers[Exercise 1: Understanding Governance Tiers]
@@ -29,7 +27,6 @@
 ** xref:06-module-04-governance.adoc#exercise-3-configure-governance-tiers-and-rate-limiting[Exercise 3: Configure Tiers and Rate Limiting]
 ** xref:06-module-04-governance.adoc#exercise-4-deploy-grafana-for-observability[Exercise 4: Deploy Grafana]
 ** xref:06-module-04-governance.adoc#exercise-5-generate-chargeback-reports[Exercise 5: Generate Chargeback Reports]
-** xref:06a-security-hardening.adoc[Exercise 6: Production Security Hardening]
 
 * xref:07-module-05-api-integration.adoc[Module 5: API Integration and Consumer Experience]
 ** xref:07-module-05-api-integration.adoc#exercise-1-generate-api-tokens-in-gen-ai-studio[Exercise 1: Generate API Tokens]

@@ -1,0 +1,62 @@
+= Red Hat OpenShift AI: Models as a Service Enablement
+
+include::partial$_attributes.adoc[]
+
+Welcome to the Red Hat OpenShift AI Models as a Service enablement workshop!
+
+== What you'll learn
+
+In this workshop, you will:
+
+* Understand the GPU silo crisis and how Models as a Service (MaaS) solves resource allocation challenges
+* Design and implement a centralized model hub with governed token-based consumption
+* Configure MaaS on Red Hat OpenShift AI using the operator and Custom Resource Definitions
+* Deploy generative AI models using llm-d, vLLM, and KServe components for distributed inference
+* Publish models to the OpenShift AI dashboard catalog for self-service access with role-based permissions
+* Implement governance policies with tiered service limits and rate limiting using Kuadrant
+* Generate usage reports for chargeback and monitor GPU utilization metrics with Grafana
+* Integrate AI models into applications using OpenAI-compatible APIs with proper retry logic
+
+== Who this is for
+
+This workshop is designed for Platform Engineers and Developers who want to transform GPU infrastructure from isolated team silos into a centralized, governed environment where lines of business can access generative AI models to build agentic applications.
+
+**Experience level**: Intermediate
+
+== Prerequisites
+
+Before starting this workshop, you should have:
+
+* Red Hat OpenShift administration experience (Version {ocp_version} or later)
+* Basic Kubernetes operator management knowledge
+* Familiarity with core GPU concepts and generic GPU enablement
+* Understanding of API concepts and REST principles
+* Basic command line experience
+
+== Workshop environment
+
+Your lab environment includes a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs (minimum {gpu_memory}) pre-configured with:
+
+* Red Hat OpenShift {ocp_version} or later
+* Red Hat OpenShift AI {rhoai_version} or later (operator installed)
+* GPU operators and drivers configured
+* Required infrastructure components (KServe, Service Mesh)
+
+You will have access to:
+
+* OpenShift cluster console: {openshift_console_url}
+* OpenShift AI dashboard: {rhoai_dashboard_url}
+* Username: {user}
+* Password: {password}
+
+NOTE: All environment details and credentials are available in the lab interface.
+
+== Estimated time
+
+This workshop will take approximately **3-4 hours** to complete.
+
+You can work at your own pace.
+
+== Let's get started!
+
+Click on **Workshop Overview** in the navigation to begin your learning journey and meet ChocoTech Industries, a chocolate manufacturer facing the GPU silo crisis.
