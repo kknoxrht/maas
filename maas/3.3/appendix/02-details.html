@@ -1,0 +1,633 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Workshop details :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="01-overview.html">
+    <link rel="next" href="03-module-01-architecture.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li><a href="02-details.html">Workshop Details</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Workshop details</h1>
+<div class="sect1">
+<h2 id="_timing_and_schedule"><a class="anchor" href="#_timing_and_schedule"></a>Timing and schedule</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_full_workshop_3_4_hours"><a class="anchor" href="#_full_workshop_3_4_hours"></a>Full workshop (3-4 hours)</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Module 1</strong>: The shift to utility AI and architecture foundation (30 minutes)</p>
+</li>
+<li>
+<p><strong>Module 2</strong>: Administering the MaaS platform (40 minutes)</p>
+</li>
+<li>
+<p><strong>Module 3</strong>: Deploying models to the MaaS catalog (55 minutes)</p>
+</li>
+<li>
+<p><strong>Module 4</strong>: Governance, observability, and chargeback (50 minutes)</p>
+</li>
+<li>
+<p><strong>Module 5</strong>: API integration and consumer experience (40 minutes)</p>
+</li>
+<li>
+<p><strong>Break time</strong>: 10 minutes between modules recommended</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_technical_requirements"><a class="anchor" href="#_technical_requirements"></a>Technical requirements</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_software_versions"><a class="anchor" href="#_software_versions"></a>Software versions</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Red Hat OpenShift 4.20 or later</p>
+</li>
+<li>
+<p>Red Hat OpenShift AI 3.3} or later</p>
+</li>
+<li>
+<p>OpenShift AI operator channel: <code>fast-3.x</code> or <code>stable-3.x</code></p>
+</li>
+<li>
+<p>NVIDIA GPU operator (latest/stable)</p>
+</li>
+<li>
+<p>OpenShift Service Mesh operator (required for Gateway API)</p>
+</li>
+<li>
+<p>Web browser (Chrome, Firefox, Safari, Edge)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_hardware_requirements"><a class="anchor" href="#_hardware_requirements"></a>Hardware requirements</h3>
+<div class="paragraph">
+<p><strong>Critical</strong>: This lab suggests a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Minimum GPU configuration</strong>: 1x NVIDIA GPU with {gpu_memory} VRAM</p>
+</li>
+<li>
+<p><strong>Recommended GPU configuration</strong>: 2x NVIDIA GPUs with 24GB+ VRAM each</p>
+</li>
+<li>
+<p><strong>GPU models supported</strong>: A100, L40S, L4, H100 (NVIDIA certified accelerators)</p>
+</li>
+<li>
+<p><strong>Purpose</strong>: Deploy multiple models simultaneously (Llama Stack, Nemotron) with distributed inference</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Why multiple GPUs matter for this lab</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>LlamaStack model is required for MaaS Dashboard (consumes 1 GPU)</p>
+</li>
+<li>
+<p>Shows realistic multi-tenant model serving scenarios</p>
+</li>
+<li>
+<p>Enables proper load balancing and autoscaling demonstrations</p>
+</li>
+<li>
+<p>Deploy the NVIDIA-Nemotron-3-Nano-4B-FP8 (or 30B A3B)</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_environment_setup"><a class="anchor" href="#_environment_setup"></a>Environment setup</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_pre_workshop_checklist"><a class="anchor" href="#_pre_workshop_checklist"></a>Pre-workshop checklist</h3>
+<div class="paragraph">
+<p>The following components should be pre-configured before the workshop starts:</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>OpenShift cluster deployed</strong> - SNO with GPU nodes configured</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>GPU operators installed</strong> - NVIDIA GPU operator and Node Feature Discovery</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>OpenShift AI operator installed</strong> - Channel: fast-3.x or stable-3.x</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>Service Mesh operator installed</strong> - Required for Gateway API routing</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>Red Hat Connectivity Link Operator Installed</strong> - Kaudrant - Authentication/Authorization/Rate Limiting</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>Leader Worker Set Operator installed for llm-d</strong> - Required for Multiple node Inference (MOE)</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>Web Terminal Operator or Developer Spaces</strong> - Required CLI access</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>KServe components deployed</strong> - Model serving infrastructure ready</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>GPU driver verification</strong> - NVIDIA drivers loaded and tested</p>
+</div>
+<div class="paragraph">
+<p>□ <strong>OpenShift CLI available</strong> - <code>oc</code> command accessible from terminal</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_setup_validation"><a class="anchor" href="#_setup_validation"></a>Setup validation</h3>
+<div class="paragraph">
+<p>Participants should run these commands at the start of the workshop to verify environment readiness:</p>
+</div>
+<div class="paragraph">
+<p>Check OpenShift login:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc whoami</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify OpenShift AI operator:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get csv -n redhat-ods-operator | grep rhods</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check GPU nodes:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get nodes -l nvidia.com/gpu.present=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify GPU operator pods:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n nvidia-gpu-operator</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check KServe components:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications | grep kserve</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_guide"><a class="anchor" href="#_troubleshooting_guide"></a>Troubleshooting guide</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_common_setup_issues"><a class="anchor" href="#_common_setup_issues"></a>Common setup issues</h3>
+<div class="paragraph">
+<p><strong>Problem</strong>: "oc command not found"</p>
+</div>
+<div class="paragraph">
+<p>→ <strong>Solution</strong>: Verify terminal session is connected to bastion host, <code>oc</code> should be pre-installed</p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: "Unable to connect to OpenShift cluster"</p>
+</div>
+<div class="paragraph">
+<p>→ <strong>Solution</strong>: Verify cluster ingress is accessible, check Showroom environment variables are populated</p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: "OpenShift AI operator not found"</p>
+</div>
+<div class="paragraph">
+<p>→ <strong>Solution</strong>: Check operator installation in <code>redhat-ods-operator</code> namespace: <code>oc get csv -n redhat-ods-operator</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: "GPU nodes not detected"</p>
+</div>
+<div class="paragraph">
+<p>→ <strong>Solution</strong>: Verify GPU operator installation and node labels: <code>oc describe node | grep nvidia</code></p>
+</div>
+<div class="paragraph">
+<p><strong>Problem</strong>: "KServe pods failing to start"</p>
+</div>
+<div class="paragraph">
+<p>→ <strong>Solution</strong>: Check Service Mesh operator is installed, verify knative-serving namespace exists</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_during_workshop_support"><a class="anchor" href="#_during_workshop_support"></a>During workshop support</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Encourage participants to use Showroom split view (console + terminal side-by-side)</p>
+</li>
+<li>
+<p>OpenShift AI dashboard tab provides GUI alternative for most tasks</p>
+</li>
+<li>
+<p>Have backup cluster access credentials ready for authentication issues</p>
+</li>
+<li>
+<p>Use OpenShift web terminal as fallback for SSH connectivity problems</p>
+</li>
+<li>
+<p>Monitor GPU utilization to prevent resource exhaustion: <code>oc adm top nodes</code></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_follow_up_resources"><a class="anchor" href="#_follow_up_resources"></a>Follow-up resources</h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_next_steps_for_participants"><a class="anchor" href="#_next_steps_for_participants"></a>Next steps for participants</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/{rhoai_version}" target="_blank" rel="noopener">Red Hat OpenShift AI Documentation</a></p>
+</li>
+<li>
+<p><a href="https://developers.redhat.com/products/openshift-ai/overview" target="_blank" rel="noopener">Red Hat Developer - OpenShift AI Resources</a></p>
+</li>
+<li>
+<p><a href="https://access.redhat.com/articles/rhoai-supported-configs" target="_blank" rel="noopener">Red Hat OpenShift AI Supported Configurations</a></p>
+</li>
+<li>
+<p><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" target="_blank" rel="noopener">Red Hat OpenShift AI Product Page</a></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_additional_learning_paths"><a class="anchor" href="#_additional_learning_paths"></a>Additional learning paths</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Intermediate</strong>: Model optimization, quantization, and fine-tuning on OpenShift AI</p>
+</li>
+<li>
+<p><strong>Advanced</strong>: Multi-cluster model serving, federated learning, and custom serving runtimes</p>
+</li>
+<li>
+<p><strong>Certification</strong>: Red Hat Certified Specialist in AI (upcoming certification program)</p>
+</li>
+<li>
+<p><strong>Community</strong>: OpenShift AI community forums and GitHub repositories</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_related_workshops"><a class="anchor" href="#_related_workshops"></a>Related workshops</h3>
+<div class="ulist">
+<ul>
+<li>
+<p>Generic GPU enablement on OpenShift (prerequisite knowledge)</p>
+</li>
+<li>
+<p>LLMOps workflows with OpenShift Pipelines and GitOps</p>
+</li>
+<li>
+<p>Building agentic applications with LangChain and OpenShift AI</p>
+</li>
+<li>
+<p>Observability and monitoring for AI workloads</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_authors_and_contributors"><a class="anchor" href="#_authors_and_contributors"></a>Authors and contributors</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Primary Author</strong>: Red Hat Technical Marketing - AI/ML Practice</p>
+</div>
+<div class="paragraph">
+<p><strong>Last Updated</strong>: April 2026</p>
+</div>
+<div class="paragraph">
+<p><strong>Workshop Version</strong>: 1.0</p>
+</div>
+<div class="paragraph">
+<p><strong>Based on</strong>: Red Hat OpenShift AI 3.3+ MaaS capabilities</p>
+</div>
+<div class="paragraph">
+<p><strong>Contact Information</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Workshop feedback: Submit via Showroom feedback interface</p>
+</li>
+<li>
+<p>Technical questions: Red Hat Customer Portal or Red Hat Developer community</p>
+</li>
+<li>
+<p>Content updates: GitHub issues on workshop repository (link provided by facilitator)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Acknowledgments</strong>: This workshop incorporates SME guidance from Red Hat OpenShift AI product engineering and field solution architects working with enterprise AI deployments.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="01-overview.html">Workshop Overview</a></span>
+  <span class="next"><a href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

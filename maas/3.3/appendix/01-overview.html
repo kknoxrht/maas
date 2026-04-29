@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Workshop overview :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="index.html">
+    <link rel="next" href="02-details.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li><a href="01-overview.html">Workshop Overview</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Workshop overview</h1>
+<div class="sect1">
+<h2 id="_your_role_and_mission"><a class="anchor" href="#_your_role_and_mission"></a>Your role and mission</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;re a Platform Engineer at ChocoTech Industries, a modern chocolate manufacturing company, and you&#8217;ve been assigned to solve a critical infrastructure challenge affecting multiple business units.</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech has teams across Quality Control, R&amp;D, Marketing, and Supply Chain all trying to leverage AI for their operations. However, each team purchased their own GPU infrastructure, leading to the "GPU Silo Crisis."</p>
+</div>
+<div class="paragraph">
+<p><strong>Your assignment</strong>: Design and implement a Models as a Service (MaaS) platform on Red Hat OpenShift AI to transform fragmented GPU resources into a centralized, governed model hub.</p>
+</div>
+<div class="paragraph">
+<p><strong>The objective</strong>: Enable lines of business to access generative AI models through a self-service catalog with proper governance, eliminating resource waste and accelerating business innovation.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_success_criteria_for_your_mission"><a class="anchor" href="#_success_criteria_for_your_mission"></a>Success criteria for your mission</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By the end of this workshop, you&#8217;ll have practical MaaS implementation skills to address ChocoTech&#8217;s GPU infrastructure challenges:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Understand the business impact of the GPU silo crisis and articulate how MaaS prevents "Shadow AI" → <strong>eliminate redundant deployments and resource waste</strong></p>
+</li>
+<li>
+<p>Configure the MaaS platform through OpenShift AI operator CRDs → <strong>establish centralized model serving infrastructure</strong></p>
+</li>
+<li>
+<p>Deploy models using distributed inference with llm-d and vLLM → <strong>enable efficient GPU utilization across multiple accelerators</strong></p>
+</li>
+<li>
+<p>Implement governance tiers with rate limiting and quotas using Kuadrant → <strong>ensure fair resource allocation and compliance</strong></p>
+</li>
+<li>
+<p>Generate usage metrics and chargeback reports → <strong>provide visibility into model consumption and justify infrastructure costs</strong></p>
+</li>
+<li>
+<p>Integrate models into applications via OpenAI-compatible APIs → <strong>enable developers to consume AI capabilities without infrastructure complexity</strong></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Technical outcome</strong>: You&#8217;ll have hands-on experience deploying and operating a production-ready MaaS platform that solves real business challenges.</p>
+</div>
+<div class="paragraph">
+<p><strong>Business benefit</strong>: Centralized model catalog with governed access that reduces costs, improves compliance, and accelerates AI application development.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_target_audience"><a class="anchor" href="#_target_audience"></a>Target audience</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This workshop is designed for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Platform Engineers responsible for GPU infrastructure and AI platform operations</p>
+</li>
+<li>
+<p>AI/ML Platform Administrators managing model serving and governance</p>
+</li>
+<li>
+<p>Developers building agentic applications that consume AI models</p>
+</li>
+<li>
+<p>Technical professionals evaluating MaaS adoption for enterprise AI initiatives</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_what_you_need_to_succeed"><a class="anchor" href="#_what_you_need_to_succeed"></a>What you need to succeed</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You should have:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Red Hat OpenShift administration experience - you&#8217;ve managed clusters and operators</p>
+</li>
+<li>
+<p>Kubernetes fundamentals - you understand pods, services, and custom resources</p>
+</li>
+<li>
+<p>Basic GPU concepts - you know why AI workloads need accelerators</p>
+</li>
+<li>
+<p>API integration knowledge - you&#8217;ve worked with REST APIs and authentication tokens</p>
+</li>
+<li>
+<p>Access to a computer with internet connectivity and SSH client</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_chocotech_industries_gpu_infrastructure_challenges"><a class="anchor" href="#_chocotech_industries_gpu_infrastructure_challenges"></a>ChocoTech Industries' GPU infrastructure challenges</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>The situation</strong>: ChocoTech Industries has invested heavily in AI across multiple business units, but their decentralized approach created serious operational problems.</p>
+</div>
+<div class="paragraph">
+<p><strong>Current state</strong>: Four teams independently purchased and deployed GPU infrastructure:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Quality Control team</strong>: Running computer vision models for defect detection on 2x A100 GPUs</p>
+</li>
+<li>
+<p><strong>R&amp;D team</strong>: Testing recipe optimization and flavor prediction models on 4x L40S GPUs</p>
+</li>
+<li>
+<p><strong>Marketing team</strong>: Analyzing customer sentiment and demand forecasting on 2x L4 GPUs</p>
+</li>
+<li>
+<p><strong>Supply Chain team</strong>: Running inventory prediction models on 2x L40S GPUs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Operational pain points identified</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>GPU under-utilization and over-provisioning</strong>: Quality Control&#8217;s GPUs sit idle 60% of the time while R&amp;D waits weeks for capacity, leading to unnecessary $200,000+ hardware purchases</p>
+</li>
+<li>
+<p><strong>Misallocation of engineering expertise</strong>: Data scientists spend 40% of their time debugging CUDA drivers, Docker containers, and Kubernetes manifests instead of tuning models and analyzing data</p>
+</li>
+<li>
+<p><strong>Redundant model deployments</strong>: All four teams independently downloaded and deployed Llama-3 8B, wasting 32GB of storage and compute capacity per deployment</p>
+</li>
+<li>
+<p><strong>Security "Black Boxes"</strong>: Without a centralized API gateway, there is zero visibility into who is sending what data to which model, making audit logs and PII filtering nearly impossible to enforce for compliance</p>
+</li>
+<li>
+<p><strong>No way to track usage or forecast needs</strong>: Finance cannot justify GPU infrastructure costs without visibility into model usage across users, applications, and different models</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>The opportunity</strong>: MaaS transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane where centralized IT manages the inference strategy, hardware allocation, and governance policies while lines of business consume AI capabilities via tokens.</p>
+</div>
+<div class="paragraph">
+<p><strong>Technical perspective</strong>: "We need to transition from hardware management to token delivery. MaaS provides the wiring layer (KServe, Kuadrant, Gateway API) and governance framework (tiers, rate limits, quotas) to make this shift possible."</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_your_vision_of_success"><a class="anchor" href="#_your_vision_of_success"></a>Your vision of success</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>If MaaS implementation succeeds for ChocoTech, here&#8217;s the potential impact:</p>
+</div>
+<div class="paragraph">
+<p><strong>Immediate improvements</strong> (short-term):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Eliminated redundancy</strong>: Single Llama-3 8B deployment serves all four teams → 75% reduction in storage and compute waste</p>
+</li>
+<li>
+<p><strong>Fair resource allocation</strong>: Tier-based quotas prevent Quality Control from monopolizing GPUs while R&amp;D waits → balanced access across business units</p>
+</li>
+<li>
+<p><strong>Complete audit trail</strong>: Every API request logged with user identity, model accessed, and tokens consumed → compliance requirements satisfied</p>
+</li>
+<li>
+<p><strong>Simplified developer experience</strong>: Marketing team integrates models via OpenAI-compatible API in hours instead of weeks → faster time to value</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Strategic benefits</strong> (longer-term):</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Accurate chargeback</strong>: Token-based consumption tracking enables Finance to bill departments based on actual usage → justify infrastructure investments</p>
+</li>
+<li>
+<p><strong>Centralized catalog governance</strong>: Platform team controls which models are available, preventing "Shadow AI" deployments → standardization and security</p>
+</li>
+<li>
+<p><strong>Better resource utilization</strong>: Autoscaling and distributed inference maximize GPU efficiency → infrastructure costs reduced by 40-50%</p>
+</li>
+<li>
+<p><strong>Accelerated innovation</strong>: Developers focus on building applications instead of managing infrastructure → increased team productivity and business agility</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Success metric</strong>: ChocoTech can demonstrate to leadership that MaaS reduced GPU infrastructure costs, improved compliance posture, and accelerated AI application delivery across all business units.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_common_questions"><a class="anchor" href="#_common_questions"></a>Common questions</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>"Can we integrate MaaS with our existing AI models without major changes?"</strong>
+→ Yes. Module 3 demonstrates deploying existing models from Hugging Face and custom model repositories using llm-d and vLLM serving runtimes</p>
+</div>
+<div class="paragraph">
+<p><strong>"What about security and compliance considerations?"</strong>
+→ Module 4 covers governance policies including rate limiting, tier-based access control, and audit logging through the Kuadrant policy layer</p>
+</div>
+<div class="paragraph">
+<p><strong>"How does this integrate with our current application development workflows?"</strong>
+→ Module 5 shows OpenAI-compatible API integration that works with existing LangChain, LlamaIndex, and custom application frameworks</p>
+</div>
+<div class="paragraph">
+<p><strong>"Is MaaS adoption sustainable for our team with limited Kubernetes expertise?"</strong>
+→ The workshop demonstrates operator-based configuration through OpenShift AI CRDs, minimizing low-level Kubernetes knowledge requirements while providing self-service capabilities via the dashboard</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="index.html">Workshop Home</a></span>
+  <span class="next"><a href="02-details.html">Workshop Details</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

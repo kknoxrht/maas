@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Conclusion :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="07-module-05-api-integration.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li><a href="08-conclusion.html">Conclusion</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Conclusion</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>cat &lt;&lt;EOF | oc apply -f -
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: redhat-ods-applications
+EOF</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_workshop_recap"><a class="anchor" href="#_workshop_recap"></a>Workshop recap</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Congratulations! You&#8217;ve successfully transformed ChocoTech Industries' fragmented GPU infrastructure into a centralized, governed Models as a Service platform.</p>
+</div>
+<div class="paragraph">
+<p><strong>What you accomplished</strong>:</p>
+</div>
+<div class="paragraph">
+<p>You began with a critical business problem: expensive GPU hardware trapped in team silos, creating simultaneous idle capacity and project bottlenecks. ChocoTech&#8217;s Quality Control GPUs sat unused while R&amp;D waited weeks for capacity, and Finance had no visibility into AI infrastructure costs.</p>
+</div>
+<div class="paragraph">
+<p>Through five comprehensive modules, you implemented a complete MaaS solution:</p>
+</div>
+<div class="paragraph">
+<p><strong>Module 1 - Architecture foundation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Identified the GPU silo crisis and its business impact on ChocoTech</p>
+</li>
+<li>
+<p>Mapped the three-layer MaaS architecture (Gateway API, Kuadrant, KServe)</p>
+</li>
+<li>
+<p>Verified foundational components (GPU operators, OpenShift AI, Service Mesh)</p>
+</li>
+<li>
+<p>Understood the complete request flow from API client to model serving</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Module 2 - Platform administration</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Configured MaaS through DataScienceCluster CRD operator-driven deployment</p>
+</li>
+<li>
+<p>Enabled Gen AI Studio dashboard for self-service model access</p>
+</li>
+<li>
+<p>Verified Gateway API resources and Kuadrant policy components</p>
+</li>
+<li>
+<p>Activated the web interface for model discovery and token generation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Module 3 - Model deployment</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deployed generative AI models using LLMInferenceService with distributed inference</p>
+</li>
+<li>
+<p>Published models to the MaaS catalog with tier-based access control</p>
+</li>
+<li>
+<p>Demonstrated LeaderWorkerSet for multi-GPU model serving</p>
+</li>
+<li>
+<p>Managed a multi-model catalog serving different business units</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Module 4 - Governance and observability</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Defined four governance tiers aligned with ChocoTech&#8217;s business priorities</p>
+</li>
+<li>
+<p>Configured rate limiting and token quotas using Kuadrant policies</p>
+</li>
+<li>
+<p>Deployed Grafana for observability into model usage and GPU utilization</p>
+</li>
+<li>
+<p>Enabled Finance to perform chargeback based on actual token consumption</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Module 5 - API integration</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generated API tokens through Gen AI Studio self-service interface</p>
+</li>
+<li>
+<p>Consumed models via OpenAI-compatible API with minimal migration effort</p>
+</li>
+<li>
+<p>Implemented exponential backoff retry logic for production applications</p>
+</li>
+<li>
+<p>Demonstrated OpenAI SDK compatibility for existing application integration</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_outcomes"><a class="anchor" href="#_learning_outcomes"></a>Learning outcomes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By completing this workshop, you&#8217;ve gained practical skills across Platform Engineering and Developer domains:</p>
+</div>
+<div class="paragraph">
+<p><strong>Platform Engineering outcomes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ How to diagnose and articulate the GPU silo crisis business problem</p>
+</li>
+<li>
+<p>✓ Configure Red Hat OpenShift AI operator CRDs to enable MaaS components</p>
+</li>
+<li>
+<p>✓ Deploy models using distributed inference with llm-d and vLLM runtimes</p>
+</li>
+<li>
+<p>✓ Implement governance tiers with Kuadrant for multi-tenant resource allocation</p>
+</li>
+<li>
+<p>✓ Deploy observability dashboards for GPU utilization and token consumption tracking</p>
+</li>
+<li>
+<p>✓ Generate chargeback reports for Finance based on actual usage by department</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Developer outcomes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Navigate Gen AI Studio to discover models and generate API tokens</p>
+</li>
+<li>
+<p>✓ Integrate models into applications using OpenAI-compatible APIs</p>
+</li>
+<li>
+<p>✓ Implement retry logic for rate limiting and quota management</p>
+</li>
+<li>
+<p>✓ Migrate existing OpenAI-based applications to self-hosted models</p>
+</li>
+<li>
+<p>✓ Understand token consumption patterns and quota management</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Architectural outcomes</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ The three-layer MaaS architecture (Gateway API, Kuadrant, KServe) and separation of concerns</p>
+</li>
+<li>
+<p>✓ How distributed inference with LeaderWorkerSet enables multi-GPU model serving</p>
+</li>
+<li>
+<p>✓ The difference between standalone KServe deployment and MaaS-integrated deployment</p>
+</li>
+<li>
+<p>✓ Request flow from API client through routing, policy enforcement, and model serving layers</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_business_impact_for_chocotech_industries"><a class="anchor" href="#_business_impact_for_chocotech_industries"></a>Business impact for ChocoTech Industries</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Your MaaS implementation delivers measurable value across ChocoTech&#8217;s organization:</p>
+</div>
+<div class="paragraph">
+<p><strong>Eliminated waste and redundancy</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Single Llama-3 8B deployment serves all four teams (75% reduction in storage and compute waste)</p>
+</li>
+<li>
+<p>Centralized catalog prevents redundant model deployments</p>
+</li>
+<li>
+<p>GPU utilization increased from 40% to 85% through fair resource allocation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Fair resource allocation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Quality Control&#8217;s production workload no longer competes with Marketing&#8217;s exploratory queries</p>
+</li>
+<li>
+<p>Tier-based quotas ensure balanced access across business units</p>
+</li>
+<li>
+<p>Platform Engineer controls model availability and access policies</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Cost visibility and chargeback</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Finance can justify AI infrastructure expansion with usage data by department</p>
+</li>
+<li>
+<p>Token-based consumption enables accurate cross-department billing</p>
+</li>
+<li>
+<p>Infrastructure costs reduced by 40-50% through better resource utilization</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Compliance and security</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Complete audit trail of every API request with user identity tracking</p>
+</li>
+<li>
+<p>PII filtering and access control via API gateway enforcement</p>
+</li>
+<li>
+<p>Tier-based access prevents unauthorized model access</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Accelerated innovation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Developers focus on building applications instead of managing infrastructure</p>
+</li>
+<li>
+<p>Self-service model access reduces time-to-value from weeks to hours</p>
+</li>
+<li>
+<p>OpenAI-compatible API enables code reuse and minimal migration effort</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_production_deployment_considerations"><a class="anchor" href="#_production_deployment_considerations"></a>Production deployment considerations</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When deploying MaaS in production environments, consider these additional factors:</p>
+</div>
+<div class="paragraph">
+<p><strong>High availability</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deploy KServe InferenceService with multiple replicas for fault tolerance</p>
+</li>
+<li>
+<p>Configure Gateway API with multiple ingress controllers for redundancy</p>
+</li>
+<li>
+<p>Use persistent storage for model caching to reduce download times</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Security hardening</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enable mutual TLS (mTLS) between Gateway API and KServe services</p>
+</li>
+<li>
+<p>Implement network policies to restrict pod-to-pod communication</p>
+</li>
+<li>
+<p>Use Red Hat OpenShift certificate management for automatic rotation</p>
+</li>
+<li>
+<p>Enable audit logging for all API requests</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Performance optimization</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use model quantization (int8, int4) to reduce GPU memory requirements</p>
+</li>
+<li>
+<p>Configure vLLM prefix-caching for improved inference latency</p>
+</li>
+<li>
+<p>Deploy models closer to consuming applications (edge vs datacenter)</p>
+</li>
+<li>
+<p>Monitor GPU utilization and scale worker replicas based on load</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Monitoring and alerting</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Set up Prometheus alerts for GPU memory exhaustion</p>
+</li>
+<li>
+<p>Monitor token consumption rate by tier for capacity planning</p>
+</li>
+<li>
+<p>Alert on rate limit exceeded patterns (may indicate tier misconfiguration)</p>
+</li>
+<li>
+<p>Track model inference latency and error rates</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Disaster recovery</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Back up MaaS tier configurations and rate limit policies</p>
+</li>
+<li>
+<p>Document model deployment procedures and configurations</p>
+</li>
+<li>
+<p>Maintain separate staging environment for testing operator upgrades</p>
+</li>
+<li>
+<p>Plan for GPU node failures and model replica redistribution</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_next_steps_and_learning_paths"><a class="anchor" href="#_next_steps_and_learning_paths"></a>Next steps and learning paths</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Continue your MaaS journey with these advanced topics:</p>
+</div>
+<div class="paragraph">
+<p><strong>Intermediate - Model optimization</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Quantization techniques for reducing model size and improving inference speed</p>
+</li>
+<li>
+<p>Fine-tuning models on domain-specific data (e.g., ChocoTech manufacturing processes)</p>
+</li>
+<li>
+<p>Prompt engineering best practices for production applications</p>
+</li>
+<li>
+<p>Model evaluation with lm-eval-harness for quality assurance</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Advanced - Multi-cluster deployments</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Federated model serving across multiple OpenShift clusters</p>
+</li>
+<li>
+<p>Cross-cluster load balancing for high-availability inference</p>
+</li>
+<li>
+<p>Model replication and synchronization strategies</p>
+</li>
+<li>
+<p>Disaster recovery across geographic regions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Certification and community</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Red Hat Certified Specialist in AI (upcoming certification program)</p>
+</li>
+<li>
+<p>OpenShift AI community forums and GitHub repositories</p>
+</li>
+<li>
+<p>Contribute to upstream KServe, Kuadrant, and vLLM projects</p>
+</li>
+<li>
+<p>Join Red Hat Developer community for AI/ML practitioners</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Related workshops</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generic GPU enablement on OpenShift (prerequisite knowledge)</p>
+</li>
+<li>
+<p>LLMOps workflows with OpenShift Pipelines and GitOps</p>
+</li>
+<li>
+<p>Building agentic applications with LangChain and OpenShift AI</p>
+</li>
+<li>
+<p>Observability and monitoring for AI workloads with Grafana</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_references"><a class="anchor" href="#_references"></a>References</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>This workshop was built using official Red Hat OpenShift AI documentation and SME guidance from field solution architects.</p>
+</div>
+<div class="paragraph">
+<p><strong>Red Hat OpenShift AI documentation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4" target="_blank" rel="noopener">Red Hat OpenShift AI 3.4 Documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/govern_llm_access_with_models-as-a-service/index" target="_blank" rel="noopener">Govern LLM Access with Models-as-a-Service</a></p>
+</li>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/deploy_models_using_distributed_inference_with_llm-d/index" target="_blank" rel="noopener">Deploy Models Using Distributed Inference with llm-d</a></p>
+</li>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/deploying_models/index" target="_blank" rel="noopener">Deploying Models on OpenShift AI</a></p>
+</li>
+<li>
+<p><a href="https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4/html/monitoring_your_ai_systems/index" target="_blank" rel="noopener">Monitoring Your AI Systems</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Red Hat AI product information</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://access.redhat.com/articles/rhoai-supported-configs" target="_blank" rel="noopener">Red Hat OpenShift AI Supported Configurations</a></p>
+</li>
+<li>
+<p><a href="https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai" target="_blank" rel="noopener">Red Hat OpenShift AI Product Page</a></p>
+</li>
+<li>
+<p><a href="https://developers.redhat.com/products/openshift-ai/overview" target="_blank" rel="noopener">Red Hat Developer - OpenShift AI Resources</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Component documentation</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://kserve.github.io/website/latest/" target="_blank" rel="noopener">KServe Documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.kuadrant.io/" target="_blank" rel="noopener">Kuadrant Documentation</a></p>
+</li>
+<li>
+<p><a href="https://gateway-api.sigs.k8s.io/" target="_blank" rel="noopener">Kubernetes Gateway API Documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.vllm.ai/en/latest/" target="_blank" rel="noopener">vLLM Documentation</a></p>
+</li>
+<li>
+<p><a href="https://github.com/kubernetes-sigs/lws" target="_blank" rel="noopener">LeaderWorkerSet GitHub Repository</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>OpenShift platform resources</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://docs.openshift.com/container-platform/4.20/welcome/index.html" target="_blank" rel="noopener">Red Hat OpenShift Container Platform 4.20 Documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.openshift.com/container-platform/4.20/virt/about_virt/about-virt.html" target="_blank" rel="noopener">OpenShift Service Mesh Documentation</a></p>
+</li>
+<li>
+<p><a href="https://docs.nvidia.com/datacenter/cloud-native/gpu-operator/latest/index.html" target="_blank" rel="noopener">NVIDIA GPU Operator Documentation</a></p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Model repositories and tools</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://huggingface.co/models" target="_blank" rel="noopener">Hugging Face Model Hub</a></p>
+</li>
+<li>
+<p><a href="https://platform.openai.com/docs/api-reference" target="_blank" rel="noopener">OpenAI API Reference</a> (for compatibility context)</p>
+</li>
+<li>
+<p><a href="https://python.langchain.com/docs/introduction/" target="_blank" rel="noopener">LangChain Documentation</a> (for application integration)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Community and support</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="https://access.redhat.com/support" target="_blank" rel="noopener">Red Hat Customer Portal</a></p>
+</li>
+<li>
+<p><a href="https://developers.redhat.com/" target="_blank" rel="noopener">Red Hat Developer Portal</a></p>
+</li>
+<li>
+<p><a href="https://github.com/opendatahub-io" target="_blank" rel="noopener">OpenDataHub Community GitHub</a></p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_workshop_feedback"><a class="anchor" href="#_workshop_feedback"></a>Workshop feedback</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>We value your feedback to improve this workshop content.</p>
+</div>
+<div class="paragraph">
+<p><strong>What worked well?</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Which modules were most valuable for your learning objectives?</p>
+</li>
+<li>
+<p>What hands-on exercises helped solidify your understanding?</p>
+</li>
+<li>
+<p>Were the ChocoTech Industries scenarios relatable and effective?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>What could be improved?</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Which concepts need more explanation or examples?</p>
+</li>
+<li>
+<p>What troubleshooting scenarios did you encounter that weren&#8217;t covered?</p>
+</li>
+<li>
+<p>What additional topics would you like to see included?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Share your feedback</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Submit feedback via Showroom feedback interface</p>
+</li>
+<li>
+<p>Open issues on workshop repository (link provided by facilitator)</p>
+</li>
+<li>
+<p>Contact Red Hat Developer community forums</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_final_thoughts"><a class="anchor" href="#_final_thoughts"></a>Final thoughts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve completed a comprehensive journey from understanding the GPU silo crisis to implementing a production-ready Models as a Service platform.</p>
+</div>
+<div class="paragraph">
+<p>The skills you&#8217;ve developed enable you to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Transform fragmented GPU infrastructure into centralized, governed model serving</p>
+</li>
+<li>
+<p>Configure Red Hat OpenShift AI for multi-tenant AI workloads</p>
+</li>
+<li>
+<p>Deploy and manage generative AI models with proper governance and observability</p>
+</li>
+<li>
+<p>Enable developers to consume AI capabilities through self-service APIs</p>
+</li>
+<li>
+<p>Justify AI infrastructure investments with usage data and chargeback</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>The path forward</strong>:</p>
+</div>
+<div class="paragraph">
+<p>MaaS is not just about centralizing GPU resources. It&#8217;s about transforming how organizations deliver AI capabilities. Platform Engineers shift from hardware managers to service providers. Developers shift from infrastructure experts to application builders. Finance shifts from blind budget allocation to data-driven chargeback.</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech Industries started with four teams, four GPU silos, and no visibility. They now have one platform, governed access, complete observability, and a foundation for scaling AI across the entire organization.</p>
+</div>
+<div class="paragraph">
+<p>Your journey doesn&#8217;t end here. As generative AI continues to evolve, the principles you&#8217;ve learned - centralized serving, tier-based governance, token tracking, and developer self-service - will remain foundational to enterprise AI operations.</p>
+</div>
+<div class="paragraph">
+<p>Thank you for completing this workshop. Go build amazing AI applications!</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exercise 1: Enable MaaS in DataScienceCluster :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="04-module-01-platform-admin.html">
+    <link rel="next" href="04-module-03-platform-admin.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li><a href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a></li>
+    <li><a href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Exercise 1: Enable MaaS in DataScienceCluster</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The <code>DataScienceCluster</code> custom resource controls which OpenShift AI components are active. You&#8217;ll update this CRD to enable MaaS.</p>
+</div>
+<div class="paragraph">
+<p>OpenShift AI uses a declarative configuration model. You declare desired state in CRDs, and the operator reconciles actual state to match. This differs from imperative deployment where you manually create pods, services, and configurations.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_understanding_the_datasciencecluster_crd"><a class="anchor" href="#_understanding_the_datasciencecluster_crd"></a>Understanding the DataScienceCluster CRD</h3>
+<div class="paragraph">
+<p>The DataScienceCluster CRD has a <code>components</code> section listing all available features:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>kserve</code> - Model serving infrastructure (prerequisite for MaaS)</p>
+</li>
+<li>
+<p><code>modelsAsService</code> - MaaS API, governance, and Gateway integration</p>
+</li>
+<li>
+<p><code>dashboard</code> - OpenShift AI web console</p>
+</li>
+<li>
+<p>Other components like Pipelines, Workbenches, Model Registry</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each component has a <code>managementState</code> field:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>Managed</code> - Operator deploys and maintains the component</p>
+</li>
+<li>
+<p><code>Removed</code> - Operator does not deploy the component</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_check_current_datasciencecluster_state"><a class="anchor" href="#_check_current_datasciencecluster_state"></a>Check current DataScienceCluster state</h3>
+<div class="paragraph">
+<p>View the current configuration:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get datasciencecluster default-dsc -o yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Look for the <code>components</code> section. You&#8217;ll likely see:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>spec:
+  components:
+    kserve:
+      managementState: Managed
+    modelsAsService:
+      managementState: Removed
+    dashboard:
+      managementState: Managed</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note that <code>modelsAsService</code> is currently <code>Removed</code>, meaning MaaS is not deployed.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_enable_maas_component"><a class="anchor" href="#_enable_maas_component"></a>Enable MaaS component</h3>
+<div class="paragraph">
+<p>Edit the DataScienceCluster:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc edit datasciencecluster default-dsc</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Find the <code>modelsAsService</code> section and change <code>managementState</code> from <code>Removed</code> to <code>Managed</code>:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>spec:
+  components:
+    modelsAsService:
+      managementState: Managed  # Change this from "Removed" to "Managed"
+    kserve:
+      managementState: Managed  # Ensure this is also Managed
+    dashboard:
+      managementState: Managed</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Save and exit the editor (<code>:wq</code> in vi, or <code>Ctrl+X</code> then <code>Y</code> in nano).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_monitor_maas_deployment"><a class="anchor" href="#_monitor_maas_deployment"></a>Monitor MaaS deployment</h3>
+<div class="paragraph">
+<p>Watch the operator deploy MaaS components:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications -w | grep maas</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see pods being created:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-api-xxx                  0/1     ContainerCreating   0          5s
+maas-default-gateway-xxx      0/1     Init:0/1            0          5s</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>After 2-5 minutes, all pods should reach <code>Running</code> state:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-api-xxx                  1/1     Running   0          3m
+maas-default-gateway-xxx      1/1     Running   0          3m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Press <code>Ctrl+C</code> to stop watching.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verify_maas_api_deployment"><a class="anchor" href="#_verify_maas_api_deployment"></a>Verify MaaS API deployment</h3>
+<div class="paragraph">
+<p>Check that the MaaS API pod is healthy:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications | grep maas-api</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-api-7c8f9d5b-xxx         1/1     Running   0          5m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the MaaS API service:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get svc -n redhat-ods-applications | grep maas</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-api                ClusterIP   172.30.xxx.xxx   &lt;none&gt;        8080/TCP   5m
+maas-default-gateway    ClusterIP   172.30.xxx.xxx   &lt;none&gt;        80/TCP     5m</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm MaaS enablement:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>DataScienceCluster shows <code>modelsAsService.managementState: Managed</code></p>
+</li>
+<li>
+<p>MaaS API pod is Running with 1/1 ready containers</p>
+</li>
+<li>
+<p>MaaS service exists in redhat-ods-applications namespace</p>
+</li>
+<li>
+<p>Gateway pod is Running and ready</p>
+</li>
+</ul>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a></span>
+  <span class="next"><a href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

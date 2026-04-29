@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exercise 1: Choosing the right model for your workload :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="05-module-01-model-deployment.html">
+    <link rel="next" href="05-module-02-model-deployment.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li>Model Deploymemnt</li>
+    <li><a href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Exercise 1: Choosing the right model for your workload</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before deploying models to the MaaS platform, you need to understand which model architectures and capabilities match specific business requirements.</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech&#8217;s Platform Engineering team receives competing requests from four departments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Quality Control</strong>: "We need a model that can analyze defect images and explain the root cause with detailed reasoning."</p>
+</li>
+<li>
+<p><strong>Marketing</strong>: "We need fast content generation for social media posts. Speed matters more than perfection."</p>
+</li>
+<li>
+<p><strong>R&amp;D</strong>: "We want to deploy Llama-3 70B for recipe optimization, but we only have GPUs with 24GB VRAM."</p>
+</li>
+<li>
+<p><strong>Supply Chain</strong>: "We need basic chatbot capabilities for vendor inquiries. Keep it cost-effective."</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Each department has different requirements for model architecture, capabilities, and performance characteristics. Choosing the wrong model wastes GPU resources and fails to meet business needs.</p>
+</div>
+<div class="paragraph">
+<p>In this exercise, you&#8217;ll learn how to evaluate models based on architecture (dense vs. sparse), capabilities (reasoning vs. non-reasoning), and hardware constraints to make informed deployment decisions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_model_architecture_dense_vs_sparse_models"><a class="anchor" href="#_model_architecture_dense_vs_sparse_models"></a>Model architecture: Dense vs. sparse models</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Model architecture fundamentally impacts GPU memory consumption, inference speed, and deployment complexity.</p>
+</div>
+<div class="sect2">
+<h3 id="_dense_models"><a class="anchor" href="#_dense_models"></a>Dense models</h3>
+<div class="paragraph">
+<p>Dense models use <strong>all parameters</strong> for every inference operation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Characteristics:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Every parameter is active for every token</p>
+</li>
+<li>
+<p>Predictable memory footprint</p>
+</li>
+<li>
+<p>Consistent inference latency</p>
+</li>
+<li>
+<p>Simpler deployment architecture</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>GPT-3, GPT-4</p>
+</li>
+<li>
+<p>Llama 2, Llama 3</p>
+</li>
+<li>
+<p>Mistral 7B</p>
+</li>
+<li>
+<p>Granite 3.0</p>
+</li>
+<li>
+<p>Most traditional transformer models</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>GPU impact:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Memory usage = model size + KV cache + activations</p>
+</li>
+<li>
+<p>For a 7B parameter model in FP16: approximately 14GB base memory</p>
+</li>
+<li>
+<p>Additional memory for batch processing and KV cache</p>
+</li>
+<li>
+<p>Memory bandwidth is the primary bottleneck</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech use case:</strong></p>
+</div>
+<div class="paragraph">
+<p>Marketing&#8217;s content generation workload uses Llama-3 8B (dense model). The predictable memory footprint (16GB) fits comfortably on a single A10 GPU (24GB), and consistent latency ensures reliable social media post generation.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_sparse_models_mixture_of_experts"><a class="anchor" href="#_sparse_models_mixture_of_experts"></a>Sparse models (Mixture of Experts)</h3>
+<div class="paragraph">
+<p>Sparse models activate only a <strong>subset of parameters</strong> per token using a routing mechanism.</p>
+</div>
+<div class="paragraph">
+<p><strong>Characteristics:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Only a fraction of experts are active per token</p>
+</li>
+<li>
+<p>More total parameters with less compute per token</p>
+</li>
+<li>
+<p>Variable latency depending on routing decisions</p>
+</li>
+<li>
+<p>Complex deployment with expert-parallelism</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mixtral 8x7B (47B total parameters, approximately 13B active per token)</p>
+</li>
+<li>
+<p>DBRX (132B total, approximately 36B active)</p>
+</li>
+<li>
+<p>Grok-1 (314B total)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>GPU impact:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Memory usage = all expert parameters + routing overhead</p>
+</li>
+<li>
+<p>Compute = only active experts per token</p>
+</li>
+<li>
+<p>Better throughput per GPU with efficient expert placement</p>
+</li>
+<li>
+<p>Requires careful sharding across GPUs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech use case:</strong></p>
+</div>
+<div class="paragraph">
+<p>R&amp;D initially considered Mixtral 8x7B for recipe optimization. While it has 47B total parameters, only 13B are active per inference, providing better throughput than a dense 13B model while requiring storage for all 47B parameters.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_performance_comparison"><a class="anchor" href="#_performance_comparison"></a>Performance comparison</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Aspect</th>
+<th class="tableblock halign-left valign-top">Dense Models</th>
+<th class="tableblock halign-left valign-top">Sparse Models</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Memory</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Full model always loaded</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All experts loaded, subset active</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Throughput</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Moderate</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher (less compute per token)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Latency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Consistent</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Variable (routing overhead)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Deployment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Simpler</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Complex (expert sharding)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cost Efficiency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower at small scale</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher at large scale</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_choosing_between_dense_and_sparse"><a class="anchor" href="#_choosing_between_dense_and_sparse"></a>Choosing between dense and sparse</h3>
+<div class="paragraph">
+<p><strong>Use dense models when:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You need predictable latency</p>
+</li>
+<li>
+<p>Simple deployment is preferred</p>
+</li>
+<li>
+<p>Model size fits comfortably in GPU memory</p>
+</li>
+<li>
+<p>You are serving moderate traffic volumes</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Use sparse models when:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>You need maximum throughput per GPU</p>
+</li>
+<li>
+<p>You can tolerate variable latency</p>
+</li>
+<li>
+<p>You have infrastructure for expert-parallelism</p>
+</li>
+<li>
+<p>Serving high traffic volumes justifies complexity</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech decision:</strong></p>
+</div>
+<div class="paragraph">
+<p>For the initial MaaS deployment, ChocoTech standardizes on <strong>dense models</strong> (Llama-3 8B, Nemotron 8B) to minimize deployment complexity and ensure predictable performance across all four departments.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_model_capabilities_reasoning_vs_non_reasoning"><a class="anchor" href="#_model_capabilities_reasoning_vs_non_reasoning"></a>Model capabilities: Reasoning vs. non-reasoning</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Beyond architecture, model capabilities determine suitability for specific workloads and impact computational requirements.</p>
+</div>
+<div class="sect2">
+<h3 id="_reasoning_models"><a class="anchor" href="#_reasoning_models"></a>Reasoning models</h3>
+<div class="paragraph">
+<p>Reasoning models use chain-of-thought techniques and extended inference time to improve answer quality.</p>
+</div>
+<div class="paragraph">
+<p><strong>Characteristics:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Generate intermediate reasoning steps before final answer</p>
+</li>
+<li>
+<p>Higher token output per query (reasoning tokens + answer)</p>
+</li>
+<li>
+<p>Slower time-to-first-token (TTFT)</p>
+</li>
+<li>
+<p>Better performance on complex tasks requiring multi-step logic</p>
+</li>
+<li>
+<p>Often use techniques like self-reflection or verification</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenAI o1, o1-mini</p>
+</li>
+<li>
+<p>QwQ-32B-Preview</p>
+</li>
+<li>
+<p>Models fine-tuned with chain-of-thought training</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Use cases:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Complex problem-solving (mathematics, coding, logic puzzles)</p>
+</li>
+<li>
+<p>Multi-step planning and strategy</p>
+</li>
+<li>
+<p>Scientific analysis and hypothesis generation</p>
+</li>
+<li>
+<p>Legal or medical reasoning</p>
+</li>
+<li>
+<p>Tasks requiring accuracy over speed</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech use case:</strong></p>
+</div>
+<div class="paragraph">
+<p>Quality Control needs a reasoning model for defect root cause analysis. When analyzing chocolate production defects, the model must:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Examine visual defect patterns</p>
+</li>
+<li>
+<p>Cross-reference against production parameters</p>
+</li>
+<li>
+<p>Reason through possible causes</p>
+</li>
+<li>
+<p>Provide detailed explanation with supporting evidence</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A reasoning model generates intermediate steps ("The crystallization pattern suggests temperature variance → Checking historical data shows Zone 3 cooling fluctuation → Root cause: faulty thermostat in Zone 3").</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_non_reasoning_models"><a class="anchor" href="#_non_reasoning_models"></a>Non-reasoning models</h3>
+<div class="paragraph">
+<p>Standard language models that generate responses directly without explicit reasoning steps.</p>
+</div>
+<div class="paragraph">
+<p><strong>Characteristics:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Direct answer generation without intermediate steps</p>
+</li>
+<li>
+<p>Lower token output per query</p>
+</li>
+<li>
+<p>Faster time-to-first-token</p>
+</li>
+<li>
+<p>Suitable for straightforward tasks</p>
+</li>
+<li>
+<p>More cost-effective at scale</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Examples:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Llama 3.1 70B</p>
+</li>
+<li>
+<p>Mistral 7B</p>
+</li>
+<li>
+<p>Granite 3.0</p>
+</li>
+<li>
+<p>NVIDIA Nemotron</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Use cases:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Content generation (blog posts, social media, emails)</p>
+</li>
+<li>
+<p>Summarization and translation</p>
+</li>
+<li>
+<p>Simple question answering</p>
+</li>
+<li>
+<p>Chatbots and customer service</p>
+</li>
+<li>
+<p>Code completion for non-complex tasks</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech use case:</strong></p>
+</div>
+<div class="paragraph">
+<p>Marketing uses a non-reasoning model (Llama-3 8B) for social media content generation. The task is straightforward: "Write a 280-character tweet about our new dark chocolate line." No multi-step reasoning is required, and fast generation enables high throughput during campaign launches.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_computational_impact_comparison"><a class="anchor" href="#_computational_impact_comparison"></a>Computational impact comparison</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Metric</th>
+<th class="tableblock halign-left valign-top">Reasoning Models</th>
+<th class="tableblock halign-left valign-top">Non-Reasoning Models</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Tokens per Query</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">High (200-2000+)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Moderate (50-500)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Time-to-First-Token</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher (reasoning latency)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower (direct generation)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Total Latency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher (more tokens)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower (fewer tokens)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GPU Utilization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher (longer occupation)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower (faster completion)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Cost per Query</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Higher (more tokens)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower (fewer tokens)</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Example workload analysis:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Scenario:</strong> 1000 requests per hour</p>
+</div>
+<div class="paragraph">
+<p><strong>Reasoning model approach:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Average 500 tokens per request</p>
+</li>
+<li>
+<p>30 seconds total latency per request</p>
+</li>
+<li>
+<p>Requires approximately 4 GPUs to handle load</p>
+</li>
+<li>
+<p>Higher token consumption for chargeback</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Non-reasoning model approach:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Average 100 tokens per request</p>
+</li>
+<li>
+<p>5 seconds total latency per request</p>
+</li>
+<li>
+<p>Requires approximately 1 GPU to handle load</p>
+</li>
+<li>
+<p>Lower token consumption for chargeback</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_chocotech_department_model_mapping"><a class="anchor" href="#_chocotech_department_model_mapping"></a>ChocoTech department model mapping</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Based on architecture and capability assessment, here is the recommended model strategy for each ChocoTech department:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Department</th>
+<th class="tableblock halign-left valign-top">Model Type</th>
+<th class="tableblock halign-left valign-top">Architecture</th>
+<th class="tableblock halign-left valign-top">Reasoning</th>
+<th class="tableblock halign-left valign-top">Rationale</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Quality Control</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">QwQ-32B-Preview or fine-tuned Llama-3 70B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dense</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Yes</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defect analysis requires multi-step reasoning and detailed explanations. Accuracy justifies higher cost.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Marketing</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Llama-3 8B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dense</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Content generation is straightforward. Speed and cost-effectiveness matter more than deep reasoning.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>R&amp;D</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Llama-3 70B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dense</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Conditional</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recipe optimization benefits from reasoning, but can fallback to standard generation for simpler tasks.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Supply Chain</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Nemotron 8B</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dense</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">No</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Vendor chatbot needs fast responses for basic inquiries. Non-reasoning sufficient for FAQs and simple questions.</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Initial deployment strategy:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Deploy <strong>Llama-3 8B</strong> (non-reasoning, dense) for Marketing and Supply Chain</p>
+</li>
+<li>
+<p>Deploy <strong>Nemotron 8B</strong> (non-reasoning, dense) as alternative for A/B testing</p>
+</li>
+<li>
+<p>Plan future deployment of <strong>reasoning-capable model</strong> for Quality Control after initial MaaS platform stabilization</p>
+</li>
+<li>
+<p>Share models across departments where requirements overlap to maximize GPU utilization</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_hardware_constraints_and_model_sizing"><a class="anchor" href="#_hardware_constraints_and_model_sizing"></a>Hardware constraints and model sizing</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Beyond capability requirements, you must consider GPU memory constraints when selecting models.</p>
+</div>
+<div class="sect2">
+<h3 id="_memory_requirements_by_model_size"><a class="anchor" href="#_memory_requirements_by_model_size"></a>Memory requirements by model size</h3>
+<div class="paragraph">
+<p><strong>7B-8B parameter models (FP16):</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Base memory: approximately 14-16GB</p>
+</li>
+<li>
+<p>KV cache: 2-4GB (depending on context length)</p>
+</li>
+<li>
+<p>Total: 16-20GB</p>
+</li>
+<li>
+<p><strong>Fits on:</strong> Single A10 (24GB), A100 (40GB or 80GB)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>30B parameter models (FP16):</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Base memory: approximately 60GB</p>
+</li>
+<li>
+<p>KV cache: 8-12GB</p>
+</li>
+<li>
+<p>Total: 68-72GB</p>
+</li>
+<li>
+<p><strong>Requires:</strong> A100 80GB or multi-GPU setup</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>70B parameter models (FP16):</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Base memory: approximately 140GB</p>
+</li>
+<li>
+<p>KV cache: 16-24GB</p>
+</li>
+<li>
+<p>Total: 156-164GB</p>
+</li>
+<li>
+<p><strong>Requires:</strong> 2x A100 80GB with tensor parallelism</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_quantization_strategies"><a class="anchor" href="#_quantization_strategies"></a>Quantization strategies</h3>
+<div class="paragraph">
+<p>To fit larger models on smaller GPUs, use quantization:</p>
+</div>
+<div class="paragraph">
+<p><strong>INT8 quantization:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces memory by approximately 50%</p>
+</li>
+<li>
+<p>Minimal quality degradation for most tasks</p>
+</li>
+<li>
+<p>Llama-3 70B in INT8: approximately 70GB (fits on 1x A100 80GB)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>INT4 (4-bit) quantization:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces memory by approximately 75%</p>
+</li>
+<li>
+<p>Noticeable quality degradation for reasoning tasks</p>
+</li>
+<li>
+<p>Suitable for non-critical workloads</p>
+</li>
+<li>
+<p>Llama-3 70B in INT4: approximately 35GB (fits on 1x A40 or A10)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>FP8 quantization:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces memory by approximately 50%</p>
+</li>
+<li>
+<p>Better quality retention than INT8</p>
+</li>
+<li>
+<p>Requires newer GPU architectures (H100, L40S)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech constraint:</strong></p>
+</div>
+<div class="paragraph">
+<p>The initial ChocoTech MaaS cluster has:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>4x NVIDIA A10 GPUs (24GB VRAM each)</p>
+</li>
+<li>
+<p>Single Node OpenShift (SNO) configuration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This constrains initial deployments to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>8B models in FP16 (comfortable fit)</p>
+</li>
+<li>
+<p>30B models in INT8 (tight fit)</p>
+</li>
+<li>
+<p>70B models require future hardware expansion or aggressive quantization</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Decision:</strong> Start with 8B models (Llama-3 8B, Nemotron 8B) to prove MaaS value, then justify hardware expansion for 70B models based on actual usage data.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_model_selection_decision_framework"><a class="anchor" href="#_model_selection_decision_framework"></a>Model selection decision framework</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Use this framework when evaluating models for deployment:</p>
+</div>
+<div class="paragraph">
+<p><strong>Step 1: Define the workload</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What task is the model performing?</p>
+</li>
+<li>
+<p>Is multi-step reasoning required?</p>
+</li>
+<li>
+<p>What is the acceptable latency?</p>
+</li>
+<li>
+<p>What is the expected request volume?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 2: Assess capability requirements</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Does the task require reasoning capabilities?</p>
+</li>
+<li>
+<p>Is speed more important than accuracy?</p>
+</li>
+<li>
+<p>What is the cost tolerance (tokens per query)?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 3: Check hardware constraints</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>What GPU memory is available?</p>
+</li>
+<li>
+<p>Is multi-GPU deployment possible?</p>
+</li>
+<li>
+<p>Can you use quantization without quality degradation?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 4: Consider governance and cost</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Which user tier will access this model?</p>
+</li>
+<li>
+<p>What is the expected token consumption for chargeback?</p>
+</li>
+<li>
+<p>Should this model share resources with other departments?</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Step 5: Validate with testing</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deploy to development environment</p>
+</li>
+<li>
+<p>Benchmark latency (TTFT, TPOT)</p>
+</li>
+<li>
+<p>Test quality with representative queries</p>
+</li>
+<li>
+<p>Measure GPU utilization and cost per query</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_checkpoint"><a class="anchor" href="#_learning_checkpoint"></a>Learning checkpoint</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You should now be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Distinguish between dense and sparse model architectures</p>
+</li>
+<li>
+<p>✓ Explain the tradeoffs between reasoning and non-reasoning models</p>
+</li>
+<li>
+<p>✓ Calculate GPU memory requirements for different model sizes</p>
+</li>
+<li>
+<p>✓ Match ChocoTech department needs to appropriate model types</p>
+</li>
+<li>
+<p>✓ Apply the model selection decision framework to new workloads</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Before proceeding to deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>ChocoTech has decided to deploy <strong>Llama-3 8B</strong> as the first model for the MaaS platform. This choice reflects:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Dense architecture for deployment simplicity</p>
+</li>
+<li>
+<p>Non-reasoning capabilities sufficient for Marketing and Supply Chain</p>
+</li>
+<li>
+<p>Fits comfortably on single A10 GPU (24GB)</p>
+</li>
+<li>
+<p>Proven performance for content generation tasks</p>
+</li>
+<li>
+<p>Can be shared across multiple departments with tier-based quotas</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>In the next exercise, you will learn about the serving runtime architecture (llm-d and vLLM) and understand why distributed inference is required for MaaS integration.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Issue:</strong> "How do I know if I need a reasoning model or non-reasoning model?"</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong> Ask: "Does the task require multi-step logic or explanation of the thought process?" If yes (e.g., root cause analysis, complex math, strategic planning), use reasoning model. If no (e.g., content generation, summarization, simple Q&amp;A), use non-reasoning model.</p>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> "My 70B model won&#8217;t fit on my GPU, what are my options?"</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Use tensor parallelism across multiple GPUs</p>
+</li>
+<li>
+<p>Apply INT8 or FP8 quantization to reduce memory by 50%</p>
+</li>
+<li>
+<p>Consider a smaller model (8B or 30B) that may meet your needs</p>
+</li>
+<li>
+<p>Evaluate if the task truly requires 70B parameters or if 8B with fine-tuning would suffice</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> "Should I deploy Mixtral 8x7B (sparse) or Llama-3 70B (dense) for my workload?"</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong> Consider:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Mixtral 8x7B: Better throughput, complex deployment, variable latency</p>
+</li>
+<li>
+<p>Llama-3 70B: Consistent latency, simpler deployment, higher memory</p>
+</li>
+<li>
+<p>For most MaaS deployments, start with dense models for operational simplicity</p>
+</li>
+<li>
+<p>Move to sparse models only when proven throughput gains justify deployment complexity</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a></span>
+  <span class="next"><a href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

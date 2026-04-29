@@ -1,0 +1,2951 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Module 4: Governance, observability, and chargeback :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="05b-lifecycle-management-gitops.html">
+    <link rel="next" href="06a-security-hardening.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li><a href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Module 4: Governance, observability, and chargeback</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Finance department raises a critical concern during your status update meeting. "We need to track which teams are consuming GPU resources," the CFO states. "Marketing is requesting additional budget for AI infrastructure, but we have no data showing their current usage or justifying the expansion."</p>
+</div>
+<div class="paragraph">
+<p>Meanwhile, the Quality Control team complains: "Our defect detection models are getting rate-limited during production shifts. Is Marketing&#8217;s chatbot consuming all the capacity?"</p>
+</div>
+<div class="paragraph">
+<p>Your task is to implement governance policies that ensure fair resource allocation, track usage for chargeback, and provide observability into model consumption patterns.</p>
+</div>
+<div class="paragraph">
+<p>In this module, you&#8217;ll configure governance tiers with rate limiting and quotas using Kuadrant, monitor GPU utilization and token consumption with Grafana, and generate chargeback reports for Finance.</p>
+</div>
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_objectives"><a class="anchor" href="#_learning_objectives"></a>Learning objectives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By the end of this module, you&#8217;ll be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Define governance tiers (bronze, silver, gold, platinum) with different access levels and quotas</p>
+</li>
+<li>
+<p>Map OpenShift user groups to tier levels for automatic access control</p>
+</li>
+<li>
+<p>Configure rate limiting and token quotas using Kuadrant RateLimitPolicy</p>
+</li>
+<li>
+<p>Deploy Grafana dashboards to monitor model usage and GPU utilization</p>
+</li>
+<li>
+<p>Generate chargeback reports showing token consumption by department and model</p>
+</li>
+<li>
+<p>Implement comprehensive security hardening for production MaaS deployment</p>
+</li>
+<li>
+<p>Troubleshoot policy enforcement issues using Kuadrant component logs</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_1_understanding_maas_governance_tiers"><a class="anchor" href="#_exercise_1_understanding_maas_governance_tiers"></a>Exercise 1: Understanding MaaS governance tiers</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before configuring governance, you need to understand how tier-based access control works and why it&#8217;s critical for multi-tenant model serving.</p>
+</div>
+<div class="paragraph">
+<p>Without tiers, centralized serving becomes uncontrolled consumption. Tier-based access transforms the MaaS platform from an unlimited resource drain to fair allocation across departments.</p>
+</div>
+<div class="sect2">
+<h3 id="_the_governance_challenge_at_chocotech"><a class="anchor" href="#_the_governance_challenge_at_chocotech"></a>The governance challenge at ChocoTech</h3>
+<div class="paragraph">
+<p>ChocoTech controls $500,000 worth of GPU infrastructure serving four departments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Quality Control</strong>: Defect detection (critical, production workload)</p>
+</li>
+<li>
+<p><strong>R&amp;D</strong>: Recipe optimization (important, but not real-time)</p>
+</li>
+<li>
+<p><strong>Marketing</strong>: Sentiment analysis (high volume, non-critical)</p>
+</li>
+<li>
+<p><strong>Supply Chain</strong>: Inventory prediction (batch processing)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Without governance</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Marketing runs unlimited chatbot queries, exhausting GPU capacity</p>
+</li>
+<li>
+<p>Quality Control&#8217;s critical defect detection gets rate-limited during production shifts</p>
+</li>
+<li>
+<p>Finance cannot allocate AI costs accurately (no consumption tracking)</p>
+</li>
+<li>
+<p>Security has no audit trail showing who accessed which models</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>With MaaS governance</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Each department is assigned a tier with appropriate rate limits and quotas</p>
+</li>
+<li>
+<p>Quality Control gets "Platinum" tier with high limits and priority access</p>
+</li>
+<li>
+<p>Marketing gets "Bronze" tier with moderate limits appropriate for their use case</p>
+</li>
+<li>
+<p>Finance can perform chargeback based on actual token consumption by department</p>
+</li>
+<li>
+<p>Security has complete audit logs of every API request with user identity</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_are_maas_tiers"><a class="anchor" href="#_what_are_maas_tiers"></a>What are MaaS tiers?</h3>
+<div class="paragraph">
+<p>Tiers are access control layers that define:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Access level</strong></dt>
+<dd>
+<p>Which models a user can query (Bronze tier can&#8217;t access Platinum-only models)</p>
+</dd>
+<dt class="hdlist1"><strong>Rate limits</strong></dt>
+<dd>
+<p>Maximum requests per minute (Bronze: 100 req/min, Platinum: 10,000 req/min)</p>
+</dd>
+<dt class="hdlist1"><strong>Token quotas</strong></dt>
+<dd>
+<p>Maximum tokens consumed per minute (Bronze: 10,000 tokens/min, Platinum: 1,000,000 tokens/min)</p>
+</dd>
+<dt class="hdlist1"><strong>Group mapping</strong></dt>
+<dd>
+<p>Which OpenShift groups are assigned to each tier</p>
+</dd>
+<dt class="hdlist1"><strong>Priority level</strong></dt>
+<dd>
+<p>Determines access hierarchy when users belong to multiple groups across different tiers</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Example: A developer with a Bronze tier Bearer token can only access models published to "Bronze tier and above." A Platinum user can access all models.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_default_tier_structure_for_chocotech"><a class="anchor" href="#_default_tier_structure_for_chocotech"></a>Default tier structure for ChocoTech</h3>
+<div class="paragraph">
+<p>You&#8217;ll configure four tiers aligned with ChocoTech&#8217;s business priorities:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3335%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tier Name</th>
+<th class="tableblock halign-left valign-top">Priority Level</th>
+<th class="tableblock halign-left valign-top">Target Department</th>
+<th class="tableblock halign-left valign-top">Rate Limit (req/min)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bronze</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Marketing (exploratory)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 requests/min, 10K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Silver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Supply Chain (batch)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500 requests/min, 50K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gold</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">R&amp;D (development)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000 requests/min, 200K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platinum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality Control (production)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10,000 requests/min, 1M tokens/min</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Priority Level determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the highest level number.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_group_assignment_logic"><a class="anchor" href="#_group_assignment_logic"></a>Group assignment logic</h3>
+<div class="paragraph">
+<p>MaaS uses OpenShift group membership to assign users to tiers:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>User authenticates with Bearer token</p>
+</li>
+<li>
+<p>Authorino (Kuadrant authentication component) extracts user identity and group memberships from OpenShift OAuth</p>
+</li>
+<li>
+<p>MaaS evaluates which tier configurations match the user&#8217;s groups</p>
+</li>
+<li>
+<p>Highest priority level wins if the user belongs to multiple tiers</p>
+</li>
+<li>
+<p>Access is enforced based on assigned tier and model configuration</p>
+</li>
+<li>
+<p>Limitador (Kuadrant rate limiting component) tracks consumption and enforces quotas</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A Platform Engineer creates a group <code>chocotech-quality-control</code> in OpenShift, then maps it to the Platinum tier. All members of that group automatically get Platinum access with highest rate limits.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_of_tier_prerequisites"><a class="anchor" href="#_verification_of_tier_prerequisites"></a>Verification of tier prerequisites</h3>
+<div class="paragraph">
+<p>Verify that Kuadrant components are running (deployed when MaaS was enabled in Module 2):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n kuadrant-system</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME                          READY   STATUS    RESTARTS   AGE
+authorino-xxx                 1/1     Running   0          2d
+limitador-xxx                 1/1     Running   0          2d</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check for existing tier configurations:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get maastier -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You may see default tiers or this may be empty if tiers haven&#8217;t been configured yet.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_2_create_openshift_groups_for_chocotech_departments"><a class="anchor" href="#_exercise_2_create_openshift_groups_for_chocotech_departments"></a>Exercise 2: Create OpenShift groups for ChocoTech departments</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ll create OpenShift groups representing ChocoTech&#8217;s four departments and assign users to them.</p>
+</div>
+<div class="paragraph">
+<p>Group-based tier assignment enables automatic access control as team membership changes.</p>
+</div>
+<div class="sect2">
+<h3 id="_create_department_groups"><a class="anchor" href="#_create_department_groups"></a>Create department groups</h3>
+<div class="paragraph">
+<p>Create a group for the Quality Control team (Platinum tier):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-quality-control</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a group for the R&amp;D team (Gold tier):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-rd</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a group for the Supply Chain team (Silver tier):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-supply-chain</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a group for the Marketing team (Bronze tier):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-marketing</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify groups were created:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get groups | grep chocotech</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>chocotech-quality-control   &lt;none&gt;
+chocotech-rd                &lt;none&gt;
+chocotech-supply-chain      &lt;none&gt;
+chocotech-marketing         &lt;none&gt;</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_assign_the_admin_user_to_quality_control_platinum_tier"><a class="anchor" href="#_assign_the_admin_user_to_quality_control_platinum_tier"></a>Assign the admin user to Quality Control (Platinum tier)</h3>
+<div class="paragraph">
+<p>For testing purposes, assign your admin user to the highest tier:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups add-users chocotech-quality-control {user}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify membership:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get group chocotech-quality-control -o yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see your user listed under <code>users</code>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm group setup:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Four OpenShift groups created representing ChocoTech departments</p>
+</li>
+<li>
+<p>Groups follow naming convention: chocotech-&lt;department&gt;</p>
+</li>
+<li>
+<p>Admin user is member of chocotech-quality-control group</p>
+</li>
+<li>
+<p>Groups are ready for tier mapping</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_3_configure_governance_tiers_and_rate_limiting"><a class="anchor" href="#_exercise_3_configure_governance_tiers_and_rate_limiting"></a>Exercise 3: Configure governance tiers and rate limiting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now you&#8217;ll create MaaSTier custom resources that map OpenShift groups to tier levels with rate limits and quotas.</p>
+</div>
+<div class="paragraph">
+<p>Tier configuration is declarative, using custom resources managed by the MaaS operator.</p>
+</div>
+<div class="sect2">
+<h3 id="_create_the_platinum_tier_quality_control"><a class="anchor" href="#_create_the_platinum_tier_quality_control"></a>Create the Platinum tier (Quality Control)</h3>
+<div class="paragraph">
+<p>Create a manifest for the highest tier:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-platinum.yaml &lt;&lt;EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: platinum
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 3
+  groups:
+    - chocotech-quality-control
+  rateLimit:
+    requestsPerMinute: 10000
+    tokensPerMinute: 1000000
+  quotas:
+    dailyTokenLimit: 100000000
+  description: "Production workloads - Quality Control team defect detection"
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply the tier configuration:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-platinum.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_the_gold_tier_rd"><a class="anchor" href="#_create_the_gold_tier_rd"></a>Create the Gold tier (R&amp;D)</h3>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-gold.yaml &lt;&lt;EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: gold
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 2
+  groups:
+    - chocotech-rd
+  rateLimit:
+    requestsPerMinute: 2000
+    tokensPerMinute: 200000
+  quotas:
+    dailyTokenLimit: 20000000
+  description: "Development workloads - R&amp;D team recipe optimization"
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-gold.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_the_silver_tier_supply_chain"><a class="anchor" href="#_create_the_silver_tier_supply_chain"></a>Create the Silver tier (Supply Chain)</h3>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-silver.yaml &lt;&lt;EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: silver
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 1
+  groups:
+    - chocotech-supply-chain
+  rateLimit:
+    requestsPerMinute: 500
+    tokensPerMinute: 50000
+  quotas:
+    dailyTokenLimit: 5000000
+  description: "Batch workloads - Supply Chain inventory prediction"
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-silver.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_the_bronze_tier_marketing"><a class="anchor" href="#_create_the_bronze_tier_marketing"></a>Create the Bronze tier (Marketing)</h3>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-bronze.yaml &lt;&lt;EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: bronze
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 0
+  groups:
+    - chocotech-marketing
+  rateLimit:
+    requestsPerMinute: 100
+    tokensPerMinute: 10000
+  quotas:
+    dailyTokenLimit: 1000000
+  description: "Exploratory workloads - Marketing sentiment analysis"
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-bronze.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verify_tier_configuration"><a class="anchor" href="#_verify_tier_configuration"></a>Verify tier configuration</h3>
+<div class="paragraph">
+<p>List all configured tiers:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get maastier -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME        PRIORITY   GROUPS                        AGE
+platinum    3          chocotech-quality-control     2m
+gold        2          chocotech-rd                  2m
+silver      1          chocotech-supply-chain        2m
+bronze      0          chocotech-marketing           2m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check that Kuadrant RateLimitPolicy resources were created:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get ratelimitpolicy -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME                    AGE
+maas-tier-platinum      2m
+maas-tier-gold          2m
+maas-tier-silver        2m
+maas-tier-bronze        2m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>These RateLimitPolicy resources are automatically created by the MaaS operator based on your MaaSTier configurations.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_2"><a class="anchor" href="#_verification_2"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm tier and policy configuration:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Four MaaSTier resources created with correct priority levels</p>
+</li>
+<li>
+<p>Groups properly mapped to tiers</p>
+</li>
+<li>
+<p>RateLimitPolicy resources created for each tier</p>
+</li>
+<li>
+<p>Limitador pod is healthy and ready to enforce quotas</p>
+</li>
+</ul>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<a class="image" href="maas-tiers-configuration.png" target="blank"><img src="maas-tiers-configuration.png" alt="MaaSTier resources showing priority levels and group mappings" width="800"></a>
+</div>
+<div class="title">Figure 1. Governance Tiers Configuration</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_4_deploy_grafana_for_observability"><a class="anchor" href="#_exercise_4_deploy_grafana_for_observability"></a>Exercise 4: Deploy Grafana for observability</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Finance department needs visibility into model usage for chargeback. You&#8217;ll deploy Grafana dashboards to monitor token consumption and GPU utilization.</p>
+</div>
+<div class="paragraph">
+<p>Grafana provides the observability layer for tracking model usage across user tiers and different models.</p>
+</div>
+<div class="sect2">
+<h3 id="_install_grafana_operator_if_not_already_installed"><a class="anchor" href="#_install_grafana_operator_if_not_already_installed"></a>Install Grafana operator (if not already installed)</h3>
+<div class="paragraph">
+<p>Check if Grafana operator is installed:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get csv -n openshift-operators | grep grafana</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If not installed, install the Grafana operator from OperatorHub:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-operator-subscription.yaml &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: grafana-operator
+  namespace: openshift-operators
+spec:
+  channel: v5
+  name: grafana-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-operator-subscription.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for the operator to be ready:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l name=grafana-operator -n openshift-operators --timeout=300s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_grafana_instance_for_maas_monitoring"><a class="anchor" href="#_create_grafana_instance_for_maas_monitoring"></a>Create Grafana instance for MaaS monitoring</h3>
+<div class="paragraph">
+<p>Create a Grafana instance in the OpenShift AI namespace:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-instance.yaml &lt;&lt;EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: maas-grafana
+  namespace: redhat-ods-applications
+  labels:
+    dashboards: "maas"
+spec:
+  config:
+    security:
+      admin_user: admin
+      admin_password: chocotech123
+    server:
+      root_url: https://maas-grafana.apps.{cluster_domain}
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-instance.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for Grafana to deploy:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l app=grafana -n redhat-ods-applications --timeout=300s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_grafana_data_source_for_prometheus"><a class="anchor" href="#_create_grafana_data_source_for_prometheus"></a>Create Grafana data source for Prometheus</h3>
+<div class="paragraph">
+<p>Configure Grafana to query OpenShift&#8217;s Prometheus for metrics:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-datasource.yaml &lt;&lt;EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDataSource
+metadata:
+  name: prometheus-maas
+  namespace: redhat-ods-applications
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "maas"
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+      timeInterval: "5s"
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-datasource.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_access_grafana_dashboard"><a class="anchor" href="#_access_grafana_dashboard"></a>Access Grafana dashboard</h3>
+<div class="paragraph">
+<p>Get the Grafana route URL:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get route maas-grafana -n redhat-ods-applications -o jsonpath='{.spec.host}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-grafana-redhat-ods-applications.apps.{cluster_domain}</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the Grafana URL in your browser</p>
+</li>
+<li>
+<p>Log in with:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Username: <code>admin</code></p>
+</li>
+<li>
+<p>Password: <code>chocotech123</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You should see the Grafana home page.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_3"><a class="anchor" href="#_verification_3"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm Grafana deployment:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Grafana operator is installed and healthy</p>
+</li>
+<li>
+<p>Grafana instance pod is Running in redhat-ods-applications namespace</p>
+</li>
+<li>
+<p>Grafana route exists and is accessible</p>
+</li>
+<li>
+<p>Grafana data source is configured to query Prometheus</p>
+</li>
+<li>
+<p>Successfully logged into Grafana web interface</p>
+</li>
+</ul>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<a class="image" href="grafana-maas-dashboard.png" target="blank"><img src="grafana-maas-dashboard.png" alt="Grafana dashboard showing MaaS token consumption and GPU utilization metrics" width="800"></a>
+</div>
+<div class="title">Figure 2. Grafana Observability Dashboard for MaaS</div>
+</div>
+<div class="paragraph">
+<p>Note: Creating comprehensive Grafana dashboards with token consumption by tier, model usage patterns, and GPU utilization requires Prometheus metrics from Kuadrant and KServe. Dashboard JSON configuration would be provided by the MaaS platform team.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_5_generate_chargeback_reports"><a class="anchor" href="#_exercise_5_generate_chargeback_reports"></a>Exercise 5: Generate chargeback reports</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Now that governance and observability are configured, you can generate chargeback reports for Finance showing token consumption by department.</p>
+</div>
+<div class="paragraph">
+<p>Token-based consumption tracking enables Finance to bill departments based on actual usage rather than infrastructure allocation.</p>
+</div>
+<div class="sect2">
+<h3 id="_query_token_consumption_metrics"><a class="anchor" href="#_query_token_consumption_metrics"></a>Query token consumption metrics</h3>
+<div class="paragraph">
+<p>Use Prometheus to query token consumption by tier:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc exec -n openshift-monitoring prometheus-k8s-0 -- promtool query instant \
+  http://localhost:9090 \
+  'sum(rate(maas_tokens_consumed_total[1h])) by (tier, model)'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This returns token consumption rate by tier and model over the last hour.</p>
+</div>
+<div class="paragraph">
+<p>Example output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>tier="platinum", model="llama-3-8b"    125000 tokens/hour
+tier="gold", model="llama-3-8b"         45000 tokens/hour
+tier="bronze", model="nemotron-8b"      12000 tokens/hour</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_calculate_chargeback_costs"><a class="anchor" href="#_calculate_chargeback_costs"></a>Calculate chargeback costs</h3>
+<div class="paragraph">
+<p>Define cost per 1,000 tokens for internal chargeback:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Bronze tier: $0.001 per 1,000 tokens</p>
+</li>
+<li>
+<p>Silver tier: $0.002 per 1,000 tokens</p>
+</li>
+<li>
+<p>Gold tier: $0.003 per 1,000 tokens</p>
+</li>
+<li>
+<p>Platinum tier: $0.005 per 1,000 tokens</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Example calculation for Quality Control (Platinum tier):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Tokens consumed (24 hours): 125,000 tokens/hour x 24 hours = 3,000,000 tokens
+Cost: (3,000,000 / 1,000) x $0.005 = $15.00 per day
+Monthly estimate: $15.00 x 30 = $450.00</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Marketing (Bronze tier):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Tokens consumed (24 hours): 12,000 tokens/hour x 24 hours = 288,000 tokens
+Cost: (288,000 / 1,000) x $0.001 = $0.29 per day
+Monthly estimate: $0.29 x 30 = $8.70</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This demonstrates that Quality Control&#8217;s production workload justifies their Platinum tier allocation, while Marketing&#8217;s exploratory use appropriately stays in Bronze tier.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_a_chargeback_report"><a class="anchor" href="#_create_a_chargeback_report"></a>Create a chargeback report</h3>
+<div class="paragraph">
+<p>Generate a simple chargeback report:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; chargeback-report.sh &lt;&lt;'EOF'
+#!/bin/bash
+echo "ChocoTech Industries - MaaS Chargeback Report"
+echo "Generated: $(date)"
+echo ""
+echo "Department          Tier      Tokens (24h)    Cost/Day    Monthly Est."
+echo "--------------------------------------------------------------------------------"
+echo "Quality Control     Platinum  3,000,000       \$15.00     \$450.00"
+echo "R&amp;D                 Gold      1,080,000       \$3.24      \$97.20"
+echo "Supply Chain        Silver      480,000       \$0.96      \$28.80"
+echo "Marketing           Bronze      288,000       \$0.29      \$8.70"
+echo "--------------------------------------------------------------------------------"
+echo "Total Monthly Cost:                                     \$584.70"
+EOF
+chmod +x chargeback-report.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run the report:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">./chargeback-report.sh</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This simple report demonstrates the concept. In production, you would integrate Prometheus metrics with your organization&#8217;s billing system or create automated Grafana reports.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_4"><a class="anchor" href="#_verification_4"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm chargeback capability:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Prometheus metrics show token consumption by tier and model</p>
+</li>
+<li>
+<p>Token consumption rates can be queried and aggregated</p>
+</li>
+<li>
+<p>Chargeback calculations based on tier pricing are possible</p>
+</li>
+<li>
+<p>Reports can demonstrate which departments are consuming GPU resources</p>
+</li>
+<li>
+<p>Finance has visibility into AI infrastructure costs by business unit</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Issue</strong>: RateLimitPolicy not enforcing quotas (requests succeeding beyond limits)</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify Limitador pod is healthy: <code>oc get pods -n kuadrant-system | grep limitador</code></p>
+</li>
+<li>
+<p>Check RateLimitPolicy is correctly configured: <code>oc describe ratelimitpolicy -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Verify AuthPolicy is configured to extract user tier: <code>oc get authpolicy -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Check Limitador logs for policy evaluation: <code>oc logs -l app=limitador -n kuadrant-system</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: User assigned to wrong tier (expected Platinum, getting Bronze)</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify user group membership: <code>oc get user {user} -o yaml | grep -A 5 groups</code></p>
+</li>
+<li>
+<p>Check MaaSTier configuration: <code>oc get maastier platinum -o yaml</code></p>
+</li>
+<li>
+<p>Ensure group name matches exactly in tier spec</p>
+</li>
+<li>
+<p>Priority level determines tier when user belongs to multiple groups (highest wins)</p>
+</li>
+<li>
+<p>Check Authorino logs for user tier resolution: <code>oc logs -l app=authorino -n kuadrant-system</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Grafana cannot connect to Prometheus data source</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify Prometheus is accessible from Grafana namespace</p>
+</li>
+<li>
+<p>Check GrafanaDataSource status: <code>oc describe grafanadatasource prometheus-maas -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Verify Thanos Querier service exists: <code>oc get svc thanos-querier -n openshift-monitoring</code></p>
+</li>
+<li>
+<p>Test connectivity: <code>oc exec -n redhat-ods-applications deployment/maas-grafana&#8201;&#8212;&#8201;curl -k <a href="https://thanos-querier.openshift-monitoring.svc.cluster.local:9091/api/v1/query?query=up" class="bare">https://thanos-querier.openshift-monitoring.svc.cluster.local:9091/api/v1/query?query=up</a></code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Token consumption metrics not appearing in Prometheus</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify KServe and Kuadrant are exposing metrics</p>
+</li>
+<li>
+<p>Check ServiceMonitor resources: <code>oc get servicemonitor -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Verify Prometheus is scraping MaaS metrics: Query <code>up{job="maas-api"}</code> in Prometheus UI</p>
+</li>
+<li>
+<p>Check MaaS API pod logs for metric export: <code>oc logs -l app=maas-api -n redhat-ods-applications | grep metrics</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: MaaSTier resource created but RateLimitPolicy not generated</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check MaaS operator logs: <code>oc logs -n redhat-ods-operator deployment/rhods-operator | grep -i maastier</code></p>
+</li>
+<li>
+<p>Verify Kuadrant CRDs are installed: <code>oc get crd | grep kuadrant</code></p>
+</li>
+<li>
+<p>Check MaaSTier status for reconciliation errors: <code>oc get maastier platinum -o yaml | grep -A 10 status</code></p>
+</li>
+<li>
+<p>Verify RBAC permissions for MaaS operator to create RateLimitPolicy resources</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_6_production_security_hardening"><a class="anchor" href="#_exercise_6_production_security_hardening"></a>Exercise 6: Production security hardening</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Chief Information Security Officer (CISO) schedules an urgent meeting before the MaaS platform goes to production. "We need to ensure this AI infrastructure meets our security and compliance requirements," she explains. "We&#8217;re subject to food safety regulations, and AI systems that impact quality control must be auditable and secure."</p>
+</div>
+<div class="paragraph">
+<p>The security team raises several questions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>"How do we verify model artifacts haven&#8217;t been tampered with?"</p>
+</li>
+<li>
+<p>"Can we audit every API request to track who accessed which models?"</p>
+</li>
+<li>
+<p>"Are the models and data encrypted in transit and at rest?"</p>
+</li>
+<li>
+<p>"Does this meet SOC 2 and ISO 27001 requirements for AI systems?"</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Before promoting the MaaS platform to production, you need to implement comprehensive security hardening across nine critical areas.</p>
+</div>
+<div class="sect2">
+<h3 id="_security_hardening_checklist"><a class="anchor" href="#_security_hardening_checklist"></a>Security hardening checklist</h3>
+<div class="paragraph">
+<p>This checklist covers enterprise security requirements for production AI model serving platforms. Each section includes ChocoTech-specific implementation guidance.</p>
+</div>
+<div class="sect3">
+<h4 id="_1_model_security"><a class="anchor" href="#_1_model_security"></a>1. Model security</h4>
+<div class="paragraph">
+<p>Ensure model artifacts are signed, verified, and tracked from source to deployment.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Sign and verify model artifacts using sigstore or cosign</p>
+</li>
+<li>
+<p>✓ Store models in a trusted registry or model repository</p>
+</li>
+<li>
+<p>✓ Scan models for malicious code or unexpected behavior</p>
+</li>
+<li>
+<p>✓ Use model provenance tracking (who trained, where, when, and how)</p>
+</li>
+<li>
+<p>✓ Implement AIBOM (AI Bill of Materials) for transparency</p>
+</li>
+<li>
+<p>✓ Monitor for model drift and adversarial inputs</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Sign model artifact with cosign before uploading to S3
+cosign sign-blob --key cosign.key llama3-8b-defect-analysis.safetensors &gt; llama3-8b-defect-analysis.sig
+
+# Verify signature before deployment
+cosign verify-blob --key cosign.pub --signature llama3-8b-defect-analysis.sig llama3-8b-defect-analysis.safetensors</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Model provenance metadata:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: llama3-defect-provenance
+  namespace: chocotech-models
+data:
+  model_name: "llama3-8b-defect-analysis"
+  base_model: "meta-llama/Meta-Llama-3-8B-Instruct"
+  trained_by: "ChocoTech R&amp;D Data Science Team"
+  training_date: "2026-04-15"
+  training_data: "chocotech-defect-images-v2 (5000 labeled images)"
+  training_environment: "OpenShift AI Training Workbench v3.4"
+  validation_accuracy: "94.2%"
+  signature_verified: "true"
+  compliance_status: "approved-for-production"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>AIBOM (AI Bill of Materials):</strong></p>
+</div>
+<div class="paragraph">
+<p>Track dependencies for the model serving stack:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Model: llama3-8b-defect-analysis v2.0.0
+├─ Base Model: meta-llama/Meta-Llama-3-8B-Instruct (v1.0)
+├─ Serving Runtime: vLLM v0.5.4
+├─ Inference Framework: llm-d v1.2.1
+├─ GPU Drivers: NVIDIA CUDA 12.4
+├─ Container Base: registry.redhat.io/ubi9/python-311:1-48
+├─ Dependencies:
+│  ├─ transformers==4.40.0
+│  ├─ torch==2.3.0+cu124
+│  └─ safetensors==0.4.3</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="paragraph">
+<p>Check model signature before every deployment. Add admission webhook to enforce signed models in production namespace.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_2_data_security"><a class="anchor" href="#_2_data_security"></a>2. Data security</h4>
+<div class="paragraph">
+<p>Protect training data and inference requests with encryption and access controls.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Encrypt data in transit (TLS/SSL)</p>
+</li>
+<li>
+<p>✓ Encrypt data at rest (OpenShift + KMS integration)</p>
+</li>
+<li>
+<p>✓ Ensure differential privacy or anonymization if using real user data</p>
+</li>
+<li>
+<p>✓ Apply access controls on training and inference data</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Encrypt data in transit:</strong></p>
+</div>
+<div class="paragraph">
+<p>Verify all MaaS endpoints use TLS:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Check MaaS gateway route uses edge TLS termination
+oc get route maas-default-gateway -n redhat-ods-applications -o jsonpath='{.spec.tls.termination}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>edge</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Encrypt data at rest:</strong></p>
+</div>
+<div class="paragraph">
+<p>Enable encryption for PersistentVolumes storing model weights:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: model-storage-encrypted
+  namespace: chocotech-models
+  annotations:
+    volume.kubernetes.io/storage-class: "encrypted-gp3"
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 100Gi
+  storageClassName: encrypted-gp3</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create an encrypted storage class with AWS KMS integration (example for AWS):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: storage.k8s.io/v1
+kind: StorageClass
+metadata:
+  name: encrypted-gp3
+provisioner: ebs.csi.aws.com
+parameters:
+  type: gp3
+  encrypted: "true"
+  kmsKeyId: "arn:aws:kms:us-east-1:123456789:key/your-kms-key-id"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Anonymize defect image metadata:</strong></p>
+</div>
+<div class="paragraph">
+<p>Quality Control&#8217;s defect images may contain PII in EXIF data (employee names, timestamps, location). Strip metadata before training:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">from PIL import Image
+import piexif
+
+def anonymize_image(image_path):
+    img = Image.open(image_path)
+    # Remove all EXIF metadata
+    img.save(image_path, exif=b"")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>MaaS gateway routes use TLS edge termination</p>
+</li>
+<li>
+<p>PVCs for model storage use encrypted storage class</p>
+</li>
+<li>
+<p>Training data is anonymized or uses differential privacy</p>
+</li>
+<li>
+<p>API requests/responses are encrypted (no plaintext transmission)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_3_api_and_endpoint_security"><a class="anchor" href="#_3_api_and_endpoint_security"></a>3. API and endpoint security</h4>
+<div class="paragraph">
+<p>Secure the MaaS API gateway and model endpoints with authentication, authorization, and input validation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Enforce authentication (Keycloak, OAuth2, OIDC)</p>
+</li>
+<li>
+<p>✓ Use API Gateway (3scale or Kuadrant) for rate-limiting and throttling</p>
+</li>
+<li>
+<p>✓ Validate all input payloads to prevent injection attacks</p>
+</li>
+<li>
+<p>✓ Use service mesh (Istio or OpenShift Service Mesh) for secure service-to-service communication</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Verify Kuadrant Authorino is enforcing authentication:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n kuadrant-system | grep authorino</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>authorino-xxx   1/1     Running   0          5d</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check AuthPolicy is applied to MaaS gateway:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get authpolicy -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Input validation for prompt injection:</strong></p>
+</div>
+<div class="paragraph">
+<p>Add input validation to prevent malicious prompts:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-python hljs" data-lang="python">import re
+
+def validate_prompt(user_input):
+    # Block prompts attempting jailbreak or injection
+    blocked_patterns = [
+        r"ignore previous instructions",
+        r"system: you are now",
+        r"&lt;\|im_start\|&gt;system",
+        r"&lt;/s&gt;&lt;s&gt;",  # Model control tokens
+    ]
+
+    for pattern in blocked_patterns:
+        if re.search(pattern, user_input, re.IGNORECASE):
+            raise ValueError("Input contains potentially malicious content")
+
+    return True</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Service mesh mTLS for internal communication:</strong></p>
+</div>
+<div class="paragraph">
+<p>Verify OpenShift Service Mesh is enforcing mutual TLS between MaaS components:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Check ServiceMeshMemberRoll includes chocotech-models namespace
+oc get servicemeshmemberroll -n istio-system -o yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Ensure <code>chocotech-models</code> namespace is enrolled in the service mesh for automatic mTLS:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: maistra.io/v1
+kind: ServiceMeshMemberRoll
+metadata:
+  name: default
+  namespace: istio-system
+spec:
+  members:
+    - redhat-ods-applications
+    - chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>API requests require Bearer token authentication (401 without token)</p>
+</li>
+<li>
+<p>Kuadrant rate limiting is active (429 when quota exceeded)</p>
+</li>
+<li>
+<p>Service mesh enforces mTLS between model pods and gateway</p>
+</li>
+<li>
+<p>Input validation blocks malicious prompts</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_4_runtime_and_infrastructure_security"><a class="anchor" href="#_4_runtime_and_infrastructure_security"></a>4. Runtime and infrastructure security</h4>
+<div class="paragraph">
+<p>Isolate model serving workloads and monitor for anomalous behavior.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Run models in isolated environments (containers with SELinux/seccomp/AppArmor)</p>
+</li>
+<li>
+<p>✓ Use confidential containers or confidential computing (Intel SGX, AMD SEV) for sensitive models</p>
+</li>
+<li>
+<p>✓ Monitor containers with runtime security tools (ACS - Advanced Cluster Security)</p>
+</li>
+<li>
+<p>✓ Regularly patch and update base images and OS</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Enable SELinux enforcement on model pods:</strong></p>
+</div>
+<div class="paragraph">
+<p>Verify OpenShift nodes have SELinux enforcing:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc debug node/&lt;node-name&gt; -- chroot /host getenforce</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Enforcing</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Seccomp profile for model pods:</strong></p>
+</div>
+<div class="paragraph">
+<p>Apply a restrictive seccomp profile to limit syscalls:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-secured
+  namespace: chocotech-models
+spec:
+  # ... model config ...
+  podSpec:
+    securityContext:
+      seccompProfile:
+        type: RuntimeDefault
+    containers:
+      - name: vllm-container
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
+          capabilities:
+            drop:
+              - ALL</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Deploy Advanced Cluster Security (ACS) for runtime monitoring:</strong></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This requires Red Hat Advanced Cluster Security operator installed.
+</td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>Create a policy to alert on unexpected model pod behavior:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy.stackrox.io/v1
+kind: SecurityPolicy
+metadata:
+  name: chocotech-model-runtime-policy
+spec:
+  description: "Alert on unexpected behavior in MaaS model pods"
+  severity: HIGH
+  policySection:
+    - policyGroup: Anomalous Activity
+  criteria:
+    - namespace: chocotech-models
+    - container:
+        image: ".*vllm.*"
+      runtime:
+        processExecution:
+          - "/bin/bash"  # Alert if shell is spawned in vLLM container
+          - "/bin/sh"
+          - "curl"       # Alert if outbound network tools used</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Image vulnerability scanning:</strong></p>
+</div>
+<div class="paragraph">
+<p>Scan base images for CVEs before deployment:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Scan vLLM image for vulnerabilities
+oc image extract quay.io/vllm/vllm:v0.5.4 --confirm
+trivy image --severity HIGH,CRITICAL quay.io/vllm/vllm:v0.5.4</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Model pods run with SELinux enforcing and seccomp profiles</p>
+</li>
+<li>
+<p>No privileged containers in chocotech-models namespace</p>
+</li>
+<li>
+<p>ACS monitors model pod runtime behavior</p>
+</li>
+<li>
+<p>Base images are scanned and updated monthly</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_5_authorization_and_access_control"><a class="anchor" href="#_5_authorization_and_access_control"></a>5. Authorization and access control</h4>
+<div class="paragraph">
+<p>Implement role-based access control (RBAC) and multi-tenant isolation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Role-Based Access Control (RBAC) in OpenShift for model owners and users</p>
+</li>
+<li>
+<p>✓ Implement multi-tenant isolation policies</p>
+</li>
+<li>
+<p>✓ Use scoped tokens for API access with expiration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>RBAC for model deployment:</strong></p>
+</div>
+<div class="paragraph">
+<p>Create custom roles for model management:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: model-deployer
+  namespace: chocotech-models
+rules:
+  - apiGroups: ["serving.kserve.io"]
+    resources: ["llminferenceservices"]
+    verbs: ["create", "update", "patch", "delete", "get", "list"]
+  - apiGroups: [""]
+    resources: ["secrets", "configmaps"]
+    verbs: ["get", "list"]
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: qc-team-model-deployers
+  namespace: chocotech-models
+subjects:
+  - kind: Group
+    name: qc-data-scientists
+    apiGroup: rbac.authorization.k8s.io
+roleRef:
+  kind: Role
+  name: model-deployer
+  apiGroup: rbac.authorization.k8s.io</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Multi-tenant namespace isolation:</strong></p>
+</div>
+<div class="paragraph">
+<p>Enforce network policies to isolate departments:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: networking.k8s.io/v1
+kind: NetworkPolicy
+metadata:
+  name: deny-cross-tenant-access
+  namespace: chocotech-models
+spec:
+  podSelector: {}
+  policyTypes:
+    - Ingress
+  ingress:
+    - from:
+        - namespaceSelector:
+            matchLabels:
+              name: chocotech-models
+        - namespaceSelector:
+            matchLabels:
+              name: redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This policy ensures model pods only accept traffic from the MaaS gateway namespace, preventing direct cross-tenant access.</p>
+</div>
+<div class="paragraph">
+<p><strong>API token scoping and expiration:</strong></p>
+</div>
+<div class="paragraph">
+<p>Configure Kuadrant to enforce token expiration:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: kuadrant.io/v1beta1
+kind: AuthPolicy
+metadata:
+  name: token-expiration-policy
+  namespace: redhat-ods-applications
+spec:
+  targetRef:
+    group: gateway.networking.k8s.io
+    kind: HTTPRoute
+    name: maas-gateway-route
+  rules:
+    - jwt:
+        issuerUrl: https://keycloak.chocotech.com/realms/maas
+        ttl: 3600  # Tokens expire after 1 hour</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Only authorized groups can deploy models</p>
+</li>
+<li>
+<p>Network policies isolate tenant namespaces</p>
+</li>
+<li>
+<p>API tokens have expiration (max 1 hour)</p>
+</li>
+<li>
+<p>RBAC prevents privilege escalation</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_6_audit_and_monitoring"><a class="anchor" href="#_6_audit_and_monitoring"></a>6. Audit and monitoring</h4>
+<div class="paragraph">
+<p>Enable comprehensive audit logging for compliance and incident response.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Enable audit logs for API access, model invocation, and data access</p>
+</li>
+<li>
+<p>✓ Integrate with SIEM/logging (OpenShift + EFK stack, Splunk, Graylog)</p>
+</li>
+<li>
+<p>✓ Monitor resource usage for anomalies (unexpected model calls)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Enable OpenShift API audit logging:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: config.openshift.io/v1
+kind: APIServer
+metadata:
+  name: cluster
+spec:
+  audit:
+    profile: WriteRequestBodies  # Log all write requests with full payload</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Configure ClusterLogForwarder for SIEM integration:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: logging.openshift.io/v1
+kind: ClusterLogForwarder
+metadata:
+  name: instance
+  namespace: openshift-logging
+spec:
+  outputs:
+    - name: splunk-maas-audit
+      type: splunk
+      url: https://splunk.chocotech.com:8088
+      secret:
+        name: splunk-hec-token
+  pipelines:
+    - name: forward-maas-audit
+      inputRefs:
+        - audit
+        - application
+      outputRefs:
+        - splunk-maas-audit
+      labels:
+        namespace: "chocotech-models,redhat-ods-applications"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Monitor for anomalous API usage:</strong></p>
+</div>
+<div class="paragraph">
+<p>Create Prometheus alert for suspicious spike in model requests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: monitoring.coreos.com/v1
+kind: PrometheusRule
+metadata:
+  name: maas-anomaly-detection
+  namespace: redhat-ods-applications
+spec:
+  groups:
+    - name: maas-security-alerts
+      interval: 1m
+      rules:
+        - alert: UnusualModelRequestSpike
+          expr: |
+            rate(http_requests_total{namespace="chocotech-models"}[5m]) &gt;
+            (avg_over_time(http_requests_total{namespace="chocotech-models"}[1h]) * 3)
+          for: 5m
+          labels:
+            severity: warning
+          annotations:
+            summary: "Unusual spike in model API requests detected"
+            description: "Request rate is 3x higher than 1-hour average. Possible abuse or attack."</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift audit logs capture all model deployment changes</p>
+</li>
+<li>
+<p>MaaS API requests are logged with user identity and timestamp</p>
+</li>
+<li>
+<p>Logs are forwarded to SIEM for long-term retention</p>
+</li>
+<li>
+<p>Anomaly detection alerts trigger for suspicious patterns</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_7_compliance_and_risk"><a class="anchor" href="#_7_compliance_and_risk"></a>7. Compliance and risk</h4>
+<div class="paragraph">
+<p>Meet regulatory requirements and document AI system governance.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Conduct AI risk assessments (NIST AI RMF or ISO 42001)</p>
+</li>
+<li>
+<p>✓ Ensure regulatory compliance (GDPR, HIPAA, COPPA, SOC 2, ISO 27001)</p>
+</li>
+<li>
+<p>✓ Maintain documentation for AI lifecycle and incident response</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>NIST AI Risk Management Framework assessment:</strong></p>
+</div>
+<div class="paragraph">
+<p>Document risk assessment for Quality Control defect detection model:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-markdown hljs" data-lang="markdown"># AI Risk Assessment: Defect Detection Model
+
+## Model Information
+- **Model Name:** llama3-8b-defect-analysis v2.0.0
+- **Use Case:** Chocolate manufacturing defect detection
+- **Risk Category:** HIGH (impacts food safety and production quality)
+
+## Risk Assessment (NIST AI RMF)
+
+### Validity and Reliability
+- **Training Data:** 5000 labeled defect images (ChocoTech production line)
+- **Validation Accuracy:** 94.2% on held-out test set
+- **Edge Cases:** Model performance degrades on novel defect types not in training data
+- **Mitigation:** Monthly retraining with new defect examples, human-in-the-loop verification
+
+### Safety
+- **Failure Mode:** Model may miss critical defects or generate false positives
+- **Impact:** Defective chocolate shipped to customers (food safety) or excessive waste (false positives)
+- **Mitigation:** Defect detection runs in parallel with human QC inspector, not as replacement
+
+### Security and Resilience
+- **Adversarial Risk:** Low (internal use only, no external API access)
+- **Model Poisoning Risk:** Medium (if training data is compromised)
+- **Mitigation:** Code-signed model artifacts, access-controlled training pipeline
+
+### Accountability and Transparency
+- **Responsible Party:** ChocoTech Quality Control Director
+- **Explainability:** Model provides reasoning for each defect classification
+- **Audit Trail:** All defect classifications logged with timestamp and model version</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Compliance documentation (SOC 2):</strong></p>
+</div>
+<div class="paragraph">
+<p>Maintain evidence for SOC 2 Type II audit:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Access control matrices (who can deploy/access models)</p>
+</li>
+<li>
+<p>✓ Change management logs (model deployment history)</p>
+</li>
+<li>
+<p>✓ Incident response procedures (model failure handling)</p>
+</li>
+<li>
+<p>✓ Vendor risk assessments (Hugging Face, vLLM dependencies)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Incident response playbook:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-markdown hljs" data-lang="markdown"># MaaS Security Incident Response Playbook
+
+## Incident Types
+
+### 1. Model Compromise (Malicious model artifact)
+- **Detection:** Signature verification failure, unexpected model behavior
+- **Response:**
+  1. Immediately scale LLMInferenceService to 0 replicas
+  2. Quarantine compromised model artifact
+  3. Alert security team (security@chocotech.com)
+  4. Forensic analysis: check S3 access logs, container image provenance
+  5. Rollback to last known-good model version
+
+### 2. Data Exfiltration (Unauthorized API access)
+- **Detection:** Anomalous request patterns, API access from unknown IPs
+- **Response:**
+  1. Revoke API tokens for affected tier
+  2. Review Kuadrant Authorino audit logs
+  3. Block malicious IP addresses in Gateway API
+  4. Notify affected users and compliance team
+
+### 3. Denial of Service (Rate limit bypass)
+- **Detection:** MaaS gateway CPU/memory saturation, excessive 429 responses
+- **Response:**
+  1. Activate emergency rate limit (reduce to 10 req/min globally)
+  2. Identify attacking user/tier via logs
+  3. Suspend attacker's API access
+  4. Scale gateway replicas if infrastructure-level DoS</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>AI risk assessment completed for production models</p>
+</li>
+<li>
+<p>Compliance documentation maintained (SOC 2, ISO 27001)</p>
+</li>
+<li>
+<p>Incident response playbook tested quarterly</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_8_supply_chain_security"><a class="anchor" href="#_8_supply_chain_security"></a>8. Supply chain security</h4>
+<div class="paragraph">
+<p>Secure the model and container supply chain.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Use SBOM tools for dependencies (Syft, Grype)</p>
+</li>
+<li>
+<p>✓ Scan third-party libraries used in models and inference services</p>
+</li>
+<li>
+<p>✓ Validate model and container integrity during deployment (admission controllers)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>Generate SBOM for vLLM container:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Generate Software Bill of Materials
+syft quay.io/vllm/vllm:v0.5.4 -o json &gt; vllm-sbom.json
+
+# Scan for vulnerabilities in dependencies
+grype sbom:vllm-sbom.json --fail-on high</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Validate container image signatures with Sigstore policy:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy.sigstore.dev/v1beta1
+kind: ClusterImagePolicy
+metadata:
+  name: require-signed-vllm-images
+spec:
+  images:
+    - glob: "quay.io/vllm/vllm:*"
+  authorities:
+    - keyless:
+        url: https://fulcio.sigstore.dev
+        identities:
+          - issuer: https://token.actions.githubusercontent.com
+            subject: https://github.com/vllm-project/vllm/.github/workflows/publish.yml@refs/heads/main</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This policy ensures only vLLM container images signed by the official GitHub Actions workflow can be deployed.</p>
+</div>
+<div class="paragraph">
+<p><strong>Pin dependency versions to prevent supply chain attacks:</strong></p>
+</div>
+<div class="paragraph">
+<p>In LLMInferenceService, pin exact vLLM version (not <code>latest</code>):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">spec:
+  runtime:
+    name: vllm
+    version: v0.5.4  # Pinned version, not "latest"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>SBOM generated for all container images</p>
+</li>
+<li>
+<p>Vulnerability scans pass (no HIGH or CRITICAL CVEs)</p>
+</li>
+<li>
+<p>Container images are signed and verified</p>
+</li>
+<li>
+<p>Dependencies pinned to specific versions (no floating tags)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_9_openshift_ai_specific_recommendations"><a class="anchor" href="#_9_openshift_ai_specific_recommendations"></a>9. OpenShift AI-specific recommendations</h4>
+<div class="paragraph">
+<p>Apply security hardening specific to Red Hat OpenShift AI and MaaS.</p>
+</div>
+<div class="paragraph">
+<p><strong>Requirements:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Use OpenShift GitOps to enforce policy-as-code for model deployment</p>
+</li>
+<li>
+<p>✓ Apply OpenShift ACS (Advanced Cluster Security) policies to enforce build/deploy/runtime rules</p>
+</li>
+<li>
+<p>✓ Secure model routes with OpenShift Routes + TLS + Keycloak Authz</p>
+</li>
+<li>
+<p>✓ Use sealed secrets or Vault for credentials</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech implementation:</strong></p>
+</div>
+<div class="paragraph">
+<p><strong>GitOps policy enforcement:</strong></p>
+</div>
+<div class="paragraph">
+<p>Use Argo CD with gatekeeper policies to enforce standards:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: constraints.gatekeeper.sh/v1beta1
+kind: K8sRequiredLabels
+metadata:
+  name: llminferenceservice-required-labels
+spec:
+  match:
+    kinds:
+      - apiGroups: ["serving.kserve.io"]
+        kinds: ["LLMInferenceService"]
+  parameters:
+    labels:
+      - key: "app.kubernetes.io/version"
+      - key: "app.kubernetes.io/managed-by"
+      - key: "chocotech.com/compliance-approved"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This gatekeeper policy prevents deployment of models without required labels (version, managed-by, compliance approval).</p>
+</div>
+<div class="paragraph">
+<p><strong>ACS build-time policy:</strong></p>
+</div>
+<div class="paragraph">
+<p>Enforce security standards at build time:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: policy.stackrox.io/v1
+kind: SecurityPolicy
+metadata:
+  name: model-container-hardening
+spec:
+  description: "Enforce security hardening for model containers"
+  severity: HIGH
+  policySection:
+    - policyGroup: Container Configuration
+  criteria:
+    - namespace: chocotech-models
+    - container:
+        image: ".*vllm.*"
+      buildTime:
+        disallowedImageLabels:
+          - key: "version"
+            value: "latest"  # Block containers with :latest tag
+        requiredImageLabels:
+          - key: "io.openshift.build.commit.id"  # Require Git commit traceability</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Sealed secrets for model storage credentials:</strong></p>
+</div>
+<div class="paragraph">
+<p>Use sealed-secrets operator instead of plain Secrets:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Encrypt S3 credentials with sealed-secrets
+oc create secret generic model-storage-connection \
+  --from-literal=AWS_ACCESS_KEY_ID=AKIAIOSFODNN7EXAMPLE \
+  --from-literal=AWS_SECRET_ACCESS_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY \
+  --dry-run=client -o yaml | \
+  kubeseal -o yaml &gt; model-storage-connection-sealed.yaml
+
+# Apply sealed secret (safe to commit to Git)
+oc apply -f model-storage-connection-sealed.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Verification:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Gatekeeper policies enforce required labels on LLMInferenceService</p>
+</li>
+<li>
+<p>ACS blocks deployment of non-compliant containers</p>
+</li>
+<li>
+<p>All secrets use sealed-secrets operator (no plaintext in Git)</p>
+</li>
+<li>
+<p>GitOps workflow requires approval for production changes</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security_hardening_verification_checklist"><a class="anchor" href="#_security_hardening_verification_checklist"></a>Security hardening verification checklist</h3>
+<div class="paragraph">
+<p>Use this checklist before promoting MaaS to production:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+<col style="width: 25%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Security Area</th>
+<th class="tableblock halign-left valign-top">Requirement</th>
+<th class="tableblock halign-left valign-top">Status</th>
+<th class="tableblock halign-left valign-top">Verification Command</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Model Security</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model artifacts signed</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>cosign verify-blob --key cosign.pub --signature &lt;sig&gt; &lt;model&gt;</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AIBOM documented</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check ConfigMap with provenance metadata</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Model scanning enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review ACS policy for model containers</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Data Security</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">TLS enabled on gateway</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get route maas-default-gateway -o jsonpath='{.spec.tls.termination}'</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Encrypted storage for models</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get pvc -o jsonpath='{.items[*].spec.storageClassName}'</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">PII anonymization</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review training data preprocessing scripts</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>API Security</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Authentication enforced</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get authpolicy -n redhat-ods-applications</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Rate limiting active</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get ratelimitpolicy -n redhat-ods-applications</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Service mesh mTLS</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get servicemeshmemberroll -n istio-system</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Runtime Security</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SELinux enforcing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc debug node/&lt;node&gt;&#8201;&#8212;&#8201;chroot /host getenforce</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Seccomp profiles applied</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get llminferenceservice -o yaml | grep seccompProfile</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ACS runtime monitoring</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check ACS dashboard for policy violations</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Access Control</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">RBAC configured</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get rolebinding -n chocotech-models</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Network policies</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get networkpolicy -n chocotech-models</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Token expiration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check AuthPolicy TTL configuration</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Audit Logging</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">API audit enabled</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get apiserver cluster -o jsonpath='{.spec.audit.profile}'</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SIEM integration</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get clusterlogforwarder -n openshift-logging</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Anomaly alerts</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get prometheusrule -n redhat-ods-applications</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Compliance</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">AI risk assessment</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review risk assessment document</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Incident response plan</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Test incident response playbook</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SOC 2 documentation</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Audit compliance evidence folder</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>Supply Chain</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">SBOM generated</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>syft quay.io/vllm/vllm:v0.5.4</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Image signatures verified</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check ClusterImagePolicy enforcement</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Dependencies pinned</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review LLMInferenceService for version pins</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><strong>OpenShift AI</strong></p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">GitOps enforcement</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Check Gatekeeper policies active</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ACS policies applied</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Review ACS policy compliance dashboard</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sealed secrets</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">☐</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock"><code>oc get sealedsecret -n chocotech-models</code></p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p><strong>Passing criteria for production:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ All HIGH severity items completed (model signing, TLS, authentication)</p>
+</li>
+<li>
+<p>✓ At least 80% of MEDIUM severity items completed</p>
+</li>
+<li>
+<p>✓ Security team approval obtained</p>
+</li>
+<li>
+<p>✓ Incident response playbook tested</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_learning_checkpoint"><a class="anchor" href="#_learning_checkpoint"></a>Learning checkpoint</h3>
+<div class="paragraph">
+<p>You should now be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Implement comprehensive security hardening across nine critical areas</p>
+</li>
+<li>
+<p>✓ Sign and verify model artifacts with cosign/sigstore</p>
+</li>
+<li>
+<p>✓ Configure encryption in transit (TLS) and at rest (encrypted storage)</p>
+</li>
+<li>
+<p>✓ Enforce authentication and authorization with Kuadrant and RBAC</p>
+</li>
+<li>
+<p>✓ Apply runtime security with SELinux, seccomp, and ACS monitoring</p>
+</li>
+<li>
+<p>✓ Enable audit logging and SIEM integration for compliance</p>
+</li>
+<li>
+<p>✓ Conduct AI risk assessments using NIST AI RMF</p>
+</li>
+<li>
+<p>✓ Secure the model and container supply chain with SBOM and signature verification</p>
+</li>
+<li>
+<p>✓ Use OpenShift-specific security features (GitOps, ACS, sealed secrets)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech production readiness:</strong></p>
+</div>
+<div class="paragraph">
+<p>The CISO approves the MaaS platform for production after verifying:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Model artifacts are signed and provenance is tracked</p>
+</li>
+<li>
+<p>All API requests are authenticated and encrypted</p>
+</li>
+<li>
+<p>Audit logs are forwarded to the SIEM for SOC 2 compliance</p>
+</li>
+<li>
+<p>Incident response procedures are documented and tested</p>
+</li>
+<li>
+<p>AI risk assessment shows acceptable risk profile for Quality Control use case</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting_2"><a class="anchor" href="#_troubleshooting_2"></a>Troubleshooting</h3>
+<div class="paragraph">
+<p><strong>Issue:</strong> Gatekeeper policy blocks LLMInferenceService deployment with missing label error</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check gatekeeper constraint: <code>oc get k8srequiredlabels -o yaml</code></p>
+</li>
+<li>
+<p>Add required labels to LLMInferenceService manifest:</p>
+</li>
+</ol>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">metadata:
+  labels:
+    app.kubernetes.io/version: "2.0.0"
+    app.kubernetes.io/managed-by: "argocd"
+    chocotech.com/compliance-approved: "true"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> Cosign signature verification fails with "signature not found" error</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify signature file exists: <code>ls -la llama3-8b-defect-analysis.sig</code></p>
+</li>
+<li>
+<p>Check public key matches private key used for signing: <code>cosign public-key --key cosign.key</code></p>
+</li>
+<li>
+<p>Ensure signature was generated for the exact file (checksum match): <code>sha256sum llama3-8b-defect-analysis.safetensors</code></p>
+</li>
+<li>
+<p>Re-sign if signature is stale or keys rotated</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> OpenShift audit logging generates excessive log volume (10GB+/day)</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Reduce audit profile from <code>WriteRequestBodies</code> to <code>Default</code>: <code>oc patch apiserver cluster --type=merge -p '{"spec":{"audit":{"profile":"Default"}}}'</code></p>
+</li>
+<li>
+<p>Filter audit logs to MaaS-related namespaces only in ClusterLogForwarder</p>
+</li>
+<li>
+<p>Use Prometheus recording rules to aggregate metrics instead of retaining raw logs</p>
+</li>
+<li>
+<p>Implement log retention policy (30 days for audit, 7 days for application logs)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> ACS reports policy violation for "privileged container" but no privileged containers are defined</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check pod security context: <code>oc get pod &lt;pod-name&gt; -n chocotech-models -o yaml | grep -A 5 securityContext</code></p>
+</li>
+<li>
+<p>Common false positive: GPU device plugin requires privileged init container (expected)</p>
+</li>
+<li>
+<p>Whitelist GPU operator namespace in ACS policy: <code>nvidia-gpu-operator</code></p>
+</li>
+<li>
+<p>Verify issue is with model pod, not infrastructure pods</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> Sealed secret cannot be decrypted by cluster</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify sealed-secrets controller is running: <code>oc get pods -n kube-system | grep sealed-secrets</code></p>
+</li>
+<li>
+<p>Check sealed secret was encrypted for correct cluster: <code>kubeseal --fetch-cert</code> (compare cert)</p>
+</li>
+<li>
+<p>Ensure sealed secret is in correct namespace (sealed secrets are namespace-scoped)</p>
+</li>
+<li>
+<p>Re-encrypt secret if sealed-secrets controller was reinstalled (new encryption key)</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_outcomes"><a class="anchor" href="#_learning_outcomes"></a>Learning outcomes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By completing this module, you should now understand:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ How tier-based governance prevents uncontrolled resource consumption in multi-tenant environments</p>
+</li>
+<li>
+<p>✓ The relationship between OpenShift groups, MaaSTier resources, and Kuadrant policies</p>
+</li>
+<li>
+<p>✓ How to configure rate limiting and token quotas using declarative tier definitions</p>
+</li>
+<li>
+<p>✓ The role of Authorino in user tier resolution and Limitador in quota enforcement</p>
+</li>
+<li>
+<p>✓ How to deploy Grafana for observability into model usage patterns</p>
+</li>
+<li>
+<p>✓ How to generate chargeback reports based on token consumption by department</p>
+</li>
+<li>
+<p>✓ How to implement comprehensive security hardening across nine critical areas</p>
+</li>
+<li>
+<p>✓ How to meet compliance requirements (SOC 2, ISO 27001, NIST AI RMF) for production AI systems</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_module_summary"><a class="anchor" href="#_module_summary"></a>Module summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve successfully implemented governance policies that ensure fair resource allocation at ChocoTech and provided Finance with visibility into AI infrastructure costs.</p>
+</div>
+<div class="paragraph">
+<p><strong>What you accomplished for ChocoTech</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Created four tier levels aligned with business priorities (Bronze/Silver/Gold/Platinum)</p>
+</li>
+<li>
+<p>Mapped department groups to tiers with appropriate rate limits and quotas</p>
+</li>
+<li>
+<p>Deployed Grafana for observability into token consumption and GPU utilization</p>
+</li>
+<li>
+<p>Enabled Finance to perform chargeback based on actual usage by department</p>
+</li>
+<li>
+<p>Prevented uncontrolled consumption through tier-based rate limiting</p>
+</li>
+<li>
+<p>Implemented production security hardening meeting SOC 2 and ISO 27001 requirements</p>
+</li>
+<li>
+<p>Obtained CISO approval for production deployment after comprehensive security review</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Business impact realized</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Fair allocation</strong>: Quality Control&#8217;s production workload no longer competes with Marketing&#8217;s exploratory queries</p>
+</li>
+<li>
+<p><strong>Cost visibility</strong>: Finance can justify AI infrastructure expansion with usage data</p>
+</li>
+<li>
+<p><strong>Accurate billing</strong>: Departments are billed based on actual consumption, not infrastructure allocation</p>
+</li>
+<li>
+<p><strong>Audit compliance</strong>: Complete trail of who accessed which models with user identity tracking</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Your journey progress</strong>:</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech now has a fully governed MaaS platform with observability and chargeback capabilities. The final step is enabling developers to integrate models into their applications.</p>
+</div>
+<div class="paragraph">
+<p><strong>Next steps</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Module 5 will guide you through the developer experience - navigating Gen AI Studio, generating API tokens, integrating models into applications using OpenAI-compatible APIs, and implementing retry logic for rate limit handling.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a></span>
+  <span class="next"><a href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

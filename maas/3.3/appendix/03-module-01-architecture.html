@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Module 1: The shift to utility AI and architecture foundation :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="02-details.html">
+    <link rel="next" href="03-module-02-architecture.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li>Architecture</li>
+    <li><a href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Module 1: The shift to utility AI and architecture foundation</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The CIO at ChocoTech Industries just called an emergency meeting. "We&#8217;ve invested over $500,000 in GPU infrastructure across four teams," she says, reviewing the quarterly report. "Yet our R&amp;D team is waiting three weeks for capacity while Quality Control&#8217;s GPUs sit idle 60% of the time. This doesn&#8217;t make sense."</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech needs to transform their fragmented GPU infrastructure into a centralized, governed platform where all business units can access AI models efficiently. You&#8217;ve been tasked with implementing Models as a Service (MaaS) on Red Hat OpenShift AI to solve this challenge.</p>
+</div>
+<div class="paragraph">
+<p>In this module, you&#8217;ll understand the business problem MaaS solves and explore the technical architecture that makes centralized model serving possible.</p>
+</div>
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_objectives"><a class="anchor" href="#_learning_objectives"></a>Learning objectives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By the end of this module, you&#8217;ll be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Articulate the business and operational problems created by the GPU silo crisis</p>
+</li>
+<li>
+<p>Explain how MaaS transforms GPU infrastructure from hardware management to token delivery</p>
+</li>
+<li>
+<p>Map the three-layer MaaS architecture (KServe, Kuadrant, Gateway API) and their responsibilities</p>
+</li>
+<li>
+<p>Verify that the foundational components are installed and healthy in your OpenShift cluster</p>
+</li>
+<li>
+<p>Understand the complete request flow from API client through Gateway, policy enforcement, to model serving</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_1_understanding_the_gpu_silo_crisis"><a class="anchor" href="#_exercise_1_understanding_the_gpu_silo_crisis"></a>Exercise 1: Understanding the GPU silo crisis</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech Industries has four teams independently managing GPU infrastructure. Let&#8217;s examine the operational pain points this creates.</p>
+</div>
+<div class="paragraph">
+<p>You begin by reviewing the current state of GPU allocations across ChocoTech&#8217;s business units.</p>
+</div>
+<div class="sect2">
+<h3 id="_the_problem_with_dedicated_accelerators"><a class="anchor" href="#_the_problem_with_dedicated_accelerators"></a>The problem with dedicated accelerators</h3>
+<div class="paragraph">
+<p><strong>Current state at ChocoTech</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Quality Control</strong>: 2x NVIDIA A100 GPUs running defect detection models</p>
+</li>
+<li>
+<p><strong>R&amp;D</strong>: 4x NVIDIA L40S GPUs for recipe optimization</p>
+</li>
+<li>
+<p><strong>Marketing</strong>: 2x NVIDIA L4 GPUs for sentiment analysis</p>
+</li>
+<li>
+<p><strong>Supply Chain</strong>: 2x NVIDIA L40S GPUs for inventory prediction</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Operational pain points identified</strong>:</p>
+</div>
+<div class="paragraph">
+<p><strong>GPU under-utilization and over-provisioning</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Teams request and manage their own dedicated GPUs, leading to expensive hardware sitting under-utilized while other high-priority projects may be stalled or additional hardware is provisioned unnecessarily.</p>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech example</strong>: Quality Control&#8217;s A100 GPUs process defect images only during production shifts (8 hours/day), leaving $120,000 of hardware idle 67% of the time. Meanwhile, R&amp;D waits three weeks for GPU capacity to test new flavor prediction models.</p>
+</div>
+<div class="paragraph">
+<p><strong>Misallocation of engineer and data science expertise</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Data scientists spend more time debugging CUDA drivers, Docker containers, and Kubernetes manifests than actually tuning models or analyzing data.</p>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech example</strong>: Marketing&#8217;s data science team spent 40 hours last quarter troubleshooting vLLM container startup issues instead of improving their customer sentiment models.</p>
+</div>
+<div class="paragraph">
+<p><strong>Redundant model deployments</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Four different teams download and deploy the same generative AI model, leading to overall waste and duplication when they could be sharing resources efficiently.</p>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech example</strong>: All four teams independently deployed Llama-3 8B for different use cases, consuming 128GB of storage (4 x 32GB) and wasting GPU memory with duplicate model weights.</p>
+</div>
+<div class="paragraph">
+<p><strong>Security "black boxes"</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Without a centralized API gateway, there is zero visibility into who is sending what data to which model, making audit logs and PII filtering nearly impossible to enforce.</p>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech example</strong>: Marketing&#8217;s sentiment analysis application processes customer feedback containing personally identifiable information (PII), but there&#8217;s no way to audit which users accessed which models or implement PII filtering policies.</p>
+</div>
+<div class="paragraph">
+<p><strong>No way to track usage or forecast needs</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Without the ability to track model usage across users, applications, and different models, there is no way to forecast compute needs accurately.</p>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech example</strong>: Finance cannot justify GPU infrastructure expansion requests because there&#8217;s no data showing which teams are consuming capacity, which models are heavily used, or whether existing hardware is properly utilized.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_solution_centralized_model_hub_with_maas"><a class="anchor" href="#_the_solution_centralized_model_hub_with_maas"></a>The solution - Centralized model hub with MaaS</h3>
+<div class="paragraph">
+<p>Models as a Service (MaaS) transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane.</p>
+</div>
+<div class="paragraph">
+<p><strong>How MaaS changes the operating model</strong>:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Central IT (Platform Engineers)</strong></dt>
+<dd>
+<p>Manages the inference strategy, hardware allocation, and governance policies. Controls which models are available, enforces access tiers, and monitors infrastructure health.</p>
+</dd>
+<dt class="hdlist1"><strong>Lines of Business (Marketing, R&amp;D, Quality Control, Supply Chain)</strong></dt>
+<dd>
+<p>Consume AI capabilities via tokens, treating model inference as a metered, on-demand internal service. Focus on building applications, not managing infrastructure.</p>
+</dd>
+<dt class="hdlist1"><strong>Platform Engineers</strong></dt>
+<dd>
+<p>Configure tiers, rate limits, quotas, and observability dashboards. Ensure fair resource allocation and compliance with organizational policies.</p>
+</dd>
+<dt class="hdlist1"><strong>Developers</strong></dt>
+<dd>
+<p>Integrate models via OpenAI-compatible APIs without worrying about GPU drivers, Kubernetes manifests, or model serving runtimes.</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p><strong>Business impact realized</strong>:</p>
+</div>
+<div class="paragraph">
+<p><strong>Without MaaS</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Redundant model deployments waste storage and compute</p>
+</li>
+<li>
+<p>No audit trail for compliance requirements</p>
+</li>
+<li>
+<p>Cannot track usage or forecast future needs</p>
+</li>
+<li>
+<p>Teams compete for scarce GPU resources</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>With MaaS</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Centralized model catalog eliminates redundancy</p>
+</li>
+<li>
+<p>Complete audit logs and PII filtering via API gateway</p>
+</li>
+<li>
+<p>Token-based consumption enables accurate chargeback</p>
+</li>
+<li>
+<p>Fair resource allocation prevents team conflicts</p>
+</li>
+</ul>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<a class="image" href="gpu-silo-before-after.png" target="blank"><img src="gpu-silo-before-after.png" alt="Comparison of siloed GPU infrastructure vs centralized MaaS model hub" width="800"></a>
+</div>
+<div class="title">Figure 1. Transforming GPU Infrastructure: From Silos to Centralized Hub</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verify_your_understanding"><a class="anchor" href="#_verify_your_understanding"></a>Verify your understanding</h3>
+<div class="paragraph">
+<p>Consider these questions based on ChocoTech&#8217;s situation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>How would centralized model serving help Quality Control and R&amp;D share GPU capacity?</p>
+</li>
+<li>
+<p>What governance policies would prevent one team from monopolizing resources?</p>
+</li>
+<li>
+<p>How does token-based consumption enable Finance to perform chargeback?</p>
+</li>
+<li>
+<p>What role does the API gateway play in audit logging and PII filtering?</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="02-details.html">Workshop Details</a></span>
+  <span class="next"><a href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

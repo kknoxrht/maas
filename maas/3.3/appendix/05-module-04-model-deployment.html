@@ -1,0 +1,1767 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Exercise 5: Deploy a second model for multi-model catalog :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="05-module-03-model-deployment.html">
+    <link rel="next" href="05b-lifecycle-management-gitops.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Course Home</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="index.html">Workshop Home</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Architecture</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <span class="nav-text">Model Deploymemnt</span>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="3">
+    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="3">
+    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="index.html">Workshop Home</a></li>
+    <li>Model Deploymemnt</li>
+    <li><a href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Exercise 5: Deploy a second model for multi-model catalog</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Marketing team requests access to a smaller, faster model for sentiment analysis. Deploy a second model to demonstrate multi-model catalog management.</p>
+</div>
+<div class="paragraph">
+<p>This exercise shows how easily you can expand the model catalog as new business requirements emerge.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_deploy_nemotron_8b_for_marketing_team"><a class="anchor" href="#_deploy_nemotron_8b_for_marketing_team"></a>Deploy Nemotron 8B for Marketing team</h3>
+<div class="paragraph">
+<p>Create a manifest for a second model:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; nemotron-8b-llminferenceservice.yaml &lt;&lt;EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: nemotron-8b
+  namespace: chocotech-models
+  labels:
+    app: nemotron-8b
+    team: marketing
+spec:
+  model:
+    name: nvidia/nemotron-4-8b-instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+    requests:
+      nvidia.com/gpu: 1
+      memory: 16Gi
+  scaling:
+    minReplicas: 1
+    maxReplicas: 2
+  maasConfig:
+    publishToGenAIStudio: true
+    tierAccess:
+      - bronze
+      - silver
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Note: This model is restricted to bronze and silver tiers, demonstrating selective access control.</p>
+</div>
+<div class="paragraph">
+<p>Apply the manifest:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f nemotron-8b-llminferenceservice.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for deployment:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready llminferenceservice/nemotron-8b -n chocotech-models --timeout=600s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>llminferenceservice.serving.kserve.io/nemotron-8b condition met</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verify_multi_model_catalog"><a class="anchor" href="#_verify_multi_model_catalog"></a>Verify multi-model catalog</h3>
+<div class="paragraph">
+<p>List all deployed models:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get llminferenceservice -n chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME           READY   REASON   AGE
+llama-3-8b     True    Ready    20m
+nemotron-8b    True    Ready    5m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check the model catalog via API:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">curl https://$(oc get route maas-default-gateway -n redhat-ods-applications -o jsonpath='{.spec.host}')/v1/models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output showing both models:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>{
+  "object": "list",
+  "data": [
+    {
+      "id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "object": "model",
+      "owned_by": "chocotech-models"
+    },
+    {
+      "id": "nvidia/nemotron-4-8b-instruct",
+      "object": "model",
+      "owned_by": "chocotech-models"
+    }
+  ]
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Refresh the Gen AI Studio Models tab in the dashboard. You should now see both models listed with their respective tier access controls.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm multi-model catalog:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Both LLMInferenceServices show READY=True status</p>
+</li>
+<li>
+<p>Both models appear in Gen AI Studio catalog</p>
+</li>
+<li>
+<p>Models show different tier access (Llama-3: all tiers, Nemotron: bronze/silver only)</p>
+</li>
+<li>
+<p><code>/v1/models</code> API endpoint returns both models</p>
+</li>
+<li>
+<p>Each model has its own service and pods in chocotech-models namespace</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_6_production_lifecycle_management_and_gitops"><a class="anchor" href="#_exercise_6_production_lifecycle_management_and_gitops"></a>Exercise 6: Production lifecycle management and GitOps</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Quality Control team has been successfully using Llama-3 8B for defect analysis for several weeks. Now they want to upgrade to a new version that has been fine-tuned on chocolate manufacturing defects.</p>
+</div>
+<div class="paragraph">
+<p>"We can&#8217;t risk downtime," explains the QC Director. "Our production line depends on real-time defect detection. Can we test the new model with 10% of traffic first, then gradually roll it out if it performs well?"</p>
+</div>
+<div class="paragraph">
+<p>This is a classic production deployment challenge: how do you safely update AI models without disrupting business-critical workloads?</p>
+</div>
+<div class="paragraph">
+<p>In this exercise, you&#8217;ll learn production-grade model lifecycle management including version management, canary deployments, GitOps integration with Argo CD, and rollback procedures.</p>
+</div>
+<div class="sect2">
+<h3 id="_version_management_strategy"><a class="anchor" href="#_version_management_strategy"></a>Version management strategy</h3>
+<div class="paragraph">
+<p>Production AI systems require disciplined version management for models, just like application code.</p>
+</div>
+<div class="sect3">
+<h4 id="_semantic_versioning_for_models"><a class="anchor" href="#_semantic_versioning_for_models"></a>Semantic versioning for models</h4>
+<div class="paragraph">
+<p>Use semantic versioning to track model releases:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>v1.0.0</strong> - Initial production release</p>
+</li>
+<li>
+<p><strong>v1.1.0</strong> - Minor improvement (fine-tuning, hyperparameter optimization)</p>
+</li>
+<li>
+<p><strong>v2.0.0</strong> - Major change (architecture change, new training data)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech versioning example:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Model Storage Path Structure:
+s3://chocotech-models/
+├── llama3-8b-defect-analysis/
+│   ├── v1.0.0/  (Base Llama-3 8B Instruct)
+│   ├── v1.1.0/  (Fine-tuned on chocolate defect images - 500 examples)
+│   └── v2.0.0/  (Fine-tuned on chocolate defect images - 5000 examples + multimodal)</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_deploying_multiple_versions_simultaneously"><a class="anchor" href="#_deploying_multiple_versions_simultaneously"></a>Deploying multiple versions simultaneously</h4>
+<div class="paragraph">
+<p>Create separate LLMInferenceService resources for each version:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v1
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "1.0.0"
+spec:
+  model:
+    name: llama3-8b-defect-analysis
+    source: s3
+    storage:
+      path: s3://chocotech-models/llama3-8b-defect-analysis/v1.0.0/
+      key: model-storage-connection
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 2
+    maxReplicas: 5
+  maasConfig:
+    publishToGenAIStudio: true
+    tierAccess:
+      - gold
+      - platinum</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Notice the <code>app.kubernetes.io/version</code> label tracks the semantic version, while the resource name includes the version (<code>llama3-defect-v1</code>).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_verification_deploy_v1_and_v2_side_by_side"><a class="anchor" href="#_verification_deploy_v1_and_v2_side_by_side"></a>Verification: Deploy v1 and v2 side-by-side</h4>
+<div class="paragraph">
+<p>For this exercise, simulate having two versions by deploying the same Llama-3 8B model with different names (in production, these would be different model versions):</p>
+</div>
+<div class="paragraph">
+<p>Create v1 deployment:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; llama3-defect-v1.yaml &lt;&lt;EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v1
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "1.0.0"
+    environment: production
+spec:
+  model:
+    name: meta-llama/Meta-Llama-3-8B-Instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 1
+    maxReplicas: 2
+  maasConfig:
+    publishToGenAIStudio: false
+    tierAccess:
+      - gold
+      - platinum
+EOF
+oc apply -f llama3-defect-v1.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create v2 deployment (canary version):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; llama3-defect-v2.yaml &lt;&lt;EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: llama3-defect-v2
+  namespace: chocotech-models
+  labels:
+    app.kubernetes.io/name: llama3-defect-analysis
+    app.kubernetes.io/version: "2.0.0"
+    environment: canary
+spec:
+  model:
+    name: meta-llama/Meta-Llama-3-8B-Instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+  scaling:
+    minReplicas: 1
+    maxReplicas: 1
+  maasConfig:
+    publishToGenAIStudio: false
+    tierAccess:
+      - gold
+      - platinum
+EOF
+oc apply -f llama3-defect-v2.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for both deployments to be ready:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready llminferenceservice/llama3-defect-v1 -n chocotech-models --timeout=600s
+oc wait --for=condition=ready llminferenceservice/llama3-defect-v2 -n chocotech-models --timeout=600s</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify both versions are running:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get llminferenceservice -n chocotech-models -l app.kubernetes.io/name=llama3-defect-analysis</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME               READY   REASON   AGE
+llama3-defect-v1   True    Ready    5m
+llama3-defect-v2   True    Ready    3m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You now have two versions deployed simultaneously, ready for canary traffic splitting.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_canary_deployments_with_traffic_splitting"><a class="anchor" href="#_canary_deployments_with_traffic_splitting"></a>Canary deployments with traffic splitting</h3>
+<div class="paragraph">
+<p>Canary deployments gradually shift traffic from the old version to the new version, allowing you to monitor performance and catch issues before full rollout.</p>
+</div>
+<div class="sect3">
+<h4 id="_traffic_splitting_with_gateway_api"><a class="anchor" href="#_traffic_splitting_with_gateway_api"></a>Traffic splitting with Gateway API</h4>
+<div class="paragraph">
+<p>OpenShift AI MaaS uses Gateway API HTTPRoute resources for traffic management. Create a canary route that splits traffic between v1 (90%) and v2 (10%):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; llama3-defect-canary-route.yaml &lt;&lt;EOF
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: llama3-defect-canary
+  namespace: chocotech-models
+spec:
+  parentRefs:
+    - name: maas-default-gateway
+      namespace: redhat-ods-applications
+  hostnames:
+    - "llama3-defect.apps.{cluster_domain}"
+  rules:
+    - matches:
+        - path:
+            type: PathPrefix
+            value: /v1/
+      backendRefs:
+        - name: llama3-defect-v1-predictor-00001
+          port: 8080
+          weight: 90
+        - name: llama3-defect-v2-predictor-00001
+          port: 8080
+          weight: 10
+EOF
+oc apply -f llama3-defect-canary-route.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>How canary traffic splitting works:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Incoming Requests (100%)
+         │
+         ▼
+    MaaS Gateway
+         │
+    ┌────┴────┐
+    │         │
+   90%       10%
+    │         │
+    ▼         ▼
+  v1.0.0    v2.0.0
+(Production) (Canary)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>90% of requests go to the stable v1 deployment, while 10% are routed to the new v2 canary version.</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_monitoring_canary_performance"><a class="anchor" href="#_monitoring_canary_performance"></a>Monitoring canary performance</h4>
+<div class="paragraph">
+<p>During the canary period, monitor key metrics:</p>
+</div>
+<div class="paragraph">
+<p><strong>Success rate:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Count successful requests for v1
+oc logs -l app.kubernetes.io/version=1.0.0 -n chocotech-models | grep "HTTP/1.1 200" | wc -l
+
+# Count successful requests for v2
+oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models | grep "HTTP/1.1 200" | wc -l</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Error rate:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs"># Count errors for v2 canary
+oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models | grep -E "HTTP/1.1 [45][0-9]{2}" | wc -l</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Latency comparison:</strong></p>
+</div>
+<div class="paragraph">
+<p>Check average response times in model logs or use Prometheus metrics (covered in Module 4):</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre># Example PromQL query for latency comparison
+histogram_quantile(0.95,
+  rate(vllm_llmd_request_duration_seconds_bucket{version="2.0.0"}[5m])
+)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech canary success criteria:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Error rate &lt; 2% for v2 canary</p>
+</li>
+<li>
+<p>P95 latency &lt; 500ms for v2 canary</p>
+</li>
+<li>
+<p>Quality Control team manually validates defect detection accuracy on test images</p>
+</li>
+<li>
+<p>Monitor for 2 hours before promotion decision</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_promoting_canary_to_production"><a class="anchor" href="#_promoting_canary_to_production"></a>Promoting canary to production</h4>
+<div class="paragraph">
+<p>If canary metrics meet success criteria, gradually increase traffic to v2:</p>
+</div>
+<div class="paragraph">
+<p><strong>Increase canary to 50%:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v1-predictor-00001", "port": 8080, "weight": 50},
+          {"name": "llama3-defect-v2-predictor-00001", "port": 8080, "weight": 50}
+        ]
+      }
+    ]
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>After monitoring 50/50 split for 1 hour, promote to 100% v2:</strong></p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v2-predictor-00001", "port": 8080, "weight": 100}
+        ]
+      }
+    ]
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Once v2 is fully promoted and stable, you can safely delete the v1 deployment:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc delete llminferenceservice llama3-defect-v1 -n chocotech-models</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rolling_back_a_failed_canary"><a class="anchor" href="#_rolling_back_a_failed_canary"></a>Rolling back a failed canary</h4>
+<div class="paragraph">
+<p>If the canary version shows problems (high error rate, poor quality, latency spikes), immediately roll back to 100% v1:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc patch httproute llama3-defect-canary -n chocotech-models --type=merge -p '
+{
+  "spec": {
+    "rules": [
+      {
+        "matches": [{"path": {"type": "PathPrefix", "value": "/v1/"}}],
+        "backendRefs": [
+          {"name": "llama3-defect-v1-predictor-00001", "port": 8080, "weight": 100}
+        ]
+      }
+    ]
+  }
+}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then investigate the v2 deployment issue before attempting another canary.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_gitops_integration_with_argo_cd"><a class="anchor" href="#_gitops_integration_with_argo_cd"></a>GitOps integration with Argo CD</h3>
+<div class="paragraph">
+<p>For production environments, use GitOps to manage model deployments declaratively from a Git repository.</p>
+</div>
+<div class="sect3">
+<h4 id="_git_repository_structure"><a class="anchor" href="#_git_repository_structure"></a>Git repository structure</h4>
+<div class="paragraph">
+<p>Create a Git repository with environment-based structure:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>chocotech-maas-models/
+├── README.md
+├── base/
+│   ├── kustomization.yaml
+│   └── llminferenceservice-template.yaml
+├── environments/
+│   ├── dev/
+│   │   ├── kustomization.yaml
+│   │   └── model-config.yaml
+│   ├── staging/
+│   │   ├── kustomization.yaml
+│   │   └── model-config.yaml
+│   └── production/
+│       ├── kustomization.yaml
+│       └── model-config.yaml
+└── versions/
+    ├── v1.0.0/
+    │   └── model-metadata.yaml
+    └── v2.0.0/
+        └── model-metadata.yaml</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_base_llminferenceservice_template"><a class="anchor" href="#_base_llminferenceservice_template"></a>Base LLMInferenceService template</h4>
+<div class="paragraph">
+<p>Create a reusable template with placeholders:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># base/llminferenceservice-template.yaml
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: MODEL_NAME
+  namespace: NAMESPACE
+  labels:
+    app.kubernetes.io/name: MODEL_APP_NAME
+    app.kubernetes.io/version: MODEL_VERSION
+    environment: ENVIRONMENT
+spec:
+  model:
+    name: MODEL_HF_NAME
+    source: MODEL_SOURCE
+  runtime:
+    name: vllm
+    version: VLLM_VERSION
+  resources:
+    limits:
+      nvidia.com/gpu: GPU_COUNT
+    requests:
+      nvidia.com/gpu: GPU_COUNT
+      memory: MEMORY_REQUEST
+  scaling:
+    minReplicas: MIN_REPLICAS
+    maxReplicas: MAX_REPLICAS
+  maasConfig:
+    publishToGenAIStudio: PUBLISH_TO_CATALOG
+    tierAccess: TIER_ACCESS_LIST</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_environment_specific_overlays"><a class="anchor" href="#_environment_specific_overlays"></a>Environment-specific overlays</h4>
+<div class="paragraph">
+<p>Production environment overlay with Kustomize:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># environments/production/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: chocotech-models-prod
+
+resources:
+  - ../../base/llminferenceservice-template.yaml
+
+patches:
+  - target:
+      kind: LLMInferenceService
+    patch: |-
+      - op: replace
+        path: /metadata/name
+        value: llama3-defect-v2
+      - op: replace
+        path: /metadata/labels/app.kubernetes.io~1version
+        value: "2.0.0"
+      - op: replace
+        path: /spec/model/name
+        value: meta-llama/Meta-Llama-3-8B-Instruct
+      - op: replace
+        path: /spec/resources/limits/nvidia.com~1gpu
+        value: 1
+      - op: replace
+        path: /spec/scaling/minReplicas
+        value: 3
+      - op: replace
+        path: /spec/scaling/maxReplicas
+        value: 10
+      - op: replace
+        path: /spec/maasConfig/publishToGenAIStudio
+        value: true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Development environment uses lower resource requests:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># environments/dev/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+namespace: chocotech-models-dev
+
+resources:
+  - ../../base/llminferenceservice-template.yaml
+
+patches:
+  - target:
+      kind: LLMInferenceService
+    patch: |-
+      - op: replace
+        path: /spec/scaling/minReplicas
+        value: 1
+      - op: replace
+        path: /spec/scaling/maxReplicas
+        value: 2
+      - op: replace
+        path: /spec/maasConfig/publishToGenAIStudio
+        value: false</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_argo_cd_application_for_automated_sync"><a class="anchor" href="#_argo_cd_application_for_automated_sync"></a>Argo CD Application for automated sync</h4>
+<div class="paragraph">
+<p>Create an Argo CD Application to continuously sync the Git repository to the cluster:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chocotech-models-production
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chocotech/maas-models.git
+    targetRevision: main
+    path: environments/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: chocotech-models-prod
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+    retry:
+      limit: 5
+      backoff:
+        duration: 5s
+        factor: 2
+        maxDuration: 3m</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>How GitOps workflow works for ChocoTech:</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>1. Data Scientist commits new model version to Git
+   ├─&gt; Git: environments/production/kustomization.yaml (updated model path)
+
+2. Argo CD detects change
+   ├─&gt; Compares Git state vs cluster state
+   ├─&gt; Identifies drift: model version v1.0.0 → v2.0.0
+
+3. Argo CD syncs automatically
+   ├─&gt; Applies Kustomize overlay
+   ├─&gt; Updates LLMInferenceService in cluster
+
+4. OpenShift AI operator reconciles
+   ├─&gt; Downloads new model version
+   ├─&gt; Performs rolling update
+   ├─&gt; Updates MaaS catalog
+
+5. Platform Engineer monitors sync status
+   ├─&gt; Argo CD dashboard shows sync health
+   ├─&gt; Model deployment progresses: Downloading → Loading → Ready</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Apply the Argo CD application (if Argo CD is installed):</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+This step requires OpenShift GitOps operator. If not installed, skip this section and use manual <code>oc apply</code> workflow.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; argocd-chocotech-models.yaml &lt;&lt;EOF
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: chocotech-models-production
+  namespace: openshift-gitops
+spec:
+  project: default
+  source:
+    repoURL: https://github.com/chocotech/maas-models.git
+    targetRevision: main
+    path: environments/production
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: chocotech-models
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true
+EOF
+# Only apply if OpenShift GitOps is installed
+oc apply -f argocd-chocotech-models.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_rollback_with_gitops"><a class="anchor" href="#_rollback_with_gitops"></a>Rollback with GitOps</h4>
+<div class="paragraph">
+<p>To rollback a bad deployment using GitOps:</p>
+</div>
+<div class="paragraph">
+<p><strong>Option 1: Git revert (recommended)</strong></p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash">cd chocotech-maas-models
+git log --oneline
+# Identify the commit that introduced the bad version
+git revert abc123
+git push origin main
+# Argo CD automatically syncs the rollback</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p><strong>Option 2: Manual sync to previous commit</strong></p>
+</div>
+<div class="paragraph">
+<p>In Argo CD UI:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Navigate to <code>chocotech-models-production</code> application</p>
+</li>
+<li>
+<p>Click "History and Rollback"</p>
+</li>
+<li>
+<p>Select previous successful deployment</p>
+</li>
+<li>
+<p>Click "Rollback"</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>Argo CD reverts the cluster state to match the selected Git commit.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_automated_testing_in_cicd_pipeline"><a class="anchor" href="#_automated_testing_in_cicd_pipeline"></a>Automated testing in CI/CD pipeline</h3>
+<div class="paragraph">
+<p>Integrate model validation into your GitOps pipeline before production deployment:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml"># .github/workflows/model-validation.yaml
+name: Validate Model Deployment
+
+on:
+  pull_request:
+    branches: [main]
+    paths:
+      - 'environments/production/**'
+
+jobs:
+  validate-model:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Validate Kustomize manifests
+        run: |
+          kustomize build environments/production &gt; rendered.yaml
+          kubectl apply --dry-run=client -f rendered.yaml
+
+      - name: Test model inference (staging environment)
+        env:
+          STAGING_API_URL: ${{ secrets.STAGING_API_URL }}
+          STAGING_API_KEY: ${{ secrets.STAGING_API_KEY }}
+        run: |
+          # Test that model responds correctly
+          response=$(curl -X POST "$STAGING_API_URL/v1/chat/completions" \
+            -H "Authorization: Bearer $STAGING_API_KEY" \
+            -H "Content-Type: application/json" \
+            -d '{
+              "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+              "messages": [{"role": "user", "content": "Test query"}],
+              "max_tokens": 50
+            }')
+
+          # Verify response contains expected fields
+          echo "$response" | jq -e '.choices[0].message.content' || exit 1
+
+      - name: Performance benchmark
+        run: |
+          # Run load test to ensure latency requirements
+          # Example: 100 requests, P95 latency &lt; 500ms
+          ./scripts/benchmark-model.sh --requests 100 --p95-threshold 500
+
+      - name: Comment PR with validation results
+        uses: actions/github-script@v6
+        with:
+          script: |
+            github.rest.issues.createComment({
+              issue_number: context.issue.number,
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              body: '✅ Model validation passed. Safe to merge.'
+            })</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This CI/CD pipeline ensures that:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Kustomize manifests are syntactically valid</p>
+</li>
+<li>
+<p>Model responds correctly to test queries</p>
+</li>
+<li>
+<p>Performance meets latency requirements</p>
+</li>
+<li>
+<p>Pull requests show validation status before merge</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_best_practices_for_production_lifecycle_management"><a class="anchor" href="#_best_practices_for_production_lifecycle_management"></a>Best practices for production lifecycle management</h3>
+<div class="paragraph">
+<p><strong>Version management:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Always use semantic versioning for model releases</p>
+</li>
+<li>
+<p>Keep at least one previous version deployed for instant rollback</p>
+</li>
+<li>
+<p>Store model artifacts in versioned S3/PVC paths</p>
+</li>
+<li>
+<p>Tag LLMInferenceService resources with version labels</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Canary deployments:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Start with 10% canary traffic, monitor for at least 1 hour</p>
+</li>
+<li>
+<p>Define success criteria before deployment (error rate, latency, quality metrics)</p>
+</li>
+<li>
+<p>Gradually increase canary traffic: 10% → 25% → 50% → 100%</p>
+</li>
+<li>
+<p>Have rollback plan ready before starting canary</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>GitOps adoption:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Use Git as the single source of truth for all model deployments</p>
+</li>
+<li>
+<p>Separate environments (dev/staging/production) with different configurations</p>
+</li>
+<li>
+<p>Enable automated sync for non-production, require approval for production</p>
+</li>
+<li>
+<p>Use Kustomize overlays for environment-specific configuration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Monitoring and observability:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Track model version in all logs and metrics</p>
+</li>
+<li>
+<p>Monitor error rates, latency (TTFT, TPOT), and GPU utilization per version</p>
+</li>
+<li>
+<p>Set up alerts for canary failure conditions</p>
+</li>
+<li>
+<p>Retain logs for at least 30 days for incident investigation</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Change management:</strong></p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Test model changes in dev → staging → production progression</p>
+</li>
+<li>
+<p>Require peer review for production model updates</p>
+</li>
+<li>
+<p>Document rollback procedures and test them regularly</p>
+</li>
+<li>
+<p>Schedule model updates during low-traffic periods</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_learning_checkpoint"><a class="anchor" href="#_learning_checkpoint"></a>Learning checkpoint</h3>
+<div class="paragraph">
+<p>You should now be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ Deploy multiple model versions simultaneously using semantic versioning</p>
+</li>
+<li>
+<p>✓ Implement canary deployments with traffic splitting via Gateway API</p>
+</li>
+<li>
+<p>✓ Monitor canary performance and make promotion decisions</p>
+</li>
+<li>
+<p>✓ Roll back failed deployments quickly</p>
+</li>
+<li>
+<p>✓ Use GitOps (Argo CD) for declarative model lifecycle management</p>
+</li>
+<li>
+<p>✓ Structure Git repositories for environment-based model configuration</p>
+</li>
+<li>
+<p>✓ Integrate automated testing into CI/CD pipelines</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>ChocoTech production readiness:</strong></p>
+</div>
+<div class="paragraph">
+<p>Quality Control now has confidence that model updates won&#8217;t disrupt their production defect detection system. They can safely test new fine-tuned models with canary deployments, monitor quality metrics, and roll back if issues arise - all without manual intervention.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h3>
+<div class="paragraph">
+<p><strong>Issue:</strong> Canary traffic is not splitting correctly (all traffic goes to one version)</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify HTTPRoute weights sum to 100: <code>oc get httproute llama3-defect-canary -n chocotech-models -o yaml | grep weight</code></p>
+</li>
+<li>
+<p>Check that both backend services exist: <code>oc get svc -n chocotech-models | grep llama3-defect</code></p>
+</li>
+<li>
+<p>Verify Gateway API is routing through MaaS gateway: <code>oc describe httproute llama3-defect-canary -n chocotech-models</code></p>
+</li>
+<li>
+<p>Test with <code>curl</code> and observe response headers to confirm version distribution</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> Argo CD Application stuck in "OutOfSync" state</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check Argo CD application health: <code>oc get application chocotech-models-production -n openshift-gitops -o yaml</code></p>
+</li>
+<li>
+<p>Common causes:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Kustomize build errors: Run <code>kustomize build environments/production</code> locally to validate</p>
+</li>
+<li>
+<p>Namespace doesn&#8217;t exist: Argo CD should create it, but verify with <code>oc get namespace chocotech-models-prod</code></p>
+</li>
+<li>
+<p>Resource conflicts: Check if resources already exist from manual deployment</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Force sync in Argo CD UI or via CLI: <code>argocd app sync chocotech-models-production --force</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> Model rollback via Git revert doesn&#8217;t trigger re-deployment</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify Argo CD automated sync is enabled: <code>oc get application chocotech-models-production -n openshift-gitops -o jsonpath='{.spec.syncPolicy.automated}'</code></p>
+</li>
+<li>
+<p>Check Argo CD is monitoring the correct branch: <code>oc get application chocotech-models-production -n openshift-gitops -o jsonpath='{.spec.source.targetRevision}'</code></p>
+</li>
+<li>
+<p>Manually trigger sync if needed: <code>argocd app sync chocotech-models-production</code></p>
+</li>
+<li>
+<p>Verify Git commit was pushed to remote: <code>git log origin/main</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> New model version downloads successfully but fails to load with CUDA errors</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check GPU availability on node: <code>oc describe node -l nvidia.com/gpu.present=true | grep "Allocated resources" -A 10</code></p>
+</li>
+<li>
+<p>Verify vLLM version compatibility with model: Some models require specific vLLM versions</p>
+</li>
+<li>
+<p>Check model logs for detailed error: <code>oc logs -l app.kubernetes.io/version=2.0.0 -n chocotech-models --tail=100</code></p>
+</li>
+<li>
+<p>Common causes: insufficient VRAM, incompatible quantization, model architecture not supported by vLLM</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue:</strong> CI/CD pipeline fails model validation even though model works locally</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution:</strong></p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify staging environment has sufficient resources: Model may be resource-constrained in staging</p>
+</li>
+<li>
+<p>Check API key is valid and has correct tier access: Expired or wrong tier tokens cause 401/403 errors</p>
+</li>
+<li>
+<p>Validate test query is appropriate for model: Complex queries may timeout in validation pipeline</p>
+</li>
+<li>
+<p>Check network connectivity from CI/CD runner to staging cluster</p>
+</li>
+<li>
+<p>Review GitHub Actions logs for specific error messages</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting_2"><a class="anchor" href="#_troubleshooting_2"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Issue</strong>: LLMInferenceService stuck in "DownloadingModel" phase for &gt;10 minutes</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check pod events for image pull errors: <code>oc describe pod -l app=llama-3-8b -n chocotech-models</code></p>
+</li>
+<li>
+<p>Common causes:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Hugging Face model download timeout (large models take time)</p>
+</li>
+<li>
+<p>Network connectivity issues to models.huggingface.co</p>
+</li>
+<li>
+<p>Insufficient storage on GPU node for model caching</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p>Check pod logs: <code>oc logs -l app=llama-3-8b -n chocotech-models</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Model pod fails with "Out of memory" error</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check GPU memory availability: <code>oc describe node -l nvidia.com/gpu.present=true | grep -A 5 "Allocatable:"</code></p>
+</li>
+<li>
+<p>Verify model size fits on GPU (Llama-3 8B requires ~16GB, 70B requires 140GB+)</p>
+</li>
+<li>
+<p>Adjust resource requests in LLMInferenceService spec</p>
+</li>
+<li>
+<p>For large models, ensure distributed inference is configured with sufficient worker replicas</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Model doesn&#8217;t appear in Gen AI Studio catalog</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify <code>publishToGenAIStudio: true</code> in LLMInferenceService spec</p>
+</li>
+<li>
+<p>Check namespace has <code>modelsAsService=true</code> label: <code>oc get namespace chocotech-models --show-labels</code></p>
+</li>
+<li>
+<p>Verify MaaSModel resource was created: <code>oc get maasmodel -n chocotech-models</code></p>
+</li>
+<li>
+<p>Check MaaS API pod logs: <code>oc logs -l app=maas-api -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Refresh browser cache and reload Gen AI Studio dashboard</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: vLLM serving runtime fails to start with CUDA errors</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify GPU drivers are loaded on node: <code>oc debug node/&lt;node-name&gt;&#8201;&#8212;&#8201;chroot /host nvidia-smi</code></p>
+</li>
+<li>
+<p>Check NVIDIA GPU operator pods: <code>oc get pods -n nvidia-gpu-operator</code></p>
+</li>
+<li>
+<p>Verify GPU node has correct labels: <code>oc get nodes -l nvidia.com/gpu.present=true --show-labels</code></p>
+</li>
+<li>
+<p>Check vLLM version compatibility with CUDA driver version</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: LeaderWorkerSet not creating worker pods</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify LeaderWorkerSet operator is running: <code>oc get pods -n leaderworkerset-system</code></p>
+</li>
+<li>
+<p>Check LLMInferenceService for distributed inference configuration</p>
+</li>
+<li>
+<p>Describe LeaderWorkerSet resource: <code>oc get leaderworkerset -n chocotech-models</code></p>
+</li>
+<li>
+<p>Review llm-serving-runtime controller logs: <code>oc logs -l app=llm-serving-runtime-controller -n redhat-ods-applications</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Model returns 500 Internal Server Error after deployment</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check model pod health: <code>oc get pods -l app=llama-3-8b -n chocotech-models</code></p>
+</li>
+<li>
+<p>Review model logs for runtime errors: <code>oc logs -l app=llama-3-8b -n chocotech-models --tail=100</code></p>
+</li>
+<li>
+<p>Verify model inference endpoint: <code>oc port-forward svc/llama-3-8b-predictor-00001 8080:8080 -n chocotech-models</code> then <code>curl localhost:8080/v1/models</code></p>
+</li>
+<li>
+<p>Common causes: incompatible model format, insufficient GPU memory, vLLM configuration errors</p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_outcomes"><a class="anchor" href="#_learning_outcomes"></a>Learning outcomes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By completing this module, you should now understand:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ How to select appropriate models based on architecture and capabilities</p>
+</li>
+<li>
+<p>✓ The critical difference between standalone KServe deployment and MaaS-integrated deployment</p>
+</li>
+<li>
+<p>✓ Why distributed inference with llm-d is required for MaaS governance integration</p>
+</li>
+<li>
+<p>✓ How to deploy models using LLMInferenceService custom resources</p>
+</li>
+<li>
+<p>✓ How LeaderWorkerSet enables multi-GPU distributed inference for large models</p>
+</li>
+<li>
+<p>✓ How to publish models to the Gen AI Studio catalog with tier-based access control</p>
+</li>
+<li>
+<p>✓ How to manage a multi-model catalog serving different business units</p>
+</li>
+<li>
+<p>✓ How to implement production-grade lifecycle management with canary deployments</p>
+</li>
+<li>
+<p>✓ How to use GitOps (Argo CD) for declarative model deployment and rollback</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_module_summary"><a class="anchor" href="#_module_summary"></a>Module summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve successfully deployed generative AI models using distributed inference and published them to the MaaS catalog for ChocoTech&#8217;s teams to consume.</p>
+</div>
+<div class="paragraph">
+<p><strong>What you accomplished for ChocoTech</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Evaluated model architectures and capabilities to match department requirements</p>
+</li>
+<li>
+<p>Deployed Llama-3 8B for R&amp;D team&#8217;s recipe optimization use case</p>
+</li>
+<li>
+<p>Deployed Nemotron 8B for Marketing team&#8217;s sentiment analysis needs</p>
+</li>
+<li>
+<p>Published both models to Gen AI Studio catalog with appropriate tier access controls</p>
+</li>
+<li>
+<p>Enabled self-service model discovery through the dashboard interface</p>
+</li>
+<li>
+<p>Verified model accessibility through MaaS gateway endpoints</p>
+</li>
+<li>
+<p>Implemented production-grade lifecycle management with canary deployments</p>
+</li>
+<li>
+<p>Configured GitOps workflow for declarative model deployment</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Technical capabilities demonstrated</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Model selection</strong>: Architecture analysis (dense vs. sparse) and capability assessment (reasoning vs. non-reasoning)</p>
+</li>
+<li>
+<p><strong>Declarative model deployment</strong>: LLMInferenceService CRD for operator-managed model serving</p>
+</li>
+<li>
+<p><strong>Distributed inference</strong>: LeaderWorkerSet for multi-GPU model serving (foundation for 70B+ models)</p>
+</li>
+<li>
+<p><strong>MaaS integration</strong>: Automatic catalog publication and governance enforcement</p>
+</li>
+<li>
+<p><strong>Multi-tenancy</strong>: Different tier access controls per model for business unit separation</p>
+</li>
+<li>
+<p><strong>Production lifecycle</strong>: Canary deployments, traffic splitting, and rollback procedures</p>
+</li>
+<li>
+<p><strong>GitOps integration</strong>: Declarative configuration management with Argo CD</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Your journey progress</strong>:</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech now has a functioning model catalog with two generative AI models available through governed endpoints. The next step is implementing governance policies to ensure fair resource allocation.</p>
+</div>
+<div class="paragraph">
+<p><strong>Next steps</strong>:</p>
+</div>
+<div class="paragraph">
+<p>Module 4 will guide you through configuring governance tiers, implementing rate limiting and quotas using Kuadrant, tracking token consumption metrics with Grafana, and establishing chargeback workflows for Finance to bill departments based on actual usage.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a></span>
+  <span class="next"><a href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>
