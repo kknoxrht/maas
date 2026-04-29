@@ -1,4 +1,4 @@
-= Workshop details
+= QuickCourse details
 
 :toc:
 :toc-placement: preamble
@@ -6,7 +6,7 @@
 
 == Timing and schedule
 
-=== Full workshop (3-4 hours)
+=== Full QuickCourse (3-4 hours)
 
 * **Module 1**: The shift to utility AI and architecture foundation (30 minutes)
 * **Module 2**: Administering the MaaS platform (40 minutes)
@@ -22,7 +22,7 @@
 
 * Red Hat OpenShift 4.20 or later
 * Red Hat OpenShift AI 3.3} or later
-* OpenShift AI operator channel: `fast-3.x` or `stable-3.x`
+* OpenShift AI operator channel: `stable-3.x`
 * NVIDIA GPU operator (latest/stable)
 * OpenShift Service Mesh operator (required for Gateway API)
 * Web browser (Chrome, Firefox, Safari, Edge)
@@ -31,7 +31,7 @@
 
 **Critical**: This lab suggests a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
 
-* **Minimum GPU configuration**: 1x NVIDIA GPU with {gpu_memory} VRAM
+* **Minimum GPU configuration**: 1x NVIDIA GPU with 24GB VRAM
 * **Recommended GPU configuration**: 2x NVIDIA GPUs with 24GB+ VRAM each
 * **GPU models supported**: A100, L40S, L4, H100 (NVIDIA certified accelerators)
 * **Purpose**: Deploy multiple models simultaneously (Llama Stack, Nemotron) with distributed inference
@@ -46,15 +46,15 @@
 
 == Environment setup
 
-=== Pre-workshop checklist
+=== Pre-QuickCourse checklist
 
-The following components should be pre-configured before the workshop starts:
+The following components should be pre-configured before the QuickCourse starts:
 
 □ **OpenShift cluster deployed** - SNO with GPU nodes configured
 
 □ **GPU operators installed** - NVIDIA GPU operator and Node Feature Discovery
 
-□ **OpenShift AI operator installed** - Channel: fast-3.x or stable-3.x
+□ **OpenShift AI operator installed** - Channel: stable-3.x
 
 □ **Service Mesh operator installed** - Required for Gateway API routing
 
@@ -70,10 +70,10 @@ The following components should be pre-configured before the workshop starts:
 
 □ **OpenShift CLI available** - `oc` command accessible from terminal
 
-
+////
 === Setup validation
 
-Participants should run these commands at the start of the workshop to verify environment readiness:
+Participants should run these commands at the start of the QuickCourse to verify environment readiness:
 
 Check OpenShift login:
 [source,role="execute"]
@@ -129,7 +129,7 @@ oc get pods -n redhat-ods-applications | grep kserve
 
 → **Solution**: Check Service Mesh operator is installed, verify knative-serving namespace exists
 
-=== During workshop support
+=== During QuickCourse support
 
 * Encourage participants to use Showroom split view (console + terminal side-by-side)
 * OpenShift AI dashboard tab provides GUI alternative for most tasks
@@ -137,43 +137,34 @@ oc get pods -n redhat-ods-applications | grep kserve
 * Use OpenShift web terminal as fallback for SSH connectivity problems
 * Monitor GPU utilization to prevent resource exhaustion: `oc adm top nodes`
 
+////
+
 == Follow-up resources
 
 === Next steps for participants
 
-* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/{rhoai_version}[Red Hat OpenShift AI Documentation^]
-* link:https://developers.redhat.com/products/openshift-ai/overview[Red Hat Developer - OpenShift AI Resources^]
-* link:https://access.redhat.com/articles/rhoai-supported-configs[Red Hat OpenShift AI Supported Configurations^]
-* link:https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[Red Hat OpenShift AI Product Page^]
+* link:https://docs.redhat.com/en/documentation/red_hat_openshift_ai_self-managed/3.4[Red Hat OpenShift AI Documentation^, window=blank]
+* link:https://developers.redhat.com/products/red-hat-ai[Red Hat Developer - OpenShift AI Resources^, window=blank]
+* link:https://access.redhat.com/articles/rhoai-supported-configs-3.x[Red Hat OpenShift AI 3.x Supported Configurations^, window=blank]
+* link:https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[Red Hat OpenShift AI Product Page^, window=blank]
 
-=== Additional learning paths
-
-* **Intermediate**: Model optimization, quantization, and fine-tuning on OpenShift AI
-* **Advanced**: Multi-cluster model serving, federated learning, and custom serving runtimes
-* **Certification**: Red Hat Certified Specialist in AI (upcoming certification program)
-* **Community**: OpenShift AI community forums and GitHub repositories
-
-=== Related workshops
-
-* Generic GPU enablement on OpenShift (prerequisite knowledge)
-* LLMOps workflows with OpenShift Pipelines and GitOps
-* Building agentic applications with LangChain and OpenShift AI
-* Observability and monitoring for AI workloads
 
 == Authors and contributors
 
-**Primary Author**: Red Hat Technical Marketing - AI/ML Practice
+**Primary Author**: Karlos KNox - Content Service Architect
 
 **Last Updated**: April 2026
 
-**Workshop Version**: 1.0
+**QuickCourse Version**: 3.3
 
 **Based on**: Red Hat OpenShift AI 3.3+ MaaS capabilities
 
 **Contact Information**:
 
-* Workshop feedback: Submit via Showroom feedback interface
-* Technical questions: Red Hat Customer Portal or Red Hat Developer community
-* Content updates: GitHub issues on workshop repository (link provided by facilitator)
+* QuickCourse feedback: Submit issue via Github repository [fix_me_link]
+* Content updates: GitHub issues on QuickCourse repository (link provided by facilitator)
 
-**Acknowledgments**: This workshop incorporates SME guidance from Red Hat OpenShift AI product engineering and field solution architects working with enterprise AI deployments.
+**Acknowledgments**: This QuickCourse incorporates SME guidance from Red Hat OpenShift AI business unit and product engineering architects working with enterprise AI deployments.
+
+* Taylor Jordan Smith
+* James Harmison 

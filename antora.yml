@@ -3,10 +3,4 @@ title: Red Hat OpenShift AI - Models as a Service
 version: 3.3
 nav:
 - modules/ROOT/nav.adoc
-- modules/LABENV/nav.adoc
-- modules/ch1-utility-ai/nav.adoc
-- modules/ch2-platform-admin/nav.adoc
-- modules/ch3-governance/nav.adoc
-- modules/ch4-model-deployment/nav.adoc
-- modules/ch5-api-integration/nav.adoc
 - modules/appendix/nav.adoc

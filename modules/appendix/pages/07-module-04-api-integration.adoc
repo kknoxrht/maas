@@ -1,0 +1,105 @@
+= Exercise 4: OpenAI API compatibility and migration patterns
+
+MaaS uses the OpenAI-compatible API format, making it easy to migrate existing applications from OpenAI to self-hosted models.
+
+Applications built for ChatGPT or GPT-4 can switch to MaaS models by changing two parameters: base URL and API key.
+
+=== OpenAI SDK compatibility
+
+Install the OpenAI Python SDK:
+
+[source,role="execute"]
+----
+pip install openai
+----
+
+Create a migration example showing how to switch from OpenAI to MaaS:
+
+[source,role="execute"]
+----
+cat > openai_to_maas_migration.py <<'EOF'
+#!/usr/bin/env python3
+import os
+from openai import OpenAI
+
+# BEFORE: Using OpenAI ChatGPT
+# client = OpenAI(
+#     api_key=os.getenv("OPENAI_API_KEY")
+# )
+
+# AFTER: Using MaaS (only two changes required)
+client = OpenAI(
+    base_url=f"https://{os.getenv('MAAS_URL')}/v1",  # Change 1: MaaS gateway URL
+    api_key=os.getenv("MAAS_TOKEN")                   # Change 2: MaaS Bearer token
+)
+
+# The rest of the code remains identical
+response = client.chat.completions.create(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",  # Use MaaS model instead of gpt-4
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant for ChocoTech Industries."},
+        {"role": "user", "content": "How can we reduce production waste in chocolate manufacturing?"}
+    ],
+    max_tokens=200,
+    temperature=0.7
+)
+
+print("Response from MaaS model:")
+print(response.choices[0].message.content)
+print(f"\nTokens used: {response.usage.total_tokens}")
+EOF
+
+chmod +x openai_to_maas_migration.py
+----
+
+Run the migration example:
+
+[source,role="execute"]
+----
+python3 openai_to_maas_migration.py
+----
+
+Expected output:
+
+----
+Response from MaaS model:
+To reduce production waste in chocolate manufacturing, consider these strategies:
+
+1. Implement precise temperature control during tempering to reduce rejections
+2. Optimize ingredient batching to minimize excess materials
+3. Reprocess chocolate scrap and trimmings back into production
+4. Use predictive quality control to catch defects earlier
+5. Train staff on proper handling to reduce breakage
+6. Implement just-in-time inventory management
+7. Monitor and optimize packaging material usage
+
+These approaches can significantly reduce waste while maintaining product quality.
+
+Tokens used: 148
+----
+
+=== Migration checklist for existing applications
+
+**For applications using OpenAI SDK**:
+
+. Change `base_url` to MaaS gateway endpoint
+. Replace OpenAI API key with MaaS Bearer token
+. Update model names (gpt-4 → meta-llama/Meta-Llama-3-8B-Instruct)
+. Test error handling for tier-specific rate limits
+. No other code changes required
+
+**For applications using direct REST API calls**:
+
+. Replace `https://api.openai.com/v1` with `https://<maas-gateway>/v1`
+. Replace `Authorization: Bearer sk-...` with MaaS Bearer token
+. Update model identifiers in request payloads
+. API request/response format remains identical
+
+=== Verification
+
+Confirm OpenAI compatibility:
+
+* OpenAI Python SDK works with MaaS without code changes (except base_url and api_key)
+* Existing applications can migrate by changing two configuration parameters
+* Request/response format matches OpenAI API exactly
+* Same SDK patterns work for both OpenAI and MaaS

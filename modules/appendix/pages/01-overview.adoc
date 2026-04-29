@@ -1,8 +1,4 @@
-= Workshop overview
-
-:toc:
-:toc-placement: preamble
-:icons: font
+= QuickCourse overview
 
 == Your role and mission
 
@@ -16,7 +12,7 @@ ChocoTech has teams across Quality Control, R&D, Marketing, and Supply Chain all
 
 == Success criteria for your mission
 
-By the end of this workshop, you'll have practical MaaS implementation skills to address ChocoTech's GPU infrastructure challenges:
+By the end of this QuickCourse, you'll have practical MaaS implementation skills to address ChocoTech's GPU infrastructure challenges:
 
 * Understand the business impact of the GPU silo crisis and articulate how MaaS prevents "Shadow AI" → **eliminate redundant deployments and resource waste**
 * Configure the MaaS platform through OpenShift AI operator CRDs → **establish centralized model serving infrastructure**
@@ -30,7 +26,7 @@ By the end of this workshop, you'll have practical MaaS implementation skills to
 **Business benefit**: Centralized model catalog with governed access that reduces costs, improves compliance, and accelerates AI application development.
 
 == Target audience
-This workshop is designed for:
+This QuickCourse is designed for:
 
 * Platform Engineers responsible for GPU infrastructure and AI platform operations
 * AI/ML Platform Administrators managing model serving and governance
@@ -101,4 +97,4 @@ If MaaS implementation succeeds for ChocoTech, here's the potential impact:
 → Module 5 shows OpenAI-compatible API integration that works with existing LangChain, LlamaIndex, and custom application frameworks
 
 **"Is MaaS adoption sustainable for our team with limited Kubernetes expertise?"**
-→ The workshop demonstrates operator-based configuration through OpenShift AI CRDs, minimizing low-level Kubernetes knowledge requirements while providing self-service capabilities via the dashboard
+→ The QuickCourse demonstrates operator-based configuration through OpenShift AI CRDs, minimizing low-level Kubernetes knowledge requirements while providing self-service capabilities via the dashboard

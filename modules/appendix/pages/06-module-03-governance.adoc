@@ -1,0 +1,150 @@
+= Exercise 4: Deploy Grafana for observability
+
+ChocoTech's Finance department needs visibility into model usage for chargeback. You'll deploy Grafana dashboards to monitor token consumption and GPU utilization.
+
+Grafana provides the observability layer for tracking model usage across user tiers and different models.
+
+=== Install Grafana operator (if not already installed)
+
+Check if Grafana operator is installed:
+
+[source,role="execute"]
+----
+oc get csv -n openshift-operators | grep grafana
+----
+
+If not installed, install the Grafana operator from OperatorHub:
+
+[source,role="execute"]
+----
+cat > grafana-operator-subscription.yaml <<EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: grafana-operator
+  namespace: openshift-operators
+spec:
+  channel: v5
+  name: grafana-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-operator-subscription.yaml
+----
+
+Wait for the operator to be ready:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready pod -l name=grafana-operator -n openshift-operators --timeout=300s
+----
+
+=== Create Grafana instance for MaaS monitoring
+
+Create a Grafana instance in the OpenShift AI namespace:
+
+[source,role="execute"]
+----
+cat > grafana-instance.yaml <<EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: maas-grafana
+  namespace: redhat-ods-applications
+  labels:
+    dashboards: "maas"
+spec:
+  config:
+    security:
+      admin_user: admin
+      admin_password: chocotech123
+    server:
+      root_url: https://maas-grafana.apps.{cluster_domain}
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-instance.yaml
+----
+
+Wait for Grafana to deploy:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready pod -l app=grafana -n redhat-ods-applications --timeout=300s
+----
+
+=== Create Grafana data source for Prometheus
+
+Configure Grafana to query OpenShift's Prometheus for metrics:
+
+[source,role="execute"]
+----
+cat > grafana-datasource.yaml <<EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDataSource
+metadata:
+  name: prometheus-maas
+  namespace: redhat-ods-applications
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "maas"
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+      timeInterval: "5s"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f grafana-datasource.yaml
+----
+
+=== Access Grafana dashboard
+
+Get the Grafana route URL:
+
+[source,role="execute"]
+----
+oc get route maas-grafana -n redhat-ods-applications -o jsonpath='{.spec.host}'
+----
+
+Expected output:
+
+----
+maas-grafana-redhat-ods-applications.apps.{cluster_domain}
+----
+
+. Open the Grafana URL in your browser
+. Log in with:
+  * Username: `admin`
+  * Password: `chocotech123`
+
+You should see the Grafana home page.
+
+=== Verification
+
+Confirm Grafana deployment:
+
+* Grafana operator is installed and healthy
+* Grafana instance pod is Running in redhat-ods-applications namespace
+* Grafana route exists and is accessible
+* Grafana data source is configured to query Prometheus
+* Successfully logged into Grafana web interface
+
+// TODO: Add screenshot of Grafana login and dashboard
+image::grafana-maas-dashboard.png[Grafana dashboard showing MaaS token consumption and GPU utilization metrics,link=self,window=blank,width=800,title="Grafana Observability Dashboard for MaaS"]
+
+Note: Creating comprehensive Grafana dashboards with token consumption by tier, model usage patterns, and GPU utilization requires Prometheus metrics from Kuadrant and KServe. Dashboard JSON configuration would be provided by the MaaS platform team.

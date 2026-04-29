@@ -1,0 +1,120 @@
+= Exercise 1: Understanding MaaS governance tiers
+
+Before configuring governance, you need to understand how tier-based access control works and why it's critical for multi-tenant model serving.
+
+Without tiers, centralized serving becomes uncontrolled consumption. Tier-based access transforms the MaaS platform from an unlimited resource drain to fair allocation across departments.
+
+=== The governance challenge at ChocoTech
+
+ChocoTech controls $500,000 worth of GPU infrastructure serving four departments:
+
+* **Quality Control**: Defect detection (critical, production workload)
+* **R&D**: Recipe optimization (important, but not real-time)
+* **Marketing**: Sentiment analysis (high volume, non-critical)
+* **Supply Chain**: Inventory prediction (batch processing)
+
+**Without governance**:
+
+* Marketing runs unlimited chatbot queries, exhausting GPU capacity
+* Quality Control's critical defect detection gets rate-limited during production shifts
+* Finance cannot allocate AI costs accurately (no consumption tracking)
+* Security has no audit trail showing who accessed which models
+
+**With MaaS governance**:
+
+* Each department is assigned a tier with appropriate rate limits and quotas
+* Quality Control gets "Platinum" tier with high limits and priority access
+* Marketing gets "Bronze" tier with moderate limits appropriate for their use case
+* Finance can perform chargeback based on actual token consumption by department
+* Security has complete audit logs of every API request with user identity
+
+=== What are MaaS tiers?
+
+Tiers are access control layers that define:
+
+**Access level**::
+Which models a user can query (Bronze tier can't access Platinum-only models)
+
+**Rate limits**::
+Maximum requests per minute (Bronze: 100 req/min, Platinum: 10,000 req/min)
+
+**Token quotas**::
+Maximum tokens consumed per minute (Bronze: 10,000 tokens/min, Platinum: 1,000,000 tokens/min)
+
+**Group mapping**::
+Which OpenShift groups are assigned to each tier
+
+**Priority level**::
+Determines access hierarchy when users belong to multiple groups across different tiers
+
+Example: A developer with a Bronze tier Bearer token can only access models published to "Bronze tier and above." A Platinum user can access all models.
+
+=== Default tier structure for ChocoTech
+
+You'll configure four tiers aligned with ChocoTech's business priorities:
+
+[cols="1,1,2,2"]
+|===
+|Tier Name |Priority Level |Target Department |Rate Limit (req/min)
+
+|Bronze
+|Level 0
+|Marketing (exploratory)
+|100 requests/min, 10K tokens/min
+
+|Silver
+|Level 1
+|Supply Chain (batch)
+|500 requests/min, 50K tokens/min
+
+|Gold
+|Level 2
+|R&D (development)
+|2,000 requests/min, 200K tokens/min
+
+|Platinum
+|Level 3
+|Quality Control (production)
+|10,000 requests/min, 1M tokens/min
+|===
+
+Priority Level determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the highest level number.
+
+=== Group assignment logic
+
+MaaS uses OpenShift group membership to assign users to tiers:
+
+. User authenticates with Bearer token
+. Authorino (Kuadrant authentication component) extracts user identity and group memberships from OpenShift OAuth
+. MaaS evaluates which tier configurations match the user's groups
+. Highest priority level wins if the user belongs to multiple tiers
+. Access is enforced based on assigned tier and model configuration
+. Limitador (Kuadrant rate limiting component) tracks consumption and enforces quotas
+
+A Platform Engineer creates a group `chocotech-quality-control` in OpenShift, then maps it to the Platinum tier. All members of that group automatically get Platinum access with highest rate limits.
+
+=== Verification of tier prerequisites
+
+Verify that Kuadrant components are running (deployed when MaaS was enabled in Module 2):
+
+[source,role="execute"]
+----
+oc get pods -n kuadrant-system
+----
+
+Expected output:
+
+----
+NAME                          READY   STATUS    RESTARTS   AGE
+authorino-xxx                 1/1     Running   0          2d
+limitador-xxx                 1/1     Running   0          2d
+----
+
+Check for existing tier configurations:
+
+[source,role="execute"]
+----
+oc get maastier -n redhat-ods-applications
+----
+
+You may see default tiers or this may be empty if tiers haven't been configured yet.

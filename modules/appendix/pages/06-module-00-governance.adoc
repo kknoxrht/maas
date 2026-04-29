@@ -1,0 +1,23 @@
+= Module 4: Governance, observability, and chargeback
+
+ChocoTech's Finance department raises a critical concern during your status update meeting. "We need to track which teams are consuming GPU resources," the CFO states. "Marketing is requesting additional budget for AI infrastructure, but we have no data showing their current usage or justifying the expansion."
+
+Meanwhile, the Quality Control team complains: "Our defect detection models are getting rate-limited during production shifts. Is Marketing's chatbot consuming all the capacity?"
+
+Your task is to implement governance policies that ensure fair resource allocation, track usage for chargeback, and provide observability into model consumption patterns.
+
+In this module, you'll configure governance tiers with rate limiting and quotas using Kuadrant, monitor GPU utilization and token consumption with Grafana, and generate chargeback reports for Finance.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Define governance tiers (bronze, silver, gold, platinum) with different access levels and quotas
+* Map OpenShift user groups to tier levels for automatic access control
+* Configure rate limiting and token quotas using Kuadrant RateLimitPolicy
+* Deploy Grafana dashboards to monitor model usage and GPU utilization
+* Generate chargeback reports showing token consumption by department and model
+* Implement comprehensive security hardening for production MaaS deployment
+* Troubleshoot policy enforcement issues using Kuadrant component logs

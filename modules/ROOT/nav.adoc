@@ -1,1 +1,1 @@
-* xref:index.adoc[Course Home]
+* xref:index.adoc[Models-as-a-Service Introduction]

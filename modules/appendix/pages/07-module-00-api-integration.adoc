@@ -1,0 +1,20 @@
+= Module 5: API integration and consumer experience
+
+A developer from ChocoTech's Marketing team approaches you with excitement. "We've been building a customer sentiment analysis application using OpenAI's ChatGPT API," she explains. "Can we switch to using the internal MaaS models instead? We want to keep customer data on-premises and reduce external API costs."
+
+This is exactly the use case MaaS enables. Your task is to show the development team how to generate API tokens, integrate models using the OpenAI-compatible API, and implement proper error handling for rate limits.
+
+In this module, you'll navigate the Gen AI Studio interface, generate Bearer tokens for authentication, consume models via the OpenAI-compatible API, and implement retry logic for production applications.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Navigate the Gen AI Studio dashboard to discover available models
+* Generate API tokens with proper scope and expiration settings
+* Make REST API calls to `/v1/models` and `/v1/chat/completions` endpoints
+* Implement OpenAI-compatible API integration in existing applications
+* Handle rate limiting responses (429 status) with exponential backoff retry logic
+* Understand token consumption tracking and quota management

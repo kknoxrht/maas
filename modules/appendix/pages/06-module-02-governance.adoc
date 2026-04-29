@@ -1,0 +1,250 @@
+= Exercise 2: Create OpenShift groups for ChocoTech departments
+
+You'll create OpenShift groups representing ChocoTech's four departments and assign users to them.
+
+Group-based tier assignment enables automatic access control as team membership changes.
+
+=== Create department groups
+
+Create a group for the Quality Control team (Platinum tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-quality-control
+----
+
+Create a group for the R&D team (Gold tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-rd
+----
+
+Create a group for the Supply Chain team (Silver tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-supply-chain
+----
+
+Create a group for the Marketing team (Bronze tier):
+
+[source,role="execute"]
+----
+oc adm groups new chocotech-marketing
+----
+
+Verify groups were created:
+
+[source,role="execute"]
+----
+oc get groups | grep chocotech
+----
+
+Expected output:
+
+----
+chocotech-quality-control   <none>
+chocotech-rd                <none>
+chocotech-supply-chain      <none>
+chocotech-marketing         <none>
+----
+
+=== Assign the admin user to Quality Control (Platinum tier)
+
+For testing purposes, assign your admin user to the highest tier:
+
+[source,role="execute"]
+----
+oc adm groups add-users chocotech-quality-control {user}
+----
+
+Verify membership:
+
+[source,role="execute"]
+----
+oc get group chocotech-quality-control -o yaml
+----
+
+You should see your user listed under `users`.
+
+=== Verification
+
+Confirm group setup:
+
+* Four OpenShift groups created representing ChocoTech departments
+* Groups follow naming convention: chocotech-<department>
+* Admin user is member of chocotech-quality-control group
+* Groups are ready for tier mapping
+
+== Exercise 3: Configure governance tiers and rate limiting
+
+Now you'll create MaaSTier custom resources that map OpenShift groups to tier levels with rate limits and quotas.
+
+Tier configuration is declarative, using custom resources managed by the MaaS operator.
+
+=== Create the Platinum tier (Quality Control)
+
+Create a manifest for the highest tier:
+
+[source,role="execute"]
+----
+cat > tier-platinum.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: platinum
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 3
+  groups:
+    - chocotech-quality-control
+  rateLimit:
+    requestsPerMinute: 10000
+    tokensPerMinute: 1000000
+  quotas:
+    dailyTokenLimit: 100000000
+  description: "Production workloads - Quality Control team defect detection"
+EOF
+----
+
+Apply the tier configuration:
+
+[source,role="execute"]
+----
+oc apply -f tier-platinum.yaml
+----
+
+=== Create the Gold tier (R&D)
+
+[source,role="execute"]
+----
+cat > tier-gold.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: gold
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 2
+  groups:
+    - chocotech-rd
+  rateLimit:
+    requestsPerMinute: 2000
+    tokensPerMinute: 200000
+  quotas:
+    dailyTokenLimit: 20000000
+  description: "Development workloads - R&D team recipe optimization"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-gold.yaml
+----
+
+=== Create the Silver tier (Supply Chain)
+
+[source,role="execute"]
+----
+cat > tier-silver.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: silver
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 1
+  groups:
+    - chocotech-supply-chain
+  rateLimit:
+    requestsPerMinute: 500
+    tokensPerMinute: 50000
+  quotas:
+    dailyTokenLimit: 5000000
+  description: "Batch workloads - Supply Chain inventory prediction"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-silver.yaml
+----
+
+=== Create the Bronze tier (Marketing)
+
+[source,role="execute"]
+----
+cat > tier-bronze.yaml <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: bronze
+  namespace: redhat-ods-applications
+spec:
+  priorityLevel: 0
+  groups:
+    - chocotech-marketing
+  rateLimit:
+    requestsPerMinute: 100
+    tokensPerMinute: 10000
+  quotas:
+    dailyTokenLimit: 1000000
+  description: "Exploratory workloads - Marketing sentiment analysis"
+EOF
+----
+
+[source,role="execute"]
+----
+oc apply -f tier-bronze.yaml
+----
+
+=== Verify tier configuration
+
+List all configured tiers:
+
+[source,role="execute"]
+----
+oc get maastier -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME        PRIORITY   GROUPS                        AGE
+platinum    3          chocotech-quality-control     2m
+gold        2          chocotech-rd                  2m
+silver      1          chocotech-supply-chain        2m
+bronze      0          chocotech-marketing           2m
+----
+
+Check that Kuadrant RateLimitPolicy resources were created:
+
+[source,role="execute"]
+----
+oc get ratelimitpolicy -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                    AGE
+maas-tier-platinum      2m
+maas-tier-gold          2m
+maas-tier-silver        2m
+maas-tier-bronze        2m
+----
+
+These RateLimitPolicy resources are automatically created by the MaaS operator based on your MaaSTier configurations.
+
+=== Verification
+
+Confirm tier and policy configuration:
+
+* Four MaaSTier resources created with correct priority levels
+* Groups properly mapped to tiers
+* RateLimitPolicy resources created for each tier
+* Limitador pod is healthy and ready to enforce quotas
+
+// TODO: Add screenshot of tier configuration
+image::maas-tiers-configuration.png[MaaSTier resources showing priority levels and group mappings,link=self,window=blank,width=800,title="Governance Tiers Configuration"]

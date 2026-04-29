@@ -1,103 +1,51 @@
-= Solving the GPU Silo with Model as a Service (MaaS)
-:navtitle: Home
+= Red Hat OpenShift AI: Models as a Service Enablement
 
-[.lead]
-*Transform GPU infrastructure from isolated team silos into a centralized Centralized Model Hub with governed token-based consumption.*
+Welcome to the Red Hat OpenShift AI Models as a Service enablement QuickCourse!
 
-== Course Description
+== What you'll learn
 
-Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks. 
+In this QuickCourse, you will:
 
-This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.
+* Understand the GPU silo crisis and how Models as a Service (MaaS) solves resource allocation challenges
+* Design and implement a centralized model hub with governed token-based consumption
+* Configure MaaS on Red Hat OpenShift AI using the operator and Custom Resource Definitions
+* Deploy generative AI models using llm-d, vLLM, and KServe components for distributed inference
+* Publish models to the OpenShift AI dashboard catalog for self-service access with role-based permissions
+* Implement governance policies with tiered service limits and rate limiting using Kuadrant
+* Generate usage reports for chargeback and monitor GPU utilization metrics with Grafana
+* Integrate AI models into applications using OpenAI-compatible APIs with proper retry logic
 
-By the end of this training, you will transition your infrastructure from "dedicated, single-team clusters" (siloed hardware) to a centralized "consumable model backplane" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.
+== Who this is for
 
-**Duration**: 3-4 hours
+This QuickCourse is built for Platform Engineers and Developers—including associates, partners, and customers—looking to modernize their GPU infrastructure. You will learn how to break down team silos and establish a centralized, governed environment that empowers lines of business to build agentic AI applications with ease.
 
-== What You'll Learn
-
-This course covers:
-
- **Architecture**::
- Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".
-
-**Platform Administration**::
-Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.
-
- **Model Deployment**::
- Publishing models to the governed catalog with distributed inference
-
- **Governance**::
- Define tiered service limits, configure group-based rate limiting, track token consumption metrics, and automate chargeback workflows.
-
- **API Integration**::
- Navigate the Gen AI studio, generate authentication tokens, implement programmatic retry logic for rate limits, and integrate models into applications via OpenAI-compatible APIs.
-
-== Target Audience
-
-**Platform Engineers**::
-Configure MaaS through the OpenShift AI operator
-Manage governance, user groups, and observability
-Monitor cluster health, gateway routing, and resource usage
-
-**Developers**::
-Consume MaaS endpoints and integrate models into applications
-
-
-**Target Level**::
-Tech Level 3 (Internal, Partners, and Customers)
+**Experience level**: Intermediate
 
 == Prerequisites
 
-This course assumes you have:
+Before starting this QuickCourse, you should have:
 
-* Red Hat OpenShift administration experience (Version 4.20+)
+* Red Hat OpenShift administration experience (Version 4.20 or later)
 * Basic Kubernetes operator management knowledge
 * Familiarity with core GPU concepts and generic GPU enablement
-* A deployed instance of Red Hat OpenShift AI 3.3 or later
+* Understanding of API concepts and REST principles
+* Basic command line experience
 
-== Course Structure
+== QuickCourse environment
 
-This course contains five modules:
+Your lab environment includes a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs (minimum 48GB) pre-configured with:
 
-[cols="1,3"]
-|===
-|Module |Description
+* Red Hat OpenShift 4.20 or later
+* Red Hat OpenShift AI 3.3.2 or later (operator installed)
+* GPU operators and drivers configured
+* Required infrastructure components (KServe, Service Mesh, Connectivity Link, etc.)
 
-|xref:ch1-utility-ai:index.adoc[Module 1]
-|The Shift to Utility AI & Architecture Foundation
+== Estimated time
 
-|xref:ch2-platform-admin:index.adoc[Module 2]
-|Administering the MaaS Platform
+This QuickCourse will take approximately **3-4 hours** to complete.
 
-|xref:ch3-model-deployment:index.adoc[Module 3]
-|Deploying Models to the MaaS Catalog
+You can work at your own pace, however, consider shutting down expensive GPU lab environment between sessions.
 
-|xref:ch4-governance:index.adoc[Module 4]
-|Governance, Observability, and Chargeback
+== Let's get started!
 
-|xref:ch5-api-integration:index.adoc[Module 5]
-|API Integration & Consumer Experience
-|===
-
-== Business Value
-
-This course addresses critical organizational challenges:
-
-**Without MaaS**:
-
- * GPU hardware sits idle while projects queue
- * Multiple teams deploy the same models redundantly
- * No audit trail for compliance requirements
- * Cannot track usage or forecast compute needs
-
-**With MaaS**:
-
- * Centralized catalog eliminates redundant deployments
- * Fair resource allocation prevents team conflicts
- * Complete audit logs and PII filtering via API gateway
- * Token-based consumption enables accurate chargeback
-
-== Let's Get Started
-
-Ready to transform your GPU infrastructure? Start with Module 1: The Shift to Utility AI.
+Click on **QuickCourse Overview** in the navigation to begin your learning journey and meet ChocoTech Industries, a chocolate manufacturer facing the GPU silo crisis.

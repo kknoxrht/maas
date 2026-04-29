@@ -38,6 +38,8 @@ Every request passes through Kuadrant, creating a complete audit trail with user
 **Chargeback accuracy**::
 Kuadrant's token tracking enables precise cross-department billing based on actual consumption rather than infrastructure allocation.
 
+---
+
 === Layer 3 - KServe (model serving)
 
 KServe provides the foundation for serving generative AI models on OpenShift.
@@ -63,6 +65,8 @@ Monitors model container health with liveness and readiness probes. Ensures requ
 * API routing or ingress (handled by Gateway API)
 
 A Platform Engineer deploys a model using KServe. KServe ensures it's running, healthy, and can handle inference requests. But KServe alone doesn't control who can access the model or how often.
+
+---
 
 === Layer 2 - Kuadrant (policy enforcement)
 
@@ -90,6 +94,8 @@ Without Kuadrant, any user with cluster access could consume unlimited GPU resou
 
 *ChocoTech example*: Marketing team is assigned "bronze" tier with 1,000 requests/hour. When they exceed this limit during a campaign launch, Kuadrant returns `429` status, preventing them from starving R&D team's "gold" tier access.
 
+---
+
 === Layer 1 - Gateway API (traffic routing)
 
 Gateway API exposes MaaS to external clients and routes traffic to the policy and serving layers.
@@ -111,7 +117,8 @@ Routes validated requests from Gateway → Kuadrant (policy check) → KServe (m
 **Integration with Istio Service Mesh**::
 Gateway API uses Istio as the underlying implementation, providing traffic management, observability, and resiliency features.
 
-=== The complete request flow
+
+== The complete request flow
 
 Here's what happens when a developer at ChocoTech queries a model from their sentiment analysis application:
 
