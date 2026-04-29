@@ -1,5 +1,4 @@
 = Workshop overview
-include::partial$_attributes.adoc[]
 
 :toc:
 :toc-placement: preamble

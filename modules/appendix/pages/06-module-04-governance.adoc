@@ -1,9 +1,5 @@
 = Module 4: Governance, observability, and chargeback
-include::partial$_attributes.adoc[]
 
-:source-highlighter: rouge
-:toc: macro
-:toclevels: 1
 
 ChocoTech's Finance department raises a critical concern during your status update meeting. "We need to track which teams are consuming GPU resources," the CFO states. "Marketing is requesting additional budget for AI infrastructure, but we have no data showing their current usage or justifying the expansion."
 

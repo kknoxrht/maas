@@ -1,0 +1,23 @@
+= Module 3: Deploying models to the MaaS catalog
+
+
+ChocoTech's R&D team approaches you with an urgent request. "We need to deploy Llama-3 8B for recipe optimization," the lead data scientist explains. "But we don't want to manage GPU drivers, Kubernetes manifests, or serving runtimes. Can the new MaaS platform handle this for us?"
+
+This is exactly the use case MaaS was built for. Your task is to deploy a generative AI model using distributed inference, publish it to the MaaS catalog with governance controls, and enable self-service access through the Gen AI Studio dashboard.
+
+In this module, you'll deploy models using llm-d and vLLM serving runtimes, configure distributed inference for multi-GPU scenarios, and publish models to the catalog for ChocoTech's teams to consume.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Evaluate models based on architecture (dense vs. sparse) and capabilities (reasoning vs. non-reasoning)
+* Match ChocoTech department requirements to appropriate model types
+* Deploy a generative AI model using LLMInferenceService custom resource
+* Configure distributed inference with llm-d and vLLM for multi-GPU serving
+* Publish a model to the MaaS catalog with governance integration
+* Verify model deployment through KServe components and health checks
+* Access published models through the Gen AI Studio dashboard catalog
+* Understand when to use distributed inference vs standalone KServe deployment

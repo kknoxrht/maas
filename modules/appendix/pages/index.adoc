@@ -1,7 +1,5 @@
 = Red Hat OpenShift AI: Models as a Service Enablement
 
-include::partial$_attributes.adoc[]
-
 Welcome to the Red Hat OpenShift AI Models as a Service enablement workshop!
 
 == What you'll learn

@@ -1,5 +1,4 @@
 = Workshop details
-include::partial$_attributes.adoc[]
 
 :toc:
 :toc-placement: preamble
@@ -9,27 +8,20 @@ include::partial$_attributes.adoc[]
 
 === Full workshop (3-4 hours)
 
-* **Module 1**: The shift to utility AI and architecture foundation (45 minutes)
-* **Module 2**: Administering the MaaS platform (50 minutes)
+* **Module 1**: The shift to utility AI and architecture foundation (30 minutes)
+* **Module 2**: Administering the MaaS platform (40 minutes)
 * **Module 3**: Deploying models to the MaaS catalog (55 minutes)
 * **Module 4**: Governance, observability, and chargeback (50 minutes)
 * **Module 5**: API integration and consumer experience (40 minutes)
 * **Break time**: 10 minutes between modules recommended
 
-=== Abbreviated workshop (2 hours)
-
-* **Module 1**: Architecture and business value (25 minutes)
-* **Module 2**: Platform administration essentials (35 minutes)
-* **Module 3**: Basic model deployment (40 minutes)
-* **Module 4**: Governance overview only (20 minutes)
-* **Module 5**: API integration demonstration (20 minutes, optional)
 
 == Technical requirements
 
 === Software versions
 
-* Red Hat OpenShift {ocp_version} or later
-* Red Hat OpenShift AI {rhoai_version} or later
+* Red Hat OpenShift 4.20 or later
+* Red Hat OpenShift AI 3.3} or later
 * OpenShift AI operator channel: `fast-3.x` or `stable-3.x`
 * NVIDIA GPU operator (latest/stable)
 * OpenShift Service Mesh operator (required for Gateway API)
@@ -37,7 +29,7 @@ include::partial$_attributes.adoc[]
 
 === Hardware requirements
 
-**Critical**: This lab requires a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
+**Critical**: This lab suggests a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
 
 * **Minimum GPU configuration**: 1x NVIDIA GPU with {gpu_memory} VRAM
 * **Recommended GPU configuration**: 2x NVIDIA GPUs with 24GB+ VRAM each
@@ -46,25 +38,11 @@ include::partial$_attributes.adoc[]
 
 **Why multiple GPUs matter for this lab**:
 
-* Demonstrates distributed inference with LeaderWorkerSet
+* LlamaStack model is required for MaaS Dashboard (consumes 1 GPU)
 * Shows realistic multi-tenant model serving scenarios
 * Enables proper load balancing and autoscaling demonstrations
+* Deploy the NVIDIA-Nemotron-3-Nano-4B-FP8 (or 30B A3B)
 
-=== Environment access
-Participants need access to:
-
-* Red Hat OpenShift cluster (provided during workshop)
-* OpenShift AI dashboard (pre-deployed)
-* Terminal access via Showroom interface
-* Code editor (Showroom embedded editor)
-* OpenShift CLI (`oc`) pre-installed on bastion
-
-=== Network requirements
-
-* Internet connectivity for downloading container images from quay.io and registry.redhat.io
-* Access to Hugging Face model repositories (models.huggingface.co)
-* OpenShift cluster ingress accessible via HTTPS
-* Showroom interface access (splits view with console and terminal)
 
 == Environment setup
 
@@ -80,13 +58,18 @@ The following components should be pre-configured before the workshop starts:
 
 □ **Service Mesh operator installed** - Required for Gateway API routing
 
+□ **Red Hat Connectivity Link Operator Installed** - Kaudrant - Authentication/Authorization/Rate Limiting
+
+□ **Leader Worker Set Operator installed for llm-d** - Required for Multiple node Inference (MOE)
+
+□ **Web Terminal Operator or Developer Spaces** - Required CLI access
+
 □ **KServe components deployed** - Model serving infrastructure ready
 
 □ **GPU driver verification** - NVIDIA drivers loaded and tested
 
 □ **OpenShift CLI available** - `oc` command accessible from terminal
 
-□ **Showroom interface configured** - Split view with console, AI dashboard, terminal, editor tabs
 
 === Setup validation
 

@@ -1,0 +1,188 @@
+= Exercise 2: Enable Gen AI Studio dashboard
+
+Now that the MaaS backend is deployed, you need to activate the dashboard interface so users can discover models and generate API tokens.
+
+The `OdhDashboardConfig` CRD controls which features appear in the OpenShift AI web console.
+
+=== Understanding the dashboard configuration
+
+The OdhDashboardConfig enables or disables UI features:
+
+* `genAiStudio` - Gen AI Studio menu item and model catalog UI
+* `modelAsService` - MaaS-specific dashboard pages (tier management, usage metrics)
+* `modelServing` - Traditional KServe model serving UI
+* Other features like Data Science Projects, Workbenches, Pipelines
+
+=== Check current dashboard configuration
+
+View the current OdhDashboardConfig:
+
+[source,role="execute"]
+----
+oc get odhdashboardconfig odh-dashboard-config -o yaml
+----
+
+Look for the `dashboardConfig` section:
+
+----
+spec:
+  dashboardConfig:
+    genAiStudio: false
+    modelAsService: false
+    disableModelServing: false
+----
+
+Note that both `genAiStudio` and `modelAsService` are currently false.
+
+=== Enable Gen AI Studio features
+
+Edit the OdhDashboardConfig:
+
+[source,role="execute"]
+----
+oc edit odhdashboardconfig odh-dashboard-config
+----
+
+Update the `dashboardConfig` section:
+
+----
+spec:
+  dashboardConfig:
+    genAiStudio: true           # Enable Gen AI Studio menu
+    modelAsService: true         # Enable MaaS dashboard pages
+    disableModelServing: false   # Keep traditional model serving enabled
+----
+
+Save and exit the editor.
+
+=== Monitor dashboard restart
+
+The dashboard pod needs to restart to pick up the new configuration:
+
+[source,role="execute"]
+----
+oc get pods -n redhat-ods-applications | grep rhods-dashboard
+----
+
+You may see the pod restarting:
+
+----
+rhods-dashboard-xxx   0/1     Terminating        0          10m
+rhods-dashboard-yyy   0/1     ContainerCreating  0          5s
+----
+
+Wait for the new pod to reach Running state:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready pod -l app=rhods-dashboard -n redhat-ods-applications --timeout=300s
+----
+
+Expected output:
+
+----
+pod/rhods-dashboard-xxx condition met
+----
+
+=== Verification
+
+Confirm dashboard configuration:
+
+* OdhDashboardConfig shows `genAiStudio: true` and `modelAsService: true`
+* Dashboard pod has restarted and is Running
+* Dashboard service is accessible
+
+== Exercise 3: Verify Gateway API components
+
+With MaaS enabled, verify that Gateway API resources are configured correctly for model inference routing.
+
+Gateway API provides the ingress layer for MaaS, exposing a single endpoint for all models.
+
+=== Check Gateway resource
+
+List Gateways in the redhat-ods-applications namespace:
+
+[source,role="execute"]
+----
+oc get gateway -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                   CLASS   ADDRESS                                          PROGRAMMED   AGE
+maas-default-gateway   istio   maas-default-gateway.apps.{cluster_domain}      True         10m
+----
+
+The `PROGRAMMED=True` status indicates the Gateway is configured correctly.
+
+Inspect the Gateway details:
+
+[source,role="execute"]
+----
+oc describe gateway maas-default-gateway -n redhat-ods-applications
+----
+
+Look for:
+
+* `Status: Programmed: True` - Gateway is ready to accept traffic
+* `Listeners` section showing HTTP/HTTPS configuration
+* `Addresses` showing the external hostname
+
+=== Check HTTPRoute resources
+
+HTTPRoutes define path-based routing rules for the Gateway:
+
+[source,role="execute"]
+----
+oc get httproute -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                  HOSTNAMES                        AGE
+maas-api-route        ["maas-default-gateway..."]     10m
+----
+
+Describe the HTTPRoute:
+
+[source,role="execute"]
+----
+oc describe httproute maas-api-route -n redhat-ods-applications
+----
+
+Look for:
+
+* `Parent Refs` pointing to maas-default-gateway
+* `Rules` section showing `/v1/models` and `/v1/chat/completions` paths
+* `Backend Refs` pointing to maas-api service
+
+=== Verify Kuadrant policy resources
+
+Check that Kuadrant policies are configured (these will be populated when governance is configured in Module 4):
+
+[source,role="execute"]
+----
+oc get authpolicy -n redhat-ods-applications
+----
+
+[source,role="execute"]
+----
+oc get ratelimitpolicy -n redhat-ods-applications
+----
+
+These may show "No resources found" initially, which is expected before governance configuration.
+
+=== Verification
+
+Confirm Gateway API setup:
+
+* Gateway resource exists with PROGRAMMED=True status
+* Gateway has external address assigned (hostname)
+* HTTPRoute exists and references the Gateway
+* HTTPRoute defines API paths for model inference
+* Kuadrant components (authorino, limitador) are running
+
+// TODO: Add screenshot of Gateway status
+image::gateway-api-status.png[Gateway API resource showing PROGRAMMED=True status and external address,link=self,window=blank,width=700,title="Gateway API Configuration Status"]

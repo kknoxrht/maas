@@ -1,0 +1,230 @@
+= Exercise 5: Deploy a second model for multi-model catalog
+
+ChocoTech's Marketing team requests access to a smaller, faster model for sentiment analysis. Deploy a second model to demonstrate multi-model catalog management.
+
+This exercise shows how easily you can expand the model catalog as new business requirements emerge.
+
+=== Deploy Nemotron 8B for Marketing team
+
+Create a manifest for a second model:
+
+[source,role="execute"]
+----
+cat > nemotron-8b-llminferenceservice.yaml <<EOF
+apiVersion: serving.kserve.io/v1alpha1
+kind: LLMInferenceService
+metadata:
+  name: nemotron-8b
+  namespace: chocotech-models
+  labels:
+    app: nemotron-8b
+    team: marketing
+spec:
+  model:
+    name: nvidia/nemotron-4-8b-instruct
+    source: huggingface
+  runtime:
+    name: vllm
+    version: v0.5.4
+  resources:
+    limits:
+      nvidia.com/gpu: 1
+    requests:
+      nvidia.com/gpu: 1
+      memory: 16Gi
+  scaling:
+    minReplicas: 1
+    maxReplicas: 2
+  maasConfig:
+    publishToGenAIStudio: true
+    tierAccess:
+      - bronze
+      - silver
+EOF
+----
+
+Note: This model is restricted to bronze and silver tiers, demonstrating selective access control.
+
+Apply the manifest:
+
+[source,role="execute"]
+----
+oc apply -f nemotron-8b-llminferenceservice.yaml
+----
+
+Wait for deployment:
+
+[source,role="execute"]
+----
+oc wait --for=condition=ready llminferenceservice/nemotron-8b -n chocotech-models --timeout=600s
+----
+
+Expected output:
+
+----
+llminferenceservice.serving.kserve.io/nemotron-8b condition met
+----
+
+=== Verify multi-model catalog
+
+List all deployed models:
+
+[source,role="execute"]
+----
+oc get llminferenceservice -n chocotech-models
+----
+
+Expected output:
+
+----
+NAME           READY   REASON   AGE
+llama-3-8b     True    Ready    20m
+nemotron-8b    True    Ready    5m
+----
+
+Check the model catalog via API:
+
+[source,role="execute"]
+----
+curl https://$(oc get route maas-default-gateway -n redhat-ods-applications -o jsonpath='{.spec.host}')/v1/models
+----
+
+Expected output showing both models:
+
+----
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "object": "model",
+      "owned_by": "chocotech-models"
+    },
+    {
+      "id": "nvidia/nemotron-4-8b-instruct",
+      "object": "model",
+      "owned_by": "chocotech-models"
+    }
+  ]
+}
+----
+
+Refresh the Gen AI Studio Models tab in the dashboard. You should now see both models listed with their respective tier access controls.
+
+=== Verification
+
+Confirm multi-model catalog:
+
+* Both LLMInferenceServices show READY=True status
+* Both models appear in Gen AI Studio catalog
+* Models show different tier access (Llama-3: all tiers, Nemotron: bronze/silver only)
+* `/v1/models` API endpoint returns both models
+* Each model has its own service and pods in chocotech-models namespace
+
+include::05b-lifecycle-management-gitops.adoc[leveloffset=+1]
+
+== Troubleshooting
+
+**Issue**: LLMInferenceService stuck in "DownloadingModel" phase for >10 minutes
+
+**Solution**:
+
+. Check pod events for image pull errors: `oc describe pod -l app=llama-3-8b -n chocotech-models`
+. Common causes:
+  * Hugging Face model download timeout (large models take time)
+  * Network connectivity issues to models.huggingface.co
+  * Insufficient storage on GPU node for model caching
+. Check pod logs: `oc logs -l app=llama-3-8b -n chocotech-models`
+
+**Issue**: Model pod fails with "Out of memory" error
+
+**Solution**:
+
+. Check GPU memory availability: `oc describe node -l nvidia.com/gpu.present=true | grep -A 5 "Allocatable:"`
+. Verify model size fits on GPU (Llama-3 8B requires ~16GB, 70B requires 140GB+)
+. Adjust resource requests in LLMInferenceService spec
+. For large models, ensure distributed inference is configured with sufficient worker replicas
+
+**Issue**: Model doesn't appear in Gen AI Studio catalog
+
+**Solution**:
+
+. Verify `publishToGenAIStudio: true` in LLMInferenceService spec
+. Check namespace has `modelsAsService=true` label: `oc get namespace chocotech-models --show-labels`
+. Verify MaaSModel resource was created: `oc get maasmodel -n chocotech-models`
+. Check MaaS API pod logs: `oc logs -l app=maas-api -n redhat-ods-applications`
+. Refresh browser cache and reload Gen AI Studio dashboard
+
+**Issue**: vLLM serving runtime fails to start with CUDA errors
+
+**Solution**:
+
+. Verify GPU drivers are loaded on node: `oc debug node/<node-name> -- chroot /host nvidia-smi`
+. Check NVIDIA GPU operator pods: `oc get pods -n nvidia-gpu-operator`
+. Verify GPU node has correct labels: `oc get nodes -l nvidia.com/gpu.present=true --show-labels`
+. Check vLLM version compatibility with CUDA driver version
+
+**Issue**: LeaderWorkerSet not creating worker pods
+
+**Solution**:
+
+. Verify LeaderWorkerSet operator is running: `oc get pods -n leaderworkerset-system`
+. Check LLMInferenceService for distributed inference configuration
+. Describe LeaderWorkerSet resource: `oc get leaderworkerset -n chocotech-models`
+. Review llm-serving-runtime controller logs: `oc logs -l app=llm-serving-runtime-controller -n redhat-ods-applications`
+
+**Issue**: Model returns 500 Internal Server Error after deployment
+
+**Solution**:
+
+. Check model pod health: `oc get pods -l app=llama-3-8b -n chocotech-models`
+. Review model logs for runtime errors: `oc logs -l app=llama-3-8b -n chocotech-models --tail=100`
+. Verify model inference endpoint: `oc port-forward svc/llama-3-8b-predictor-00001 8080:8080 -n chocotech-models` then `curl localhost:8080/v1/models`
+. Common causes: incompatible model format, insufficient GPU memory, vLLM configuration errors
+
+== Learning outcomes
+
+By completing this module, you should now understand:
+
+* ✓ How to select appropriate models based on architecture and capabilities
+* ✓ The critical difference between standalone KServe deployment and MaaS-integrated deployment
+* ✓ Why distributed inference with llm-d is required for MaaS governance integration
+* ✓ How to deploy models using LLMInferenceService custom resources
+* ✓ How LeaderWorkerSet enables multi-GPU distributed inference for large models
+* ✓ How to publish models to the Gen AI Studio catalog with tier-based access control
+* ✓ How to manage a multi-model catalog serving different business units
+* ✓ How to implement production-grade lifecycle management with canary deployments
+* ✓ How to use GitOps (Argo CD) for declarative model deployment and rollback
+
+== Module summary
+
+You've successfully deployed generative AI models using distributed inference and published them to the MaaS catalog for ChocoTech's teams to consume.
+
+**What you accomplished for ChocoTech**:
+
+* Evaluated model architectures and capabilities to match department requirements
+* Deployed Llama-3 8B for R&D team's recipe optimization use case
+* Deployed Nemotron 8B for Marketing team's sentiment analysis needs
+* Published both models to Gen AI Studio catalog with appropriate tier access controls
+* Enabled self-service model discovery through the dashboard interface
+* Verified model accessibility through MaaS gateway endpoints
+* Implemented production-grade lifecycle management with canary deployments
+* Configured GitOps workflow for declarative model deployment
+
+**Technical capabilities demonstrated**:
+
+* **Model selection**: Architecture analysis (dense vs. sparse) and capability assessment (reasoning vs. non-reasoning)
+* **Declarative model deployment**: LLMInferenceService CRD for operator-managed model serving
+* **Distributed inference**: LeaderWorkerSet for multi-GPU model serving (foundation for 70B+ models)
+* **MaaS integration**: Automatic catalog publication and governance enforcement
+* **Multi-tenancy**: Different tier access controls per model for business unit separation
+* **Production lifecycle**: Canary deployments, traffic splitting, and rollback procedures
+* **GitOps integration**: Declarative configuration management with Argo CD
+
+**Your journey progress**:
+
+ChocoTech now has a functioning model catalog with two generative AI models available through governed endpoints. The next step is implementing governance policies to ensure fair resource allocation.
+
+**Next steps**:
+
+Module 4 will guide you through configuring governance tiers, implementing rate limiting and quotas using Kuadrant, tracking token consumption metrics with Grafana, and establishing chargeback workflows for Finance to bill departments based on actual usage.

@@ -1,0 +1,44 @@
+// Standard Showroom attributes for Red Hat OpenShift AI - MaaS Enablement
+// These placeholders are replaced at runtime by the Showroom deployment
+
+// OpenShift cluster details
+:openshift_console_url: {openshift_console_url}
+:openshift_api_url: {openshift_api_url}
+:cluster_domain: {cluster_domain}
+
+// Red Hat OpenShift AI dashboard
+:rhoai_dashboard_url: {rhoai_dashboard_url}
+
+// User credentials
+:user: {user}
+:password: {password}
+
+// Admin credentials
+:admin_user: {admin_user}
+:admin_password: {admin_password}
+
+// Bastion host
+:bastion_public_hostname: {bastion_public_hostname}
+
+// Version information (minimum supported)
+:ocp_version: 4.20+
+:rhoai_version: 3.3+
+:gpu_memory: 24GB
+
+// Project/namespace
+:namespace: {project_namespace}
+
+// Git repository
+:git_repo: {git_repository_url}
+
+// Container registry
+:registry_url: {container_registry_url}
+
+
+cat <<EOF | oc apply -f -
+apiVersion: kuadrant.io/v1beta1
+kind: Kuadrant
+metadata:
+  name: kuadrant
+  namespace: redhat-ods-applications
+EOF

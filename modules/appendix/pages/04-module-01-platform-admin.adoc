@@ -1,0 +1,19 @@
+= Module 2: Administering the MaaS platform
+
+After presenting the MaaS architecture to ChocoTech's leadership team, you've received approval to proceed with implementation. "This could solve our GPU allocation problems," the CIO says, "but I need to see it actually working in our environment."
+
+Your next task is to configure the MaaS platform on the existing OpenShift AI deployment. This involves updating Custom Resource Definitions (CRDs) to enable components and activating the dashboard interface for self-service access.
+
+In this module, you'll configure MaaS through the OpenShift AI operator, enable the Gen AI Studio dashboard, and verify that all components are healthy and accessible.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Configure the DataScienceCluster CRD to enable MaaS components
+* Update the OdhDashboardConfig to activate Gen AI Studio interface
+* Verify that Gateway API, Kuadrant, and MaaS API components are deployed and healthy
+* Access the OpenShift AI dashboard and navigate to the Gen AI Studio
+* Troubleshoot common component enablement issues using operator logs and resource status

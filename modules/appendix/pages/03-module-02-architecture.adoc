@@ -1,0 +1,234 @@
+= Exercise 2: The MaaS architecture stack
+
+Now that you understand the business problem, let's explore the technical architecture that makes MaaS possible.
+
+MaaS on Red Hat OpenShift AI is built on three distinct layers, each with specific responsibilities. Understanding this layered architecture is critical for effective configuration and troubleshooting.
+
+=== The three-layer architecture
+
+A user request for model inference passes through three distinct layers:
+
+----
+User Request → Gateway API → Kuadrant → KServe → Model
+             (Routing)     (Policy)   (Serving)
+----
+
+Each layer has a specific responsibility and solves a distinct problem:
+
+**Gateway API (Layer 1 - Traffic routing)**::
+Network traffic routing and ingress control. Exposes a single API endpoint that routes to multiple backend models. Handles TLS termination and path-based routing.
+
+**Kuadrant (Layer 2 - Policy enforcement)**::
+Authorization (Authorino) and rate limiting (Limitador). Enforces tier-based access control, token quotas, and usage tracking. Returns 401/403/429 status codes for policy violations.
+
+**KServe (Layer 3 - Model serving)**::
+Model serving infrastructure. Manages model lifecycle, distributed inference with LeaderWorkerSet, autoscaling, and health checks.
+
+**Why this layered architecture matters**:
+
+**Separation of concerns**::
+Each component has one job. KServe doesn't do authentication. Kuadrant doesn't do model serving. Gateway API doesn't enforce quotas.
+
+**Flexibility**::
+Replace Gateway API implementation without changing KServe. Adjust rate limits without redeploying models. Swap serving runtimes (vLLM, TGI) without touching policy layer.
+
+**Auditability**::
+Every request passes through Kuadrant, creating a complete audit trail with user identity, model accessed, tokens consumed, and timestamp.
+
+**Chargeback accuracy**::
+Kuadrant's token tracking enables precise cross-department billing based on actual consumption rather than infrastructure allocation.
+
+=== Layer 3 - KServe (model serving)
+
+KServe provides the foundation for serving generative AI models on OpenShift.
+
+**Core capabilities**:
+
+**Model deployment**::
+Packages models in containers with serving runtimes (vLLM, llm-d, Hugging Face TGI). Abstracts complexity of GPU allocation and CUDA drivers.
+
+**Distributed inference with LeaderWorkerSet**::
+Splits large models across multiple GPUs using tensor parallelism. Critical for models exceeding single GPU memory capacity (70B+ parameter models).
+
+**Autoscaling**::
+Scales model replicas based on request load. Scales to zero when idle to conserve GPU resources. Scales up when inference demand increases.
+
+**Health checks and readiness**::
+Monitors model container health with liveness and readiness probes. Ensures requests only route to healthy model instances.
+
+**What KServe does NOT do**:
+
+* Authentication or authorization (handled by Kuadrant/Authorino)
+* Rate limiting or quota enforcement (handled by Kuadrant/Limitador)
+* API routing or ingress (handled by Gateway API)
+
+A Platform Engineer deploys a model using KServe. KServe ensures it's running, healthy, and can handle inference requests. But KServe alone doesn't control who can access the model or how often.
+
+=== Layer 2 - Kuadrant (policy enforcement)
+
+Kuadrant adds governance and policy enforcement on top of KServe model serving.
+
+**Authorino - Authentication and authorization**:
+
+* Validates Bearer tokens from API requests
+* Maps OpenShift users to tier levels (bronze, silver, gold, platinum)
+* Returns `401 Unauthorized` for invalid or missing tokens
+* Returns `403 Forbidden` when user's tier cannot access a specific model
+* Integrates with OpenShift OAuth for user identity
+
+**Limitador - Rate limiting and quotas**:
+
+* Enforces requests-per-minute limits based on user tier
+* Tracks token consumption quotas (e.g., 10,000 tokens/hour for bronze tier)
+* Returns `429 Rate Limit Exceeded` when limits are hit
+* Includes `Retry-After` header for client backoff logic
+* Provides metrics for chargeback and capacity planning
+
+**Why Kuadrant is critical for enterprise AI**:
+
+Without Kuadrant, any user with cluster access could consume unlimited GPU resources, monopolize capacity, and prevent other teams from accessing models. Kuadrant enforces fair resource allocation and provides the audit trail required for compliance.
+
+*ChocoTech example*: Marketing team is assigned "bronze" tier with 1,000 requests/hour. When they exceed this limit during a campaign launch, Kuadrant returns `429` status, preventing them from starving R&D team's "gold" tier access.
+
+=== Layer 1 - Gateway API (traffic routing)
+
+Gateway API exposes MaaS to external clients and routes traffic to the policy and serving layers.
+
+**Core capabilities**:
+
+**Single endpoint for all models**::
+One URL (`https://maas-default-gateway.{cluster_domain}`) for all models. Eliminates need for per-model hostnames or complex DNS management.
+
+**Path-based routing**::
+`/v1/models` lists available models, `/v1/chat/completions` routes to specific models based on request payload. OpenAI-compatible API paths for developer familiarity.
+
+**TLS termination**::
+Handles HTTPS certificates (via cert-manager or OpenShift Routes). Ensures encrypted communication between clients and API gateway.
+
+**Request forwarding**::
+Routes validated requests from Gateway → Kuadrant (policy check) → KServe (model inference) → response back to client.
+
+**Integration with Istio Service Mesh**::
+Gateway API uses Istio as the underlying implementation, providing traffic management, observability, and resiliency features.
+
+=== The complete request flow
+
+Here's what happens when a developer at ChocoTech queries a model from their sentiment analysis application:
+
+----
+1. Developer sends: POST /v1/chat/completions
+   Headers: Authorization: Bearer <token>
+   Body: {"model": "llama-3-8b", "messages": [...]}
+
+2. Gateway API receives request at maas-default-gateway endpoint
+
+3. Kuadrant/Authorino validates Bearer token
+   - Invalid token? Return 401 Unauthorized (stop here)
+   - Valid token? Extract user identity and tier level
+
+4. Kuadrant/Authorino checks model access policy
+   - User's tier cannot access llama-3-8b? Return 403 Forbidden (stop here)
+   - User's tier has access? Proceed to rate limit check
+
+5. Kuadrant/Limitador checks rate limits and quotas
+   - Exceeded requests/minute? Return 429 Rate Limit Exceeded (stop here)
+   - Exceeded token quota? Return 429 with quota message (stop here)
+   - Within limits? Forward request to KServe
+
+6. Request forwarded to KServe InferenceService
+
+7. KServe routes to appropriate model pod (llama-3-8b-predictor-xxx)
+
+8. vLLM serving runtime generates inference response
+
+9. Response flows back: KServe → Gateway API → Developer's application
+
+10. Kuadrant logs request metadata for chargeback:
+    - User: marketing-dev-user
+    - Model: llama-3-8b
+    - Tokens consumed: 247 (input: 50, output: 197)
+    - Timestamp: 2026-04-28T14:32:17Z
+    - Status: 200 OK
+----
+
+This layered approach ensures that every request is authenticated, authorized, rate-limited, audited, and routed to the correct model serving infrastructure.
+
+////
+
+=== Verify the architecture layers
+
+Now let's verify that the three architectural layers are installed and healthy in your OpenShift cluster.
+
+Check KServe components (model serving layer):
+
+[source,role="execute"]
+----
+oc get pods -n redhat-ods-applications | grep -E "(kserve|llm)"
+----
+
+Expected output (pods should be Running):
+
+----
+kserve-controller-manager-xxx           1/1     Running
+llm-serving-runtime-controller-xxx      1/1     Running
+----
+
+Check Kuadrant components (policy enforcement layer):
+
+[source,role="execute"]
+----
+oc get pods -n kuadrant-system
+----
+
+Expected output:
+
+----
+NAME                          READY   STATUS    RESTARTS   AGE
+authorino-xxx                 1/1     Running   0          5d
+limitador-xxx                 1/1     Running   0          5d
+----
+
+Check Gateway API resources:
+
+[source,role="execute"]
+----
+oc get gateway -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                   CLASS   ADDRESS                              PROGRAMMED   AGE
+maas-default-gateway   istio   maas-default-gateway.example.com    True         5d
+----
+
+Verify Service Mesh (Istio) integration:
+
+[source,role="execute"]
+----
+oc get pods -n istio-system
+----
+
+Expected output (Istio control plane):
+
+----
+istiod-xxx                    1/1     Running
+istio-ingressgateway-xxx      1/1     Running
+----
+
+////
+
+=== Verification
+
+Confirm that all three layers are healthy:
+
+* KServe controller pods are Running in redhat-ods-applications namespace
+* Kuadrant pods (authorino, limitador) are Running in __fix_me__ namespace
+* Gateway resource exists with PROGRAMMED=True status
+* Istio control plane pods are Running in istio-system namespace
+
+If any components are missing or unhealthy, the MaaS platform cannot function correctly. Each layer depends on the others for complete end-to-end model serving with governance.
+
+// TODO: Add architecture diagram showing three layers and request flow
+image::maas-architecture-layers.png[MaaS three-layer architecture showing Gateway API, Kuadrant, and KServe components,link=self,window=blank,width=800,title="MaaS Architecture: Three Layers of Model Serving Infrastructure"]
+
