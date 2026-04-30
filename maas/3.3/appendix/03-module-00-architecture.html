@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>Module 1: The shift to centralized model serving :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="02-details.html">
+    <link rel="next" href="03-module-01-architecture.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="03-module-00-architecture.html">MaaS Architecture</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">Module 1: The shift to centralized model serving</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>The CIO at ChocoTech Industries just called an emergency meeting. "We&#8217;ve invested over $500,000 in GPU infrastructure across four teams," she says, reviewing the quarterly report. "Yet our R&amp;D team is waiting three weeks for capacity while Quality Control&#8217;s GPUs sit idle 60% of the time. This doesn&#8217;t make sense."</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech needs to transform their fragmented GPU infrastructure into a centralized, governed platform where all business units can access AI models efficiently. You&#8217;ve been tasked with implementing Models as a Service (MaaS) on Red Hat OpenShift AI to solve this challenge.</p>
+</div>
+<div class="paragraph">
+<p>In this module, you&#8217;ll understand the business problem MaaS solves and explore the technical architecture that makes centralized model serving possible.</p>
+</div>
+<!-- toc disabled -->
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_objectives"><a class="anchor" href="#_learning_objectives"></a>Learning objectives</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By the end of this module, you&#8217;ll be able to:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Articulate the business and operational problems created by the GPU silo crisis</p>
+</li>
+<li>
+<p>Explain how MaaS transforms GPU infrastructure from hardware management to token delivery</p>
+</li>
+<li>
+<p>Map the three-layer MaaS architecture (KServe, Kuadrant, Gateway API) and their responsibilities</p>
+</li>
+<li>
+<p>Verify that the foundational components are installed and healthy in your OpenShift cluster</p>
+</li>
+<li>
+<p>Understand the complete request flow from API client through Gateway, policy enforcement, to model serving</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="02-details.html">Workshop Details</a></span>
+  <span class="next"><a href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>4.4: Deploy Grafana for observability :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="06-module-02-governance.html">
+    <link rel="next" href="06-module-04-governance.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="06-module-00-governance.html">MaaS Governance</a></li>
+    <li><a href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">4.4: Deploy Grafana for observability</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>ChocoTech&#8217;s Finance department needs visibility into model usage for chargeback. You&#8217;ll deploy Grafana dashboards to monitor token consumption and GPU utilization.</p>
+</div>
+<div class="paragraph">
+<p>Grafana provides the observability layer for tracking model usage across user tiers and different models.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_install_grafana_operator_if_not_already_installed"><a class="anchor" href="#_install_grafana_operator_if_not_already_installed"></a>Install Grafana operator (if not already installed)</h3>
+<div class="paragraph">
+<p>Check if Grafana operator is installed:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get csv -n openshift-operators | grep grafana</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If not installed, install the Grafana operator from OperatorHub:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-operator-subscription.yaml &lt;&lt;EOF
+apiVersion: operators.coreos.com/v1alpha1
+kind: Subscription
+metadata:
+  name: grafana-operator
+  namespace: openshift-operators
+spec:
+  channel: v5
+  name: grafana-operator
+  source: community-operators
+  sourceNamespace: openshift-marketplace
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-operator-subscription.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for the operator to be ready:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l name=grafana-operator -n openshift-operators --timeout=300s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_grafana_instance_for_maas_monitoring"><a class="anchor" href="#_create_grafana_instance_for_maas_monitoring"></a>Create Grafana instance for MaaS monitoring</h3>
+<div class="paragraph">
+<p>Create a Grafana instance in the OpenShift AI namespace:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-instance.yaml &lt;&lt;EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: Grafana
+metadata:
+  name: maas-grafana
+  namespace: redhat-ods-applications
+  labels:
+    dashboards: "maas"
+spec:
+  config:
+    security:
+      admin_user: admin
+      admin_password: chocotech123
+    server:
+      root_url: https://maas-grafana.apps.{cluster_domain}
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-instance.yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Wait for Grafana to deploy:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l app=grafana -n redhat-ods-applications --timeout=300s</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_create_grafana_data_source_for_prometheus"><a class="anchor" href="#_create_grafana_data_source_for_prometheus"></a>Create Grafana data source for Prometheus</h3>
+<div class="paragraph">
+<p>Configure Grafana to query OpenShift&#8217;s Prometheus for metrics:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-datasource.yaml &lt;&lt;EOF
+apiVersion: grafana.integreatly.org/v1beta1
+kind: GrafanaDataSource
+metadata:
+  name: prometheus-maas
+  namespace: redhat-ods-applications
+spec:
+  instanceSelector:
+    matchLabels:
+      dashboards: "maas"
+  datasource:
+    name: Prometheus
+    type: prometheus
+    access: proxy
+    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
+    isDefault: true
+    jsonData:
+      tlsSkipVerify: true
+      timeInterval: "5s"
+EOF</code></pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-datasource.yaml</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_access_grafana_dashboard"><a class="anchor" href="#_access_grafana_dashboard"></a>Access Grafana dashboard</h3>
+<div class="paragraph">
+<p>Get the Grafana route URL:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get route maas-grafana -n redhat-ods-applications -o jsonpath='{.spec.host}'</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>maas-grafana-redhat-ods-applications.apps.{cluster_domain}</pre>
+</div>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Open the Grafana URL in your browser</p>
+</li>
+<li>
+<p>Log in with:</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Username: <code>admin</code></p>
+</li>
+<li>
+<p>Password: <code>chocotech123</code></p>
+</li>
+</ul>
+</div>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>You should see the Grafana home page.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm Grafana deployment:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Grafana operator is installed and healthy</p>
+</li>
+<li>
+<p>Grafana instance pod is Running in redhat-ods-applications namespace</p>
+</li>
+<li>
+<p>Grafana route exists and is accessible</p>
+</li>
+<li>
+<p>Grafana data source is configured to query Prometheus</p>
+</li>
+<li>
+<p>Successfully logged into Grafana web interface</p>
+</li>
+</ul>
+</div>
+<div class="imageblock unresolved">
+<div class="content">
+<a class="image" href="grafana-maas-dashboard.png" target="blank"><img src="grafana-maas-dashboard.png" alt="Grafana dashboard showing MaaS token consumption and GPU utilization metrics" width="800"></a>
+</div>
+<div class="title">Figure 1. Grafana Observability Dashboard for MaaS</div>
+</div>
+<div class="paragraph">
+<p>Note: Creating comprehensive Grafana dashboards with token consumption by tier, model usage patterns, and GPU utilization requires Prometheus metrics from Kuadrant and KServe. Dashboard JSON configuration would be provided by the MaaS platform team.</p>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a></span>
+  <span class="next"><a href="06-module-04-governance.html">4.5: Generate chargeback reports</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

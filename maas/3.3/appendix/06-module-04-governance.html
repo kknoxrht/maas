@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Module 4: Governance, observability, and chargeback :: Red Hat OpenShift AI - Models as a Service</title>
-    <link rel="prev" href="05b-lifecycle-management-gitops.html">
+    <title>4.5: Generate chargeback reports :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="06-module-03-governance.html">
     <link rel="next" href="06a-security-hardening.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../../_/css/site.css">
@@ -40,194 +40,116 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../index.html">Course Home</a>
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">Workshop Home</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-details.html">Workshop Details</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Architecture</span>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Model Deploymemnt</span>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
   </li>
 </ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
   </li>
   <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
-  </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="08-conclusion.html">Conclusion</a>
-  </li>
-</ul>
   </li>
 </ul>
   </li>
@@ -260,8 +182,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
-    <li><a href="index.html">Workshop Home</a></li>
-    <li><a href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a></li>
+    <li><a href="06-module-00-governance.html">MaaS Governance</a></li>
+    <li><a href="06-module-04-governance.html">4.5: Generate chargeback reports</a></li>
   </ul>
 </nav>
 </div>
@@ -270,806 +192,16 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Module 4: Governance, observability, and chargeback</h1>
+<h1 class="page">4.5: Generate chargeback reports</h1>
 <div id="preamble">
-<div class="sectionbody">
-<div class="paragraph">
-<p>ChocoTech&#8217;s Finance department raises a critical concern during your status update meeting. "We need to track which teams are consuming GPU resources," the CFO states. "Marketing is requesting additional budget for AI infrastructure, but we have no data showing their current usage or justifying the expansion."</p>
-</div>
-<div class="paragraph">
-<p>Meanwhile, the Quality Control team complains: "Our defect detection models are getting rate-limited during production shifts. Is Marketing&#8217;s chatbot consuming all the capacity?"</p>
-</div>
-<div class="paragraph">
-<p>Your task is to implement governance policies that ensure fair resource allocation, track usage for chargeback, and provide observability into model consumption patterns.</p>
-</div>
-<div class="paragraph">
-<p>In this module, you&#8217;ll configure governance tiers with rate limiting and quotas using Kuadrant, monitor GPU utilization and token consumption with Grafana, and generate chargeback reports for Finance.</p>
-</div>
-<!-- toc disabled -->
-</div>
-</div>
-<div class="sect1">
-<h2 id="_learning_objectives"><a class="anchor" href="#_learning_objectives"></a>Learning objectives</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>By the end of this module, you&#8217;ll be able to:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Define governance tiers (bronze, silver, gold, platinum) with different access levels and quotas</p>
-</li>
-<li>
-<p>Map OpenShift user groups to tier levels for automatic access control</p>
-</li>
-<li>
-<p>Configure rate limiting and token quotas using Kuadrant RateLimitPolicy</p>
-</li>
-<li>
-<p>Deploy Grafana dashboards to monitor model usage and GPU utilization</p>
-</li>
-<li>
-<p>Generate chargeback reports showing token consumption by department and model</p>
-</li>
-<li>
-<p>Implement comprehensive security hardening for production MaaS deployment</p>
-</li>
-<li>
-<p>Troubleshoot policy enforcement issues using Kuadrant component logs</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_exercise_1_understanding_maas_governance_tiers"><a class="anchor" href="#_exercise_1_understanding_maas_governance_tiers"></a>Exercise 1: Understanding MaaS governance tiers</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Before configuring governance, you need to understand how tier-based access control works and why it&#8217;s critical for multi-tenant model serving.</p>
-</div>
-<div class="paragraph">
-<p>Without tiers, centralized serving becomes uncontrolled consumption. Tier-based access transforms the MaaS platform from an unlimited resource drain to fair allocation across departments.</p>
-</div>
-<div class="sect2">
-<h3 id="_the_governance_challenge_at_chocotech"><a class="anchor" href="#_the_governance_challenge_at_chocotech"></a>The governance challenge at ChocoTech</h3>
-<div class="paragraph">
-<p>ChocoTech controls $500,000 worth of GPU infrastructure serving four departments:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><strong>Quality Control</strong>: Defect detection (critical, production workload)</p>
-</li>
-<li>
-<p><strong>R&amp;D</strong>: Recipe optimization (important, but not real-time)</p>
-</li>
-<li>
-<p><strong>Marketing</strong>: Sentiment analysis (high volume, non-critical)</p>
-</li>
-<li>
-<p><strong>Supply Chain</strong>: Inventory prediction (batch processing)</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>Without governance</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Marketing runs unlimited chatbot queries, exhausting GPU capacity</p>
-</li>
-<li>
-<p>Quality Control&#8217;s critical defect detection gets rate-limited during production shifts</p>
-</li>
-<li>
-<p>Finance cannot allocate AI costs accurately (no consumption tracking)</p>
-</li>
-<li>
-<p>Security has no audit trail showing who accessed which models</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>With MaaS governance</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Each department is assigned a tier with appropriate rate limits and quotas</p>
-</li>
-<li>
-<p>Quality Control gets "Platinum" tier with high limits and priority access</p>
-</li>
-<li>
-<p>Marketing gets "Bronze" tier with moderate limits appropriate for their use case</p>
-</li>
-<li>
-<p>Finance can perform chargeback based on actual token consumption by department</p>
-</li>
-<li>
-<p>Security has complete audit logs of every API request with user identity</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_what_are_maas_tiers"><a class="anchor" href="#_what_are_maas_tiers"></a>What are MaaS tiers?</h3>
-<div class="paragraph">
-<p>Tiers are access control layers that define:</p>
-</div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Access level</strong></dt>
-<dd>
-<p>Which models a user can query (Bronze tier can&#8217;t access Platinum-only models)</p>
-</dd>
-<dt class="hdlist1"><strong>Rate limits</strong></dt>
-<dd>
-<p>Maximum requests per minute (Bronze: 100 req/min, Platinum: 10,000 req/min)</p>
-</dd>
-<dt class="hdlist1"><strong>Token quotas</strong></dt>
-<dd>
-<p>Maximum tokens consumed per minute (Bronze: 10,000 tokens/min, Platinum: 1,000,000 tokens/min)</p>
-</dd>
-<dt class="hdlist1"><strong>Group mapping</strong></dt>
-<dd>
-<p>Which OpenShift groups are assigned to each tier</p>
-</dd>
-<dt class="hdlist1"><strong>Priority level</strong></dt>
-<dd>
-<p>Determines access hierarchy when users belong to multiple groups across different tiers</p>
-</dd>
-</dl>
-</div>
-<div class="paragraph">
-<p>Example: A developer with a Bronze tier Bearer token can only access models published to "Bronze tier and above." A Platinum user can access all models.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_default_tier_structure_for_chocotech"><a class="anchor" href="#_default_tier_structure_for_chocotech"></a>Default tier structure for ChocoTech</h3>
-<div class="paragraph">
-<p>You&#8217;ll configure four tiers aligned with ChocoTech&#8217;s business priorities:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 16.6666%;">
-<col style="width: 33.3333%;">
-<col style="width: 33.3335%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Tier Name</th>
-<th class="tableblock halign-left valign-top">Priority Level</th>
-<th class="tableblock halign-left valign-top">Target Department</th>
-<th class="tableblock halign-left valign-top">Rate Limit (req/min)</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Bronze</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Level 0</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Marketing (exploratory)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">100 requests/min, 10K tokens/min</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Silver</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Level 1</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Supply Chain (batch)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">500 requests/min, 50K tokens/min</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Gold</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Level 2</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">R&amp;D (development)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">2,000 requests/min, 200K tokens/min</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Platinum</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Level 3</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Quality Control (production)</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">10,000 requests/min, 1M tokens/min</p></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>Priority Level determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the highest level number.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_group_assignment_logic"><a class="anchor" href="#_group_assignment_logic"></a>Group assignment logic</h3>
-<div class="paragraph">
-<p>MaaS uses OpenShift group membership to assign users to tiers:</p>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>User authenticates with Bearer token</p>
-</li>
-<li>
-<p>Authorino (Kuadrant authentication component) extracts user identity and group memberships from OpenShift OAuth</p>
-</li>
-<li>
-<p>MaaS evaluates which tier configurations match the user&#8217;s groups</p>
-</li>
-<li>
-<p>Highest priority level wins if the user belongs to multiple tiers</p>
-</li>
-<li>
-<p>Access is enforced based on assigned tier and model configuration</p>
-</li>
-<li>
-<p>Limitador (Kuadrant rate limiting component) tracks consumption and enforces quotas</p>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>A Platform Engineer creates a group <code>chocotech-quality-control</code> in OpenShift, then maps it to the Platinum tier. All members of that group automatically get Platinum access with highest rate limits.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verification_of_tier_prerequisites"><a class="anchor" href="#_verification_of_tier_prerequisites"></a>Verification of tier prerequisites</h3>
-<div class="paragraph">
-<p>Verify that Kuadrant components are running (deployed when MaaS was enabled in Module 2):</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n kuadrant-system</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>NAME                          READY   STATUS    RESTARTS   AGE
-authorino-xxx                 1/1     Running   0          2d
-limitador-xxx                 1/1     Running   0          2d</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Check for existing tier configurations:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get maastier -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You may see default tiers or this may be empty if tiers haven&#8217;t been configured yet.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_exercise_2_create_openshift_groups_for_chocotech_departments"><a class="anchor" href="#_exercise_2_create_openshift_groups_for_chocotech_departments"></a>Exercise 2: Create OpenShift groups for ChocoTech departments</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>You&#8217;ll create OpenShift groups representing ChocoTech&#8217;s four departments and assign users to them.</p>
-</div>
-<div class="paragraph">
-<p>Group-based tier assignment enables automatic access control as team membership changes.</p>
-</div>
-<div class="sect2">
-<h3 id="_create_department_groups"><a class="anchor" href="#_create_department_groups"></a>Create department groups</h3>
-<div class="paragraph">
-<p>Create a group for the Quality Control team (Platinum tier):</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-quality-control</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a group for the R&amp;D team (Gold tier):</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-rd</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a group for the Supply Chain team (Silver tier):</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-supply-chain</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Create a group for the Marketing team (Bronze tier):</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-marketing</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Verify groups were created:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get groups | grep chocotech</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>chocotech-quality-control   &lt;none&gt;
-chocotech-rd                &lt;none&gt;
-chocotech-supply-chain      &lt;none&gt;
-chocotech-marketing         &lt;none&gt;</pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_assign_the_admin_user_to_quality_control_platinum_tier"><a class="anchor" href="#_assign_the_admin_user_to_quality_control_platinum_tier"></a>Assign the admin user to Quality Control (Platinum tier)</h3>
-<div class="paragraph">
-<p>For testing purposes, assign your admin user to the highest tier:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups add-users chocotech-quality-control {user}</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Verify membership:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get group chocotech-quality-control -o yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You should see your user listed under <code>users</code>.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
-<div class="paragraph">
-<p>Confirm group setup:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Four OpenShift groups created representing ChocoTech departments</p>
-</li>
-<li>
-<p>Groups follow naming convention: chocotech-&lt;department&gt;</p>
-</li>
-<li>
-<p>Admin user is member of chocotech-quality-control group</p>
-</li>
-<li>
-<p>Groups are ready for tier mapping</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_exercise_3_configure_governance_tiers_and_rate_limiting"><a class="anchor" href="#_exercise_3_configure_governance_tiers_and_rate_limiting"></a>Exercise 3: Configure governance tiers and rate limiting</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>Now you&#8217;ll create MaaSTier custom resources that map OpenShift groups to tier levels with rate limits and quotas.</p>
-</div>
-<div class="paragraph">
-<p>Tier configuration is declarative, using custom resources managed by the MaaS operator.</p>
-</div>
-<div class="sect2">
-<h3 id="_create_the_platinum_tier_quality_control"><a class="anchor" href="#_create_the_platinum_tier_quality_control"></a>Create the Platinum tier (Quality Control)</h3>
-<div class="paragraph">
-<p>Create a manifest for the highest tier:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-platinum.yaml &lt;&lt;EOF
-apiVersion: maas.opendatahub.io/v1alpha1
-kind: MaaSTier
-metadata:
-  name: platinum
-  namespace: redhat-ods-applications
-spec:
-  priorityLevel: 3
-  groups:
-    - chocotech-quality-control
-  rateLimit:
-    requestsPerMinute: 10000
-    tokensPerMinute: 1000000
-  quotas:
-    dailyTokenLimit: 100000000
-  description: "Production workloads - Quality Control team defect detection"
-EOF</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Apply the tier configuration:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-platinum.yaml</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_the_gold_tier_rd"><a class="anchor" href="#_create_the_gold_tier_rd"></a>Create the Gold tier (R&amp;D)</h3>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-gold.yaml &lt;&lt;EOF
-apiVersion: maas.opendatahub.io/v1alpha1
-kind: MaaSTier
-metadata:
-  name: gold
-  namespace: redhat-ods-applications
-spec:
-  priorityLevel: 2
-  groups:
-    - chocotech-rd
-  rateLimit:
-    requestsPerMinute: 2000
-    tokensPerMinute: 200000
-  quotas:
-    dailyTokenLimit: 20000000
-  description: "Development workloads - R&amp;D team recipe optimization"
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-gold.yaml</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_the_silver_tier_supply_chain"><a class="anchor" href="#_create_the_silver_tier_supply_chain"></a>Create the Silver tier (Supply Chain)</h3>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-silver.yaml &lt;&lt;EOF
-apiVersion: maas.opendatahub.io/v1alpha1
-kind: MaaSTier
-metadata:
-  name: silver
-  namespace: redhat-ods-applications
-spec:
-  priorityLevel: 1
-  groups:
-    - chocotech-supply-chain
-  rateLimit:
-    requestsPerMinute: 500
-    tokensPerMinute: 50000
-  quotas:
-    dailyTokenLimit: 5000000
-  description: "Batch workloads - Supply Chain inventory prediction"
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-silver.yaml</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_the_bronze_tier_marketing"><a class="anchor" href="#_create_the_bronze_tier_marketing"></a>Create the Bronze tier (Marketing)</h3>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; tier-bronze.yaml &lt;&lt;EOF
-apiVersion: maas.opendatahub.io/v1alpha1
-kind: MaaSTier
-metadata:
-  name: bronze
-  namespace: redhat-ods-applications
-spec:
-  priorityLevel: 0
-  groups:
-    - chocotech-marketing
-  rateLimit:
-    requestsPerMinute: 100
-    tokensPerMinute: 10000
-  quotas:
-    dailyTokenLimit: 1000000
-  description: "Exploratory workloads - Marketing sentiment analysis"
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f tier-bronze.yaml</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verify_tier_configuration"><a class="anchor" href="#_verify_tier_configuration"></a>Verify tier configuration</h3>
-<div class="paragraph">
-<p>List all configured tiers:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get maastier -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>NAME        PRIORITY   GROUPS                        AGE
-platinum    3          chocotech-quality-control     2m
-gold        2          chocotech-rd                  2m
-silver      1          chocotech-supply-chain        2m
-bronze      0          chocotech-marketing           2m</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Check that Kuadrant RateLimitPolicy resources were created:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get ratelimitpolicy -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>NAME                    AGE
-maas-tier-platinum      2m
-maas-tier-gold          2m
-maas-tier-silver        2m
-maas-tier-bronze        2m</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>These RateLimitPolicy resources are automatically created by the MaaS operator based on your MaaSTier configurations.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verification_2"><a class="anchor" href="#_verification_2"></a>Verification</h3>
-<div class="paragraph">
-<p>Confirm tier and policy configuration:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Four MaaSTier resources created with correct priority levels</p>
-</li>
-<li>
-<p>Groups properly mapped to tiers</p>
-</li>
-<li>
-<p>RateLimitPolicy resources created for each tier</p>
-</li>
-<li>
-<p>Limitador pod is healthy and ready to enforce quotas</p>
-</li>
-</ul>
-</div>
-<div class="imageblock unresolved">
-<div class="content">
-<a class="image" href="maas-tiers-configuration.png" target="blank"><img src="maas-tiers-configuration.png" alt="MaaSTier resources showing priority levels and group mappings" width="800"></a>
-</div>
-<div class="title">Figure 1. Governance Tiers Configuration</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_exercise_4_deploy_grafana_for_observability"><a class="anchor" href="#_exercise_4_deploy_grafana_for_observability"></a>Exercise 4: Deploy Grafana for observability</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>ChocoTech&#8217;s Finance department needs visibility into model usage for chargeback. You&#8217;ll deploy Grafana dashboards to monitor token consumption and GPU utilization.</p>
-</div>
-<div class="paragraph">
-<p>Grafana provides the observability layer for tracking model usage across user tiers and different models.</p>
-</div>
-<div class="sect2">
-<h3 id="_install_grafana_operator_if_not_already_installed"><a class="anchor" href="#_install_grafana_operator_if_not_already_installed"></a>Install Grafana operator (if not already installed)</h3>
-<div class="paragraph">
-<p>Check if Grafana operator is installed:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get csv -n openshift-operators | grep grafana</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>If not installed, install the Grafana operator from OperatorHub:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-operator-subscription.yaml &lt;&lt;EOF
-apiVersion: operators.coreos.com/v1alpha1
-kind: Subscription
-metadata:
-  name: grafana-operator
-  namespace: openshift-operators
-spec:
-  channel: v5
-  name: grafana-operator
-  source: community-operators
-  sourceNamespace: openshift-marketplace
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-operator-subscription.yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Wait for the operator to be ready:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l name=grafana-operator -n openshift-operators --timeout=300s</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_grafana_instance_for_maas_monitoring"><a class="anchor" href="#_create_grafana_instance_for_maas_monitoring"></a>Create Grafana instance for MaaS monitoring</h3>
-<div class="paragraph">
-<p>Create a Grafana instance in the OpenShift AI namespace:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-instance.yaml &lt;&lt;EOF
-apiVersion: grafana.integreatly.org/v1beta1
-kind: Grafana
-metadata:
-  name: maas-grafana
-  namespace: redhat-ods-applications
-  labels:
-    dashboards: "maas"
-spec:
-  config:
-    security:
-      admin_user: admin
-      admin_password: chocotech123
-    server:
-      root_url: https://maas-grafana.apps.{cluster_domain}
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-instance.yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Wait for Grafana to deploy:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l app=grafana -n redhat-ods-applications --timeout=300s</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_create_grafana_data_source_for_prometheus"><a class="anchor" href="#_create_grafana_data_source_for_prometheus"></a>Create Grafana data source for Prometheus</h3>
-<div class="paragraph">
-<p>Configure Grafana to query OpenShift&#8217;s Prometheus for metrics:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; grafana-datasource.yaml &lt;&lt;EOF
-apiVersion: grafana.integreatly.org/v1beta1
-kind: GrafanaDataSource
-metadata:
-  name: prometheus-maas
-  namespace: redhat-ods-applications
-spec:
-  instanceSelector:
-    matchLabels:
-      dashboards: "maas"
-  datasource:
-    name: Prometheus
-    type: prometheus
-    access: proxy
-    url: https://thanos-querier.openshift-monitoring.svc.cluster.local:9091
-    isDefault: true
-    jsonData:
-      tlsSkipVerify: true
-      timeInterval: "5s"
-EOF</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f grafana-datasource.yaml</code></pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_access_grafana_dashboard"><a class="anchor" href="#_access_grafana_dashboard"></a>Access Grafana dashboard</h3>
-<div class="paragraph">
-<p>Get the Grafana route URL:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get route maas-grafana -n redhat-ods-applications -o jsonpath='{.spec.host}'</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>maas-grafana-redhat-ods-applications.apps.{cluster_domain}</pre>
-</div>
-</div>
-<div class="olist arabic">
-<ol class="arabic">
-<li>
-<p>Open the Grafana URL in your browser</p>
-</li>
-<li>
-<p>Log in with:</p>
-<div class="ulist">
-<ul>
-<li>
-<p>Username: <code>admin</code></p>
-</li>
-<li>
-<p>Password: <code>chocotech123</code></p>
-</li>
-</ul>
-</div>
-</li>
-</ol>
-</div>
-<div class="paragraph">
-<p>You should see the Grafana home page.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verification_3"><a class="anchor" href="#_verification_3"></a>Verification</h3>
-<div class="paragraph">
-<p>Confirm Grafana deployment:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Grafana operator is installed and healthy</p>
-</li>
-<li>
-<p>Grafana instance pod is Running in redhat-ods-applications namespace</p>
-</li>
-<li>
-<p>Grafana route exists and is accessible</p>
-</li>
-<li>
-<p>Grafana data source is configured to query Prometheus</p>
-</li>
-<li>
-<p>Successfully logged into Grafana web interface</p>
-</li>
-</ul>
-</div>
-<div class="imageblock unresolved">
-<div class="content">
-<a class="image" href="grafana-maas-dashboard.png" target="blank"><img src="grafana-maas-dashboard.png" alt="Grafana dashboard showing MaaS token consumption and GPU utilization metrics" width="800"></a>
-</div>
-<div class="title">Figure 2. Grafana Observability Dashboard for MaaS</div>
-</div>
-<div class="paragraph">
-<p>Note: Creating comprehensive Grafana dashboards with token consumption by tier, model usage patterns, and GPU utilization requires Prometheus metrics from Kuadrant and KServe. Dashboard JSON configuration would be provided by the MaaS platform team.</p>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_exercise_5_generate_chargeback_reports"><a class="anchor" href="#_exercise_5_generate_chargeback_reports"></a>Exercise 5: Generate chargeback reports</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Now that governance and observability are configured, you can generate chargeback reports for Finance showing token consumption by department.</p>
 </div>
 <div class="paragraph">
 <p>Token-based consumption tracking enables Finance to bill departments based on actual usage rather than infrastructure allocation.</p>
+</div>
+</div>
 </div>
 <div class="sect2">
 <h3 id="_query_token_consumption_metrics"><a class="anchor" href="#_query_token_consumption_metrics"></a>Query token consumption metrics</h3>
@@ -1179,7 +311,7 @@ chmod +x chargeback-report.sh</code></pre>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_verification_4"><a class="anchor" href="#_verification_4"></a>Verification</h3>
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
 <div class="paragraph">
 <p>Confirm chargeback capability:</p>
 </div>
@@ -1201,8 +333,6 @@ chmod +x chargeback-report.sh</code></pre>
 <p>Finance has visibility into AI infrastructure costs by business unit</p>
 </li>
 </ul>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1324,7 +454,7 @@ chmod +x chargeback-report.sh</code></pre>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_exercise_6_production_security_hardening"><a class="anchor" href="#_exercise_6_production_security_hardening"></a>Exercise 6: Production security hardening</h2>
+<h2 id="_4_6_production_security_hardening"><a class="anchor" href="#_4_6_production_security_hardening"></a>4.6: Production security hardening</h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>ChocoTech&#8217;s Chief Information Security Officer (CISO) schedules an urgent meeting before the MaaS platform goes to production. "We need to ensure this AI infrastructure meets our security and compliance requirements," she explains. "We&#8217;re subject to food safety regulations, and AI systems that impact quality control must be auditable and secure."</p>
@@ -2936,8 +2066,8 @@ oc apply -f model-storage-connection-sealed.yaml</code></pre>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a></span>
-  <span class="next"><a href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a></span>
+  <span class="prev"><a href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a></span>
+  <span class="next"><a href="06a-security-hardening.html">4.6: Production security hardening</a></span>
 </nav>
 </article>
   </div>

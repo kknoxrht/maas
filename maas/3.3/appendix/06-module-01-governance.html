@@ -1,0 +1,429 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>4.1: Understanding MaaS governance tiers :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="06-module-00-governance.html">
+    <link rel="next" href="06-module-02-governance.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
+<ul class="nav-list">
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="06-module-00-governance.html">MaaS Governance</a></li>
+    <li><a href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">4.1: Understanding MaaS governance tiers</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Before configuring governance, you need to understand how tier-based access control works and why it&#8217;s critical for multi-tenant model serving.</p>
+</div>
+<div class="paragraph">
+<p>Without tiers, centralized serving becomes uncontrolled consumption. Tier-based access transforms the MaaS platform from an unlimited resource drain to fair allocation across departments.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_governance_challenge_at_chocotech"><a class="anchor" href="#_the_governance_challenge_at_chocotech"></a>The governance challenge at ChocoTech</h3>
+<div class="paragraph">
+<p>ChocoTech controls $500,000 worth of GPU infrastructure serving four departments:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Quality Control</strong>: Defect detection (critical, production workload)</p>
+</li>
+<li>
+<p><strong>R&amp;D</strong>: Recipe optimization (important, but not real-time)</p>
+</li>
+<li>
+<p><strong>Marketing</strong>: Sentiment analysis (high volume, non-critical)</p>
+</li>
+<li>
+<p><strong>Supply Chain</strong>: Inventory prediction (batch processing)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Without governance</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Marketing runs unlimited chatbot queries, exhausting GPU capacity</p>
+</li>
+<li>
+<p>Quality Control&#8217;s critical defect detection gets rate-limited during production shifts</p>
+</li>
+<li>
+<p>Finance cannot allocate AI costs accurately (no consumption tracking)</p>
+</li>
+<li>
+<p>Security has no audit trail showing who accessed which models</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>With MaaS governance</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Each department is assigned a tier with appropriate rate limits and quotas</p>
+</li>
+<li>
+<p>Quality Control gets "Platinum" tier with high limits and priority access</p>
+</li>
+<li>
+<p>Marketing gets "Bronze" tier with moderate limits appropriate for their use case</p>
+</li>
+<li>
+<p>Finance can perform chargeback based on actual token consumption by department</p>
+</li>
+<li>
+<p>Security has complete audit logs of every API request with user identity</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_what_are_maas_tiers"><a class="anchor" href="#_what_are_maas_tiers"></a>What are MaaS tiers?</h3>
+<div class="paragraph">
+<p>Tiers are access control layers that define:</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1"><strong>Access level</strong></dt>
+<dd>
+<p>Which models a user can query (Bronze tier can&#8217;t access Platinum-only models)</p>
+</dd>
+<dt class="hdlist1"><strong>Rate limits</strong></dt>
+<dd>
+<p>Maximum requests per minute (Bronze: 100 req/min, Platinum: 10,000 req/min)</p>
+</dd>
+<dt class="hdlist1"><strong>Token quotas</strong></dt>
+<dd>
+<p>Maximum tokens consumed per minute (Bronze: 10,000 tokens/min, Platinum: 1,000,000 tokens/min)</p>
+</dd>
+<dt class="hdlist1"><strong>Group mapping</strong></dt>
+<dd>
+<p>Which OpenShift groups are assigned to each tier</p>
+</dd>
+<dt class="hdlist1"><strong>Priority level</strong></dt>
+<dd>
+<p>Determines access hierarchy when users belong to multiple groups across different tiers</p>
+</dd>
+</dl>
+</div>
+<div class="paragraph">
+<p>Example: A developer with a Bronze tier Bearer token can only access models published to "Bronze tier and above." A Platinum user can access all models.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_default_tier_structure_for_chocotech"><a class="anchor" href="#_default_tier_structure_for_chocotech"></a>Default tier structure for ChocoTech</h3>
+<div class="paragraph">
+<p>You&#8217;ll configure four tiers aligned with ChocoTech&#8217;s business priorities:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 16.6666%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3335%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Tier Name</th>
+<th class="tableblock halign-left valign-top">Priority Level</th>
+<th class="tableblock halign-left valign-top">Target Department</th>
+<th class="tableblock halign-left valign-top">Rate Limit (req/min)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bronze</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 0</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Marketing (exploratory)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">100 requests/min, 10K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Silver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 1</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Supply Chain (batch)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">500 requests/min, 50K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gold</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 2</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">R&amp;D (development)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">2,000 requests/min, 200K tokens/min</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Platinum</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Level 3</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality Control (production)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">10,000 requests/min, 1M tokens/min</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>Priority Level determines access hierarchy: when a user belongs to multiple groups across different tiers, MaaS assigns them to the tier with the highest level number.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_group_assignment_logic"><a class="anchor" href="#_group_assignment_logic"></a>Group assignment logic</h3>
+<div class="paragraph">
+<p>MaaS uses OpenShift group membership to assign users to tiers:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>User authenticates with Bearer token</p>
+</li>
+<li>
+<p>Authorino (Kuadrant authentication component) extracts user identity and group memberships from OpenShift OAuth</p>
+</li>
+<li>
+<p>MaaS evaluates which tier configurations match the user&#8217;s groups</p>
+</li>
+<li>
+<p>Highest priority level wins if the user belongs to multiple tiers</p>
+</li>
+<li>
+<p>Access is enforced based on assigned tier and model configuration</p>
+</li>
+<li>
+<p>Limitador (Kuadrant rate limiting component) tracks consumption and enforces quotas</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>A Platform Engineer creates a group <code>chocotech-quality-control</code> in OpenShift, then maps it to the Platinum tier. All members of that group automatically get Platinum access with highest rate limits.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_of_tier_prerequisites"><a class="anchor" href="#_verification_of_tier_prerequisites"></a>Verification of tier prerequisites</h3>
+<div class="paragraph">
+<p>Verify that Kuadrant components are running (deployed when MaaS was enabled in Module 2):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n kuadrant-system</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>NAME                          READY   STATUS    RESTARTS   AGE
+authorino-xxx                 1/1     Running   0          2d
+limitador-xxx                 1/1     Running   0          2d</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Check for existing tier configurations:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get maastier -n redhat-ods-applications</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You may see default tiers or this may be empty if tiers haven&#8217;t been configured yet.</p>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="06-module-00-governance.html">MaaS Governance</a></span>
+  <span class="next"><a href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

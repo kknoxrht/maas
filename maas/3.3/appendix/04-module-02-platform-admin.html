@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Exercise 1: Enable MaaS in DataScienceCluster :: Red Hat OpenShift AI - Models as a Service</title>
+    <title>2.1: Creating organizational structure and tier architecture :: Red Hat OpenShift AI - Models as a Service</title>
     <link rel="prev" href="04-module-01-platform-admin.html">
     <link rel="next" href="04-module-03-platform-admin.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -40,194 +40,116 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../index.html">Course Home</a>
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">Workshop Home</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-details.html">Workshop Details</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Architecture</span>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
 <ul class="nav-list">
-  <li class="nav-item is-current-page" data-depth="3">
-    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Model Deploymemnt</span>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="08-conclusion.html">Conclusion</a>
-  </li>
-</ul>
   </li>
 </ul>
   </li>
@@ -260,9 +182,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
-    <li><a href="index.html">Workshop Home</a></li>
-    <li><a href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a></li>
-    <li><a href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a></li>
+    <li><a href="04-module-01-platform-admin.html">Access Control &amp; Governance</a></li>
+    <li><a href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a></li>
   </ul>
 </nav>
 </div>
@@ -271,150 +192,204 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Exercise 1: Enable MaaS in DataScienceCluster</h1>
+<h1 class="page">2.1: Creating organizational structure and tier architecture</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>DataScienceCluster</code> custom resource controls which OpenShift AI components are active. You&#8217;ll update this CRD to enable MaaS.</p>
+<p>Before deploying AI models, you need to establish how ChocoTech&#8217;s business units will access the MaaS platform. This starts with creating OpenShift groups that represent organizational structure and mapping them to access tiers.</p>
 </div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_understanding_tier_based_governance"><a class="anchor" href="#_understanding_tier_based_governance"></a>Understanding tier-based governance</h2>
+<div class="sectionbody">
 <div class="paragraph">
-<p>OpenShift AI uses a declarative configuration model. You declare desired state in CRDs, and the operator reconciles actual state to match. This differs from imperative deployment where you manually create pods, services, and configurations.</p>
-</div>
-</div>
+<p>Tier-based governance provides fair resource allocation across business units while preventing any single team from monopolizing GPU resources.</p>
 </div>
 <div class="sect2">
-<h3 id="_understanding_the_datasciencecluster_crd"><a class="anchor" href="#_understanding_the_datasciencecluster_crd"></a>Understanding the DataScienceCluster CRD</h3>
+<h3 id="_the_three_tier_model"><a class="anchor" href="#_the_three_tier_model"></a>The three-tier model</h3>
 <div class="paragraph">
-<p>The DataScienceCluster CRD has a <code>components</code> section listing all available features:</p>
+<p>MaaS uses a three-tier model for resource allocation:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>kserve</code> - Model serving infrastructure (prerequisite for MaaS)</p>
+<p><strong>Gold tier</strong>: Production workloads with highest priority and guaranteed resources</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Intended for mission-critical applications</p>
 </li>
 <li>
-<p><code>modelsAsService</code> - MaaS API, governance, and Gateway integration</p>
+<p>Premium rate limits and quotas</p>
 </li>
 <li>
-<p><code>dashboard</code> - OpenShift AI web console</p>
-</li>
-<li>
-<p>Other components like Pipelines, Workbenches, Model Registry</p>
+<p>Highest request processing priority</p>
 </li>
 </ul>
 </div>
+</li>
+<li>
+<p><strong>Silver tier</strong>: Development and moderate usage workloads with balanced resources</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Intended for development and staging environments</p>
+</li>
+<li>
+<p>Moderate rate limits and quotas</p>
+</li>
+<li>
+<p>Medium request processing priority</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Bronze tier</strong>: Exploratory and low-priority workloads with shared resources</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Intended for experimentation and testing</p>
+</li>
+<li>
+<p>Conservative rate limits and quotas</p>
+</li>
+<li>
+<p>Lower request processing priority</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_why_tiers_matter_for_maas"><a class="anchor" href="#_why_tiers_matter_for_maas"></a>Why tiers matter for MaaS</h3>
 <div class="paragraph">
-<p>Each component has a <code>managementState</code> field:</p>
+<p>Tier-based governance provides several critical capabilities:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>Managed</code> - Operator deploys and maintains the component</p>
+<p><strong>Fair resource allocation</strong>: Prevents Bronze tier users from consuming resources needed by Gold tier production workloads</p>
 </li>
 <li>
-<p><code>Removed</code> - Operator does not deploy the component</p>
+<p><strong>Cost control</strong>: Rate limits and quotas cap resource consumption per tier</p>
+</li>
+<li>
+<p><strong>Chargeback reporting</strong>: Track and allocate AI infrastructure costs by tier and business unit</p>
+</li>
+<li>
+<p><strong>Quality of service</strong>: Gold tier gets higher priority during peak demand</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Without tiers, the first team to use the platform could monopolize all available GPU resources, blocking other business units.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_chocotechs_business_unit_mapping"><a class="anchor" href="#_chocotechs_business_unit_mapping"></a>ChocoTech&#8217;s business unit mapping</h3>
+<div class="paragraph">
+<p>Based on the CIO&#8217;s requirements document, ChocoTech&#8217;s business units map to tiers as follows:</p>
+</div>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 14.2857%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5714%;">
+<col style="width: 14.2857%;">
+<col style="width: 28.5715%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Business Unit</th>
+<th class="tableblock halign-left valign-top">Tier</th>
+<th class="tableblock halign-left valign-top">Use Case</th>
+<th class="tableblock halign-left valign-top">Priority</th>
+<th class="tableblock halign-left valign-top">Models Allowed</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Quality Control</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Gold</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Defect detection (production)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Highest</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All models</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">R&amp;D</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Silver</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Recipe optimization (development)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Medium</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">All models</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Marketing</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Bronze</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Sentiment analysis (exploratory)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Lower</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Select models</p></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>In Module 3, you&#8217;ll deploy two models:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>llama3-8b</strong>: Accessible to all tiers (Gold, Silver, Bronze)</p>
+</li>
+<li>
+<p><strong>nemotron-8b</strong>: Accessible to Bronze and Silver only (demonstrating selective tier access)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This mapping ensures Quality Control&#8217;s production defect detection system gets guaranteed resources, while Marketing&#8217;s exploratory sentiment analysis doesn&#8217;t impact critical workloads.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_openshift_groups"><a class="anchor" href="#_creating_openshift_groups"></a>Creating OpenShift groups</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>OpenShift groups provide a way to organize users by department or function and assign permissions at the group level rather than individual users.</p>
+</div>
+<div class="sect2">
+<h3 id="_why_use_groups_instead_of_individual_users"><a class="anchor" href="#_why_use_groups_instead_of_individual_users"></a>Why use groups instead of individual users?</h3>
+<div class="paragraph">
+<p>Groups provide several advantages over granting permissions to individual users:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Scalability</strong>: Add new team members by adding them to groups, not by creating individual role bindings</p>
+</li>
+<li>
+<p><strong>Audit trails</strong>: Actions are traceable to business units (e.g., "chocotech-quality-control") rather than individual users</p>
+</li>
+<li>
+<p><strong>Team collaboration</strong>: All members of a group share the same permissions</p>
+</li>
+<li>
+<p><strong>Simplified management</strong>: Change group permissions once instead of updating permissions for each user</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_check_current_datasciencecluster_state"><a class="anchor" href="#_check_current_datasciencecluster_state"></a>Check current DataScienceCluster state</h3>
+<h3 id="_exercise_1_create_business_unit_groups"><a class="anchor" href="#_exercise_1_create_business_unit_groups"></a>Exercise 1: Create business unit groups</h3>
 <div class="paragraph">
-<p>View the current configuration:</p>
+<p>Create groups for each of ChocoTech&#8217;s business units:</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get datasciencecluster default-dsc -o yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Look for the <code>components</code> section. You&#8217;ll likely see:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>spec:
-  components:
-    kserve:
-      managementState: Managed
-    modelsAsService:
-      managementState: Removed
-    dashboard:
-      managementState: Managed</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that <code>modelsAsService</code> is currently <code>Removed</code>, meaning MaaS is not deployed.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_enable_maas_component"><a class="anchor" href="#_enable_maas_component"></a>Enable MaaS component</h3>
-<div class="paragraph">
-<p>Edit the DataScienceCluster:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc edit datasciencecluster default-dsc</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Find the <code>modelsAsService</code> section and change <code>managementState</code> from <code>Removed</code> to <code>Managed</code>:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>spec:
-  components:
-    modelsAsService:
-      managementState: Managed  # Change this from "Removed" to "Managed"
-    kserve:
-      managementState: Managed  # Ensure this is also Managed
-    dashboard:
-      managementState: Managed</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Save and exit the editor (<code>:wq</code> in vi, or <code>Ctrl+X</code> then <code>Y</code> in nano).</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_monitor_maas_deployment"><a class="anchor" href="#_monitor_maas_deployment"></a>Monitor MaaS deployment</h3>
-<div class="paragraph">
-<p>Watch the operator deploy MaaS components:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications -w | grep maas</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You should see pods being created:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>maas-api-xxx                  0/1     ContainerCreating   0          5s
-maas-default-gateway-xxx      0/1     Init:0/1            0          5s</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>After 2-5 minutes, all pods should reach <code>Running</code> state:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>maas-api-xxx                  1/1     Running   0          3m
-maas-default-gateway-xxx      1/1     Running   0          3m</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Press <code>Ctrl+C</code> to stop watching.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verify_maas_api_deployment"><a class="anchor" href="#_verify_maas_api_deployment"></a>Verify MaaS API deployment</h3>
-<div class="paragraph">
-<p>Check that the MaaS API pod is healthy:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications | grep maas-api</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-quality-control</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -422,15 +397,12 @@ maas-default-gateway-xxx      1/1     Running   0          3m</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maas-api-7c8f9d5b-xxx         1/1     Running   0          5m</pre>
+<pre>group.user.openshift.io/chocotech-quality-control created</pre>
 </div>
-</div>
-<div class="paragraph">
-<p>Check the MaaS API service:</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get svc -n redhat-ods-applications | grep maas</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-rd</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -438,36 +410,366 @@ maas-default-gateway-xxx      1/1     Running   0          3m</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>maas-api                ClusterIP   172.30.xxx.xxx   &lt;none&gt;        8080/TCP   5m
-maas-default-gateway    ClusterIP   172.30.xxx.xxx   &lt;none&gt;        80/TCP     5m</pre>
+<pre>group.user.openshift.io/chocotech-rd created</pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups new chocotech-marketing</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>group.user.openshift.io/chocotech-marketing created</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You&#8217;ve now created three groups representing ChocoTech&#8217;s organizational structure.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exercise_2_add_yourself_to_a_group"><a class="anchor" href="#_exercise_2_add_yourself_to_a_group"></a>Exercise 2: Add yourself to a group</h3>
+<div class="paragraph">
+<p>For this lab, you&#8217;ll work as a member of the Quality Control team (Gold tier):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc adm groups add-users chocotech-quality-control $(oc whoami)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>group.user.openshift.io/chocotech-quality-control added: "user1"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify your group membership:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get group chocotech-quality-control -o yaml</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: chocotech-quality-control
+  resourceVersion: "123456"
+  uid: abc123...
+users:
+- user1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>You should see your username in the <code>users</code> list.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_preparing_the_model_serving_namespace"><a class="anchor" href="#_preparing_the_model_serving_namespace"></a>Preparing the model serving namespace</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Models will be deployed in a dedicated namespace with proper labels for MaaS governance.</p>
+</div>
+<div class="sect2">
+<h3 id="_exercise_3_create_and_label_the_namespace"><a class="anchor" href="#_exercise_3_create_and_label_the_namespace"></a>Exercise 3: Create and label the namespace</h3>
+<div class="paragraph">
+<p>Create a new namespace (project) for model serving:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc new-project chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Now using project "chocotech-models" on server "https://api.cluster.example.com:6443".
+
+You can add applications to this project with the 'new-app' command.</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Label the namespace to enable MaaS governance:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc label namespace chocotech-models maas.opendatahub.io/managed=true</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>namespace/chocotech-models labeled</pre>
+</div>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc label namespace chocotech-models modelmesh-enabled=false</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>namespace/chocotech-models labeled</pre>
 </div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<h3 id="_understanding_namespace_labels"><a class="anchor" href="#_understanding_namespace_labels"></a>Understanding namespace labels</h3>
 <div class="paragraph">
-<p>Confirm MaaS enablement:</p>
+<p>These labels serve specific purposes:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>DataScienceCluster shows <code>modelsAsService.managementState: Managed</code></p>
+<p><code>maas.opendatahub.io/managed=true</code>: Enables MaaS governance for this namespace</p>
+<div class="ulist">
+<ul>
+<li>
+<p>MaaS tier policies will apply to models in this namespace</p>
 </li>
 <li>
-<p>MaaS API pod is Running with 1/1 ready containers</p>
+<p>Rate limits and quotas will be enforced</p>
 </li>
 <li>
-<p>MaaS service exists in redhat-ods-applications namespace</p>
-</li>
-<li>
-<p>Gateway pod is Running and ready</p>
+<p>Models can be published to the Gen AI Studio catalog</p>
 </li>
 </ul>
+</div>
+</li>
+<li>
+<p><code>modelmesh-enabled=false</code>: Ensures KServe single-model serving (not ModelMesh)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>MaaS uses KServe with LLMInferenceService for large language models</p>
+</li>
+<li>
+<p>ModelMesh is designed for serving many small models (not LLMs)</p>
+</li>
+<li>
+<p>This label prevents ModelMesh from managing models in this namespace</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exercise_4_grant_group_access_to_namespace"><a class="anchor" href="#_exercise_4_grant_group_access_to_namespace"></a>Exercise 4: Grant group access to namespace</h3>
+<div class="paragraph">
+<p>Grant the Quality Control group admin access to the namespace:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc create rolebinding chocotech-qc-admin \
+  --clusterrole=admin \
+  --group=chocotech-quality-control \
+  -n chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>rolebinding.rbac.authorization.k8s.io/chocotech-qc-admin created</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This RoleBinding grants members of the <code>chocotech-quality-control</code> group (including you) full admin permissions in the <code>chocotech-models</code> namespace, including:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Deploying models (creating LLMInferenceService resources)</p>
+</li>
+<li>
+<p>Managing resources (pods, services, config maps)</p>
+</li>
+<li>
+<p>Viewing logs and metrics</p>
+</li>
+<li>
+<p>Managing RBAC within the namespace</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>In production, you would create separate RoleBindings for each business unit group with appropriate permissions. For this lab, you&#8217;re working as Quality Control (Gold tier) with admin access.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Verify all organizational structure components are in place:</p>
+</div>
+<div class="sect2">
+<h3 id="_verification_checklist"><a class="anchor" href="#_verification_checklist"></a>Verification checklist</h3>
+<div class="paragraph">
+<p>Confirm the following:</p>
+</div>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-square-o"></i> Three business unit groups created (chocotech-quality-control, chocotech-rd, chocotech-marketing)</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Current user is member of chocotech-quality-control group</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> chocotech-models namespace exists and is labeled for MaaS</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> RoleBinding grants Quality Control group access to namespace</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Run this verification command:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">echo "=== Groups ===" &amp;&amp; \
+oc get groups | grep chocotech &amp;&amp; \
+echo "=== Current User ===" &amp;&amp; \
+oc whoami &amp;&amp; \
+echo "=== Group Membership ===" &amp;&amp; \
+oc get group chocotech-quality-control -o jsonpath='{.users[*]}' &amp;&amp; echo &amp;&amp; \
+echo "=== Namespace ===" &amp;&amp; \
+oc get namespace chocotech-models --show-labels &amp;&amp; \
+echo "=== RoleBindings ===" &amp;&amp; \
+oc get rolebinding -n chocotech-models | grep chocotech</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>=== Groups ===
+chocotech-marketing
+chocotech-quality-control
+chocotech-rd
+=== Current User ===
+user1
+=== Group Membership ===
+user1
+=== Namespace ===
+NAME                STATUS   AGE   LABELS
+chocotech-models    Active   5m    maas.opendatahub.io/managed=true,modelmesh-enabled=false,...
+=== RoleBindings ===
+chocotech-qc-admin                                        ClusterRole/admin                                         5m</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All checkboxes should be complete.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_business_value"><a class="anchor" href="#_business_value"></a>Business value</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By mapping ChocoTech&#8217;s organizational structure to OpenShift groups and tiers, you&#8217;ve established the foundation for:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Department-level access control</strong>: Quality Control team members can collaborate on model deployment without individual permission management</p>
+</li>
+<li>
+<p><strong>Tier-based resource allocation</strong>: Gold tier will receive priority when governance policies are applied in Section 2.3</p>
+</li>
+<li>
+<p><strong>Audit trails</strong>: All actions are traceable to business unit groups, not individual users</p>
+</li>
+<li>
+<p><strong>Scalable onboarding</strong>: New team members can be added to groups without complex RBAC configuration</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When the CIO asks "How do we ensure Quality Control&#8217;s production workloads aren&#8217;t impacted by Marketing&#8217;s experiments?", you can now point to the tier-based group structure.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_knowledge_check"><a class="anchor" href="#_knowledge_check"></a>Knowledge check</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Test your understanding before moving to the next section:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Why use OpenShift groups instead of granting access to individual users?</strong></p>
+<div class="paragraph">
+<p>Groups provide scalability (easy to add new users), audit trails (actions traced to business units), and simplified permission management (change group permissions once instead of per user).</p>
+</div>
+</li>
+<li>
+<p><strong>What is the benefit of the <code>maas.opendatahub.io/managed=true</code> label?</strong></p>
+<div class="paragraph">
+<p>This label enables MaaS governance for the namespace, allowing tier policies, rate limits, and quotas to be enforced on models deployed in this namespace.</p>
+</div>
+</li>
+<li>
+<p><strong>Which ChocoTech business unit will have the highest priority for model inference requests?</strong></p>
+<div class="paragraph">
+<p>Quality Control (Gold tier) will have highest priority (priority: 100) to ensure production defect detection workloads get guaranteed resources.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve established ChocoTech&#8217;s organizational structure with groups and namespace preparation. In the next section, you&#8217;ll configure API authentication using ServiceAccounts and RBAC so applications can access models programmatically with JWT tokens.</p>
+</div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a></span>
-  <span class="next"><a href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a></span>
+  <span class="prev"><a href="04-module-01-platform-admin.html">Access Control &amp; Governance</a></span>
+  <span class="next"><a href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a></span>
 </nav>
 </article>
   </div>

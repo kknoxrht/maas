@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>5.3: Implement retry logic for rate limiting :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="prev" href="07-module-02-api-integration.html">
+    <link rel="next" href="07-module-04-api-integration.html">
+    <meta name="generator" content="Antora 3.1.3">
+    <link rel="stylesheet" href="../../../_/css/site.css">
+    <script>var uiRootPath = '../../../_'</script>
+  </head>
+  <body class="article">
+<header class="header">
+  <nav class="navbar">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="https://www.redhat.com" target="_blank"><img src="../../../_/img/redhat-logo.png" height="40px" alt="Red Hat"></a>
+      <a class="navbar-item" style="font-size: 24px; color: white" href="../../..">Red Hat OpenShift AI - Models as a Service</a>
+      <button class="navbar-burger" data-target="topbar-nav">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+    </div>
+    <div id="topbar-nav" class="navbar-menu">
+      <div class="navbar-end">
+        <a class="navbar-item" href="https://github.com/RedHatQuickCourses/REPLACEREPONAME/issues" target="_blank">Report Issues</a>
+      </div>
+    </div>
+  </nav>
+</header>
+<div class="body">
+<div class="nav-container" data-component="maas" data-version="3.3">
+  <aside class="nav">
+    <div class="panels">
+<div class="nav-panel-menu is-active" data-panel="menu">
+  <nav class="nav-menu">
+    <h3 class="title"><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></h3>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="0">
+<ul class="nav-list">
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="02-details.html">Workshop Details</a>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
+    <a class="nav-link" href="08-conclusion.html">Conclusion</a>
+  </li>
+</ul>
+  </li>
+</ul>
+  </nav>
+</div>
+<div class="nav-panel-explore" data-panel="explore">
+  <div class="context">
+    <span class="title">Red Hat OpenShift AI - Models as a Service</span>
+    <span class="version">3.3</span>
+  </div>
+  <ul class="components">
+    <li class="component is-current">
+      <a class="title" href="../index.html">Red Hat OpenShift AI - Models as a Service</a>
+      <ul class="versions">
+        <li class="version is-current is-latest">
+          <a href="../index.html">3.3</a>
+        </li>
+      </ul>
+    </li>
+  </ul>
+</div>
+    </div>
+  </aside>
+</div>
+<main class="article">
+<div class="toolbar" role="navigation">
+<button class="nav-toggle"></button>
+  <a href="../index.html" class="home-link"></a>
+<nav class="breadcrumbs" aria-label="breadcrumbs">
+  <ul>
+    <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
+    <li><a href="07-module-00-api-integration.html">Developer Experience - API Integration</a></li>
+    <li><a href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a></li>
+  </ul>
+</nav>
+</div>
+  <div class="content">
+<aside class="toc sidebar" data-title="Contents" data-levels="2">
+  <div class="toc-menu"></div>
+</aside>
+<article class="doc">
+<h1 class="page">5.3: Implement retry logic for rate limiting</h1>
+<div id="preamble">
+<div class="sectionbody">
+<div class="paragraph">
+<p>Production applications must handle rate limiting responses (429 status) gracefully using exponential backoff retry logic.</p>
+</div>
+<div class="paragraph">
+<p>When users exceed their tier&#8217;s rate limit or quota, Kuadrant returns <code>429 Rate Limit Exceeded</code> with a <code>Retry-After</code> header indicating when to retry.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_understand_rate_limit_responses"><a class="anchor" href="#_understand_rate_limit_responses"></a>Understand rate limit responses</h3>
+<div class="paragraph">
+<p>Make multiple rapid requests to trigger rate limiting (Bronze tier: 100 req/min):</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">for i in {1..10}; do
+  curl -s -w "\nHTTP Status: %{http_code}\n" -X POST "https://${MAAS_URL}/v1/chat/completions" \
+    -H "Authorization: Bearer ${MAAS_TOKEN}" \
+    -H "Content-Type: application/json" \
+    -d '{
+      "model": "meta-llama/Meta-Llama-3-8B-Instruct",
+      "messages": [{"role": "user", "content": "Hi"}],
+      "max_tokens": 10
+    }' | head -5
+  sleep 0.5
+done</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If you exceed rate limits, you&#8217;ll see:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>HTTP Status: 429
+
+{
+  "error": {
+    "message": "Rate limit exceeded. Retry after 45 seconds.",
+    "type": "rate_limit_exceeded",
+    "code": 429
+  }
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The response includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>HTTP status <code>429 Rate Limit Exceeded</code></p>
+</li>
+<li>
+<p><code>Retry-After</code> header with seconds to wait</p>
+</li>
+<li>
+<p>Error message explaining the limit</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_implement_exponential_backoff_retry_logic"><a class="anchor" href="#_implement_exponential_backoff_retry_logic"></a>Implement exponential backoff retry logic</h3>
+<div class="paragraph">
+<p>Create a Python script with proper retry logic:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; maas_client_with_retry.py &lt;&lt;'EOF'
+#!/usr/bin/env python3
+import os
+import time
+import requests
+from typing import Optional
+
+MAAS_URL = f"https://{os.getenv('MAAS_URL')}"
+MAAS_TOKEN = os.getenv('MAAS_TOKEN')
+
+def chat_completion_with_retry(
+    model: str,
+    messages: list,
+    max_retries: int = 3,
+    initial_backoff: float = 1.0
+) -&gt; Optional[dict]:
+    """
+    Make chat completion request with exponential backoff retry logic.
+
+    Args:
+        model: Model identifier
+        messages: List of chat messages
+        max_retries: Maximum number of retry attempts
+        initial_backoff: Initial backoff delay in seconds
+
+    Returns:
+        API response dict or None if all retries failed
+    """
+    headers = {
+        "Authorization": f"Bearer {MAAS_TOKEN}",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "model": model,
+        "messages": messages,
+        "max_tokens": 200
+    }
+
+    backoff = initial_backoff
+
+    for attempt in range(max_retries + 1):
+        try:
+            response = requests.post(
+                f"{MAAS_URL}/v1/chat/completions",
+                headers=headers,
+                json=payload,
+                timeout=30
+            )
+
+            # Success
+            if response.status_code == 200:
+                return response.json()
+
+            # Rate limit exceeded
+            elif response.status_code == 429:
+                if attempt &lt; max_retries:
+                    # Get retry-after header if present, otherwise use exponential backoff
+                    retry_after = int(response.headers.get('Retry-After', backoff))
+                    print(f"Rate limit exceeded. Retrying after {retry_after} seconds (attempt {attempt + 1}/{max_retries})")
+                    time.sleep(retry_after)
+                    backoff *= 2  # Exponential backoff for next attempt
+                else:
+                    print(f"Rate limit exceeded. Max retries ({max_retries}) reached.")
+                    return None
+
+            # Unauthorized or forbidden
+            elif response.status_code in [401, 403]:
+                print(f"Authentication error: {response.status_code}")
+                print(response.json())
+                return None
+
+            # Other errors
+            else:
+                print(f"API error: {response.status_code}")
+                print(response.json())
+                return None
+
+        except requests.exceptions.Timeout:
+            print(f"Request timeout (attempt {attempt + 1}/{max_retries})")
+            if attempt &lt; max_retries:
+                time.sleep(backoff)
+                backoff *= 2
+        except requests.exceptions.RequestException as e:
+            print(f"Request failed: {e}")
+            return None
+
+    return None
+
+# Test the retry logic
+if __name__ == "__main__":
+    print("Testing MaaS API with retry logic...\n")
+
+    result = chat_completion_with_retry(
+        model="meta-llama/Meta-Llama-3-8B-Instruct",
+        messages=[
+            {"role": "system", "content": "You are a helpful assistant for ChocoTech Industries."},
+            {"role": "user", "content": "What are the benefits of dark chocolate?"}
+        ],
+        max_retries=3,
+        initial_backoff=1.0
+    )
+
+    if result:
+        print("Success!")
+        print(f"Response: {result['choices'][0]['message']['content']}")
+        print(f"\nTokens used: {result['usage']['total_tokens']}")
+    else:
+        print("Failed to get response after retries.")
+EOF
+
+chmod +x maas_client_with_retry.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run the script:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">python3 maas_client_with_retry.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Testing MaaS API with retry logic...
+
+Success!
+Response: Dark chocolate offers several health benefits for consumers:
+
+1. Rich in antioxidants (flavonoids) that support heart health
+2. May improve blood flow and lower blood pressure
+3. Contains minerals like iron, magnesium, and zinc
+4. May enhance brain function and mood
+5. Lower sugar content compared to milk chocolate
+
+At ChocoTech Industries, we emphasize the quality of cocoa beans and minimal processing to preserve these beneficial compounds.
+
+Tokens used: 156</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm retry logic implementation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Script handles 429 rate limit responses gracefully</p>
+</li>
+<li>
+<p>Exponential backoff increases wait time between retries</p>
+</li>
+<li>
+<p><code>Retry-After</code> header is respected when present</p>
+</li>
+<li>
+<p>Maximum retry attempts prevent infinite loops</p>
+</li>
+<li>
+<p>Successful response after rate limit delay</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_exercise_4_openai_api_compatibility_and_migration_patterns"><a class="anchor" href="#_exercise_4_openai_api_compatibility_and_migration_patterns"></a>Exercise 4: OpenAI API compatibility and migration patterns</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>MaaS uses the OpenAI-compatible API format, making it easy to migrate existing applications from OpenAI to self-hosted models.</p>
+</div>
+<div class="paragraph">
+<p>Applications built for ChatGPT or GPT-4 can switch to MaaS models by changing two parameters: base URL and API key.</p>
+</div>
+<div class="sect2">
+<h3 id="_openai_sdk_compatibility"><a class="anchor" href="#_openai_sdk_compatibility"></a>OpenAI SDK compatibility</h3>
+<div class="paragraph">
+<p>Install the OpenAI Python SDK:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">pip install openai</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Create a migration example showing how to switch from OpenAI to MaaS:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">cat &gt; openai_to_maas_migration.py &lt;&lt;'EOF'
+#!/usr/bin/env python3
+import os
+from openai import OpenAI
+
+# BEFORE: Using OpenAI ChatGPT
+# client = OpenAI(
+#     api_key=os.getenv("OPENAI_API_KEY")
+# )
+
+# AFTER: Using MaaS (only two changes required)
+client = OpenAI(
+    base_url=f"https://{os.getenv('MAAS_URL')}/v1",  # Change 1: MaaS gateway URL
+    api_key=os.getenv("MAAS_TOKEN")                   # Change 2: MaaS Bearer token
+)
+
+# The rest of the code remains identical
+response = client.chat.completions.create(
+    model="meta-llama/Meta-Llama-3-8B-Instruct",  # Use MaaS model instead of gpt-4
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant for ChocoTech Industries."},
+        {"role": "user", "content": "How can we reduce production waste in chocolate manufacturing?"}
+    ],
+    max_tokens=200,
+    temperature=0.7
+)
+
+print("Response from MaaS model:")
+print(response.choices[0].message.content)
+print(f"\nTokens used: {response.usage.total_tokens}")
+EOF
+
+chmod +x openai_to_maas_migration.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Run the migration example:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">python3 openai_to_maas_migration.py</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Response from MaaS model:
+To reduce production waste in chocolate manufacturing, consider these strategies:
+
+1. Implement precise temperature control during tempering to reduce rejections
+2. Optimize ingredient batching to minimize excess materials
+3. Reprocess chocolate scrap and trimmings back into production
+4. Use predictive quality control to catch defects earlier
+5. Train staff on proper handling to reduce breakage
+6. Implement just-in-time inventory management
+7. Monitor and optimize packaging material usage
+
+These approaches can significantly reduce waste while maintaining product quality.
+
+Tokens used: 148</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_migration_checklist_for_existing_applications"><a class="anchor" href="#_migration_checklist_for_existing_applications"></a>Migration checklist for existing applications</h3>
+<div class="paragraph">
+<p><strong>For applications using OpenAI SDK</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Change <code>base_url</code> to MaaS gateway endpoint</p>
+</li>
+<li>
+<p>Replace OpenAI API key with MaaS Bearer token</p>
+</li>
+<li>
+<p>Update model names (gpt-4 → meta-llama/Meta-Llama-3-8B-Instruct)</p>
+</li>
+<li>
+<p>Test error handling for tier-specific rate limits</p>
+</li>
+<li>
+<p>No other code changes required</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>For applications using direct REST API calls</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Replace <code><a href="https://api.openai.com/v1" class="bare">https://api.openai.com/v1</a></code> with <code><a href="https://&lt;maas-gateway&gt;/v1" class="bare">https://&lt;maas-gateway&gt;/v1</a></code></p>
+</li>
+<li>
+<p>Replace <code>Authorization: Bearer sk-&#8230;&#8203;</code> with MaaS Bearer token</p>
+</li>
+<li>
+<p>Update model identifiers in request payloads</p>
+</li>
+<li>
+<p>API request/response format remains identical</p>
+</li>
+</ol>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_verification_2"><a class="anchor" href="#_verification_2"></a>Verification</h3>
+<div class="paragraph">
+<p>Confirm OpenAI compatibility:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenAI Python SDK works with MaaS without code changes (except base_url and api_key)</p>
+</li>
+<li>
+<p>Existing applications can migrate by changing two configuration parameters</p>
+</li>
+<li>
+<p>Request/response format matches OpenAI API exactly</p>
+</li>
+<li>
+<p>Same SDK patterns work for both OpenAI and MaaS</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_troubleshooting"><a class="anchor" href="#_troubleshooting"></a>Troubleshooting</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p><strong>Issue</strong>: API returns 401 Unauthorized</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify Bearer token is valid and not expired in Gen AI Studio → API tokens</p>
+</li>
+<li>
+<p>Check token is correctly set in environment variable: <code>echo ${MAAS_TOKEN:0:20}</code></p>
+</li>
+<li>
+<p>Ensure Authorization header format: <code>Authorization: Bearer &lt;token&gt;</code> (not <code>Bearer: &lt;token&gt;</code>)</p>
+</li>
+<li>
+<p>Verify token was copied correctly (no extra spaces or newlines)</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: API returns 403 Forbidden</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Your tier does not have access to the requested model</p>
+</li>
+<li>
+<p>Check model&#8217;s tier access in Gen AI Studio → Models tab</p>
+</li>
+<li>
+<p>Verify your user group membership: <code>oc get user {user} -o yaml | grep groups</code></p>
+</li>
+<li>
+<p>Check which tier your group is assigned to</p>
+</li>
+<li>
+<p>Request access from Platform Engineer to upgrade tier or publish model to your tier</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: API returns 429 Rate Limit Exceeded immediately</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>You&#8217;ve exhausted your tier&#8217;s quota (requests/min or tokens/min)</p>
+</li>
+<li>
+<p>Check usage in Gen AI Studio → Usage tab</p>
+</li>
+<li>
+<p>Implement exponential backoff retry logic (see Exercise 3)</p>
+</li>
+<li>
+<p>Request tier upgrade from Platform Engineer if usage is legitimate</p>
+</li>
+<li>
+<p>Check <code>Retry-After</code> header for when quota resets</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: OpenAI SDK raises "Connection refused" error</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Verify MaaS gateway route exists: <code>oc get route maas-default-gateway -n redhat-ods-applications</code></p>
+</li>
+<li>
+<p>Check MAAS_URL environment variable is correct: <code>echo $MAAS_URL</code></p>
+</li>
+<li>
+<p>Verify network connectivity from client to OpenShift cluster</p>
+</li>
+<li>
+<p>Check for firewall or proxy blocking HTTPS traffic</p>
+</li>
+<li>
+<p>Test with curl first to isolate SDK vs connectivity issues</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Model inference returns empty or truncated response</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Check <code>max_tokens</code> parameter - may be too low for complete response</p>
+</li>
+<li>
+<p>Increase <code>max_tokens</code> to allow longer completions (e.g., 500 or 1000)</p>
+</li>
+<li>
+<p>Check <code>finish_reason</code> in response - if "length", tokens limit was hit</p>
+</li>
+<li>
+<p>Verify model is healthy: <code>oc get llminferenceservice -n chocotech-models</code></p>
+</li>
+<li>
+<p>Check model pod logs for inference errors: <code>oc logs -l app=llama-3-8b -n chocotech-models</code></p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p><strong>Issue</strong>: Requests timing out after 30 seconds</p>
+</div>
+<div class="paragraph">
+<p><strong>Solution</strong>:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Large models or long prompts may take time to generate responses</p>
+</li>
+<li>
+<p>Increase request timeout in client code (e.g., <code>timeout=60</code>)</p>
+</li>
+<li>
+<p>Check model pod CPU/GPU utilization - may be overloaded</p>
+</li>
+<li>
+<p>Consider using streaming responses for better user experience</p>
+</li>
+<li>
+<p>Check for model pod issues: <code>oc get pods -n chocotech-models</code></p>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_learning_outcomes"><a class="anchor" href="#_learning_outcomes"></a>Learning outcomes</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By completing this module, you should now understand:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>✓ How to navigate Gen AI Studio to discover models and generate API tokens</p>
+</li>
+<li>
+<p>✓ The OpenAI-compatible API structure and endpoint patterns (<code>/v1/models</code>, <code>/v1/chat/completions</code>)</p>
+</li>
+<li>
+<p>✓ How to implement exponential backoff retry logic for production applications</p>
+</li>
+<li>
+<p>✓ How tier-based rate limiting and quotas affect API responses</p>
+</li>
+<li>
+<p>✓ Migration patterns for switching applications from OpenAI to self-hosted MaaS models</p>
+</li>
+<li>
+<p>✓ Token consumption tracking and quota management for cost visibility</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_module_summary"><a class="anchor" href="#_module_summary"></a>Module summary</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve successfully demonstrated the developer experience for consuming MaaS models via the OpenAI-compatible API.</p>
+</div>
+<div class="paragraph">
+<p><strong>What you accomplished for ChocoTech</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Enabled Marketing team to switch from external OpenAI API to internal MaaS models</p>
+</li>
+<li>
+<p>Generated API tokens with appropriate expiration and scope for application integration</p>
+</li>
+<li>
+<p>Demonstrated OpenAI SDK compatibility for minimal migration effort</p>
+</li>
+<li>
+<p>Implemented retry logic for production-ready error handling</p>
+</li>
+<li>
+<p>Provided developers with self-service access to AI capabilities without infrastructure complexity</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Developer experience benefits</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Self-service</strong>: Developers generate API tokens without Platform Engineer involvement</p>
+</li>
+<li>
+<p><strong>Familiar API</strong>: OpenAI-compatible format reduces learning curve and enables code reuse</p>
+</li>
+<li>
+<p><strong>Production-ready</strong>: Rate limiting and retry patterns ensure reliable applications</p>
+</li>
+<li>
+<p><strong>Cost visibility</strong>: Token consumption tracking enables application-level budget management</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Your journey progress</strong>:</p>
+</div>
+<div class="paragraph">
+<p>ChocoTech now has a complete MaaS platform with governance, observability, and developer self-service capabilities. From GPU silo crisis to centralized model hub, you&#8217;ve transformed how the organization delivers AI capabilities.</p>
+</div>
+<div class="paragraph">
+<p><strong>What you&#8217;ve built</strong>:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Module 1: Understood the GPU silo problem and MaaS architecture</p>
+</li>
+<li>
+<p>Module 2: Configured the MaaS platform through OpenShift AI operator</p>
+</li>
+<li>
+<p>Module 3: Deployed models with distributed inference to the catalog</p>
+</li>
+<li>
+<p>Module 4: Implemented governance tiers, rate limiting, and chargeback</p>
+</li>
+<li>
+<p>Module 5: Enabled developer API integration with OpenAI compatibility</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p><strong>Next steps</strong>:</p>
+</div>
+<div class="paragraph">
+<p>The Conclusion will summarize key learning outcomes, provide reference links to Red Hat OpenShift AI documentation, and outline paths for further exploration including model optimization, fine-tuning, and production deployment patterns.</p>
+</div>
+</div>
+</div>
+<nav class="pagination">
+  <span class="prev"><a href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a></span>
+  <span class="next"><a href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a></span>
+</nav>
+</article>
+  </div>
+</main>
+</div>
+<footer class="footer">
+  <img src="../../../_/img/rhl-logo-red.png" height="40px" alt="Red Hat"  href="https://redhat.com" >
+</footer><script id="site-script" src="../../../_/js/site.js" data-ui-root-path="../../../_"></script>
+<script async src="../../../_/js/vendor/highlight.js"></script>
+  </body>
+</html>

@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Solving the GPU Silo with Model as a Service (MaaS) :: Red Hat OpenShift AI - Models as a Service</title>
-    <link rel="next" href="LABENV/index.html">
+    <title>Red Hat OpenShift AI: Models as a Service Enablement :: Red Hat OpenShift AI - Models as a Service</title>
+    <link rel="next" href="appendix/01-overview.html">
     <meta name="generator" content="Antora 3.1.3">
     <link rel="stylesheet" href="../../_/css/site.css">
     <script>var uiRootPath = '../../_'</script>
@@ -39,194 +39,116 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item is-current-page" data-depth="1">
-    <a class="nav-link" href="index.html">Course Home</a>
+    <a class="nav-link" href="index.html">Models-as-a-Service Introduction</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="LABENV/index.html">Lab Environment</a>
+    <a class="nav-link" href="appendix/01-overview.html">QuickCourse Overview</a>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="ch3-governance/index.html">3. Governance &amp; Observability</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="appendix/index.html">Workshop Home</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="appendix/01-overview.html">Workshop Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="appendix/02-details.html">Workshop Details</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Architecture</span>
+    <a class="nav-link" href="appendix/03-module-00-architecture.html">MaaS Architecture</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="appendix/04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+    <a class="nav-link" href="appendix/04-module-01-platform-admin.html">Access Control &amp; Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Model Deploymemnt</span>
+    <a class="nav-link" href="appendix/05-module-01-model-deployment.html">Model Deployment</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="appendix/06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+    <a class="nav-link" href="appendix/06-module-00-governance.html">MaaS Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="appendix/06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/06-module-05-governance.html">Troubleshooting</a>
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="appendix/07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="appendix/07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+    <a class="nav-link" href="appendix/07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="appendix/07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="appendix/08-conclusion.html">Conclusion</a>
-  </li>
-</ul>
   </li>
 </ul>
   </li>
@@ -259,7 +181,7 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="index.html">Red Hat OpenShift AI - Models as a Service</a></li>
-    <li><a href="index.html">Course Home</a></li>
+    <li><a href="index.html">Models-as-a-Service Introduction</a></li>
   </ul>
 </nav>
 </div>
@@ -268,83 +190,58 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Solving the GPU Silo with Model as a Service (MaaS)</h1>
+<h1 class="page">Red Hat OpenShift AI: Models as a Service Enablement</h1>
 <div id="preamble">
 <div class="sectionbody">
-<div class="paragraph lead">
-<p><strong>Transform GPU infrastructure from isolated team silos into a centralized Centralized Model Hub with governed token-based consumption.</strong></p>
+<div class="paragraph">
+<p>Welcome to the Red Hat OpenShift AI Models as a Service enablement QuickCourse!</p>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_course_description"><a class="anchor" href="#_course_description"></a>Course Description</h2>
+<h2 id="_what_youll_learn"><a class="anchor" href="#_what_youll_learn"></a>What you&#8217;ll learn</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Organizations face a "GPU Silo" crisis where expensive, limited hardware is trapped within individual teams, creating simultaneous idle capacity and project bottlenecks.</p>
+<p>In this QuickCourse, you will:</p>
 </div>
-<div class="paragraph">
-<p>This course equips Platform Engineers, AI/ML Platform Administrators, and Developers with the expertise to design, deploy, and manage a scalable Models-as-a-Service (MaaS) ecosystem within Red Hat OpenShift AI.</p>
-</div>
-<div class="paragraph">
-<p>By the end of this training, you will transition your infrastructure from "dedicated, single-team clusters" (siloed hardware) to a centralized "consumable model backplane" with robust governance, usage quotas, and seamless integration of production-ready AI endpoints.</p>
-</div>
-<div class="paragraph">
-<p><strong>Duration</strong>: 3-4 hours</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Understand the GPU silo crisis and how Models as a Service (MaaS) solves resource allocation challenges</p>
+</li>
+<li>
+<p>Design and implement a centralized model hub with governed token-based consumption</p>
+</li>
+<li>
+<p>Configure MaaS on Red Hat OpenShift AI using the operator and Custom Resource Definitions</p>
+</li>
+<li>
+<p>Deploy generative AI models using llm-d, vLLM, and KServe components for distributed inference</p>
+</li>
+<li>
+<p>Publish models to the OpenShift AI dashboard catalog for self-service access with role-based permissions</p>
+</li>
+<li>
+<p>Implement governance policies with tiered service limits and rate limiting using Kuadrant</p>
+</li>
+<li>
+<p>Generate usage reports for chargeback and monitor GPU utilization metrics with Grafana</p>
+</li>
+<li>
+<p>Integrate AI models into applications using OpenAI-compatible APIs with proper retry logic</p>
+</li>
+</ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_what_youll_learn"><a class="anchor" href="#_what_youll_learn"></a>What You&#8217;ll Learn</h2>
+<h2 id="_who_this_is_for"><a class="anchor" href="#_who_this_is_for"></a>Who this is for</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This course covers:</p>
+<p>This QuickCourse is built for Platform Engineers and Developers—including associates, partners, and customers—looking to modernize their GPU infrastructure. You will learn how to break down team silos and establish a centralized, governed environment that empowers lines of business to build agentic AI applications with ease.</p>
 </div>
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Architecture</strong></dt>
-<dd>
-<p>Understand the transition from hardware management to token delivery, map the architectural layers (KServe, Kuadrant, Gateway API), and articulate how MaaS prevents "Shadow AI".</p>
-</dd>
-<dt class="hdlist1"><strong>Platform Administration</strong></dt>
-<dd>
-<p>Configure the OpenShift AI CRDs to enable the MaaS component, establish Gateway API routing, and activate the dashboard interface.</p>
-</dd>
-<dt class="hdlist1"><strong>Model Deployment</strong></dt>
-<dd>
-<p>Publishing models to the governed catalog with distributed inference</p>
-</dd>
-<dt class="hdlist1"><strong>Governance</strong></dt>
-<dd>
-<p>Define tiered service limits, configure group-based rate limiting, track token consumption metrics, and automate chargeback workflows.</p>
-</dd>
-<dt class="hdlist1"><strong>API Integration</strong></dt>
-<dd>
-<p>Navigate the Gen AI studio, generate authentication tokens, implement programmatic retry logic for rate limits, and integrate models into applications via OpenAI-compatible APIs.</p>
-</dd>
-</dl>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_target_audience"><a class="anchor" href="#_target_audience"></a>Target Audience</h2>
-<div class="sectionbody">
-<div class="dlist">
-<dl>
-<dt class="hdlist1"><strong>Platform Engineers</strong></dt>
-<dd>
-<p>Configure MaaS through the OpenShift AI operator
-Manage governance, user groups, and observability
-Monitor cluster health, gateway routing, and resource usage</p>
-</dd>
-<dt class="hdlist1"><strong>Developers</strong></dt>
-<dd>
-<p>Consume MaaS endpoints and integrate models into applications</p>
-</dd>
-<dt class="hdlist1"><strong>Target Level</strong></dt>
-<dd>
-<p>Tech Level 3 (Internal, Partners, and Customers)</p>
-</dd>
-</dl>
+<div class="paragraph">
+<p><strong>Experience level</strong>: Intermediate</p>
 </div>
 </div>
 </div>
@@ -352,12 +249,12 @@ Monitor cluster health, gateway routing, and resource usage</p>
 <h2 id="_prerequisites"><a class="anchor" href="#_prerequisites"></a>Prerequisites</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This course assumes you have:</p>
+<p>Before starting this QuickCourse, you should have:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Red Hat OpenShift administration experience (Version 4.20+)</p>
+<p>Red Hat OpenShift administration experience (Version 4.20 or later)</p>
 </li>
 <li>
 <p>Basic Kubernetes operator management knowledge</p>
@@ -366,110 +263,60 @@ Monitor cluster health, gateway routing, and resource usage</p>
 <p>Familiarity with core GPU concepts and generic GPU enablement</p>
 </li>
 <li>
-<p>A deployed instance of Red Hat OpenShift AI 3.3 or later</p>
+<p>Understanding of API concepts and REST principles</p>
+</li>
+<li>
+<p>Basic command line experience</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_course_structure"><a class="anchor" href="#_course_structure"></a>Course Structure</h2>
+<h2 id="_quickcourse_environment"><a class="anchor" href="#_quickcourse_environment"></a>QuickCourse environment</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This course contains five modules:</p>
-</div>
-<table class="tableblock frame-all grid-all stretch">
-<colgroup>
-<col style="width: 25%;">
-<col style="width: 75%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-top">Module</th>
-<th class="tableblock halign-left valign-top">Description</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="ch1-utility-ai/index.html" class="xref page">Module 1</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">The Shift to Utility AI &amp; Architecture Foundation</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="ch2-platform-admin/index.html" class="xref page">Module 2</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Administering the MaaS Platform</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#ch3-model-deployment:index.adoc" class="xref unresolved">Module 3</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Deploying Models to the MaaS Catalog</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="#ch4-governance:index.adoc" class="xref unresolved">Module 4</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Governance, Observability, and Chargeback</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="ch5-api-integration/index.html" class="xref page">Module 5</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">API Integration &amp; Consumer Experience</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_business_value"><a class="anchor" href="#_business_value"></a>Business Value</h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>This course addresses critical organizational challenges:</p>
-</div>
-<div class="paragraph">
-<p><strong>Without MaaS</strong>:</p>
+<p>The recommended lab environment is a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs (minimum 48GB - (2x24Gb) pre-configured with:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>GPU hardware sits idle while projects queue</p>
+<p>Red Hat OpenShift 4.20 or later</p>
 </li>
 <li>
-<p>Multiple teams deploy the same models redundantly</p>
+<p>Red Hat OpenShift AI 3.3.2 or later (operator installed)</p>
 </li>
 <li>
-<p>No audit trail for compliance requirements</p>
+<p>GPU operators and drivers configured</p>
 </li>
 <li>
-<p>Cannot track usage or forecast compute needs</p>
-</li>
-</ul>
-</div>
-<div class="paragraph">
-<p><strong>With MaaS</strong>:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>Centralized catalog eliminates redundant deployments</p>
-</li>
-<li>
-<p>Fair resource allocation prevents team conflicts</p>
-</li>
-<li>
-<p>Complete audit logs and PII filtering via API gateway</p>
-</li>
-<li>
-<p>Token-based consumption enables accurate chargeback</p>
+<p>Required infrastructure components (KServe, Service Mesh, Connectivity Link, etc.)</p>
 </li>
 </ul>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_lets_get_started"><a class="anchor" href="#_lets_get_started"></a>Let&#8217;s Get Started</h2>
+<h2 id="_estimated_time"><a class="anchor" href="#_estimated_time"></a>Estimated time</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Ready to transform your GPU infrastructure? Start with Module 1: The Shift to Utility AI.</p>
+<p>This QuickCourse will take approximately <strong>3-4 hours</strong> to complete.</p>
+</div>
+<div class="paragraph">
+<p>You can work at your own pace, however, consider shutting down expensive GPU lab environment between sessions.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_lets_get_started"><a class="anchor" href="#_lets_get_started"></a>Let&#8217;s get started!</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Click on <strong>QuickCourse Overview</strong> in the navigation to begin your learning journey and meet ChocoTech Industries, a chocolate manufacturer facing the GPU silo crisis.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="next"><a href="LABENV/index.html">Lab Environment</a></span>
+  <span class="next"><a href="appendix/01-overview.html">QuickCourse Overview</a></span>
 </nav>
 </article>
   </div>

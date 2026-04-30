@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1">
-    <title>Exercise 2: Enable Gen AI Studio dashboard :: Red Hat OpenShift AI - Models as a Service</title>
+    <title>2.2: Configuring API access with ServiceAccounts and RBAC :: Red Hat OpenShift AI - Models as a Service</title>
     <link rel="prev" href="04-module-02-platform-admin.html">
     <link rel="next" href="04-module-04-platform-admin.html">
     <meta name="generator" content="Antora 3.1.3">
@@ -40,194 +40,116 @@
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../index.html">Course Home</a>
+    <a class="nav-link" href="../index.html">Models-as-a-Service Introduction</a>
   </li>
 </ul>
   </li>
   <li class="nav-item" data-depth="0">
 <ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <a class="nav-link" href="../LABENV/index.html">Lab Environment</a>
+    <a class="nav-link" href="01-overview.html">QuickCourse Overview</a>
   </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
   <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch1-utility-ai/index.html">The Shift from Single Team Clusters</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s1-gpu-silo-crisis.html">1.1: The GPU Silo Crux</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s2-hardware-prerequisites.html">1.2: Hardware &amp; Platform Prerequisites</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch1-utility-ai/s3-maas-architecture.html">1.3: The MaaS Architecture Stack</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch2-platform-admin/index.html">2. Administering the MaaS Platform</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s1-enabling-maas-crds.html">2.1: Enabling MaaS (CRD Configuration)</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s2-deployment-workflows.html">2.2: Deployment Workflows</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch2-platform-admin/s3-troubleshooting-lab.html">2.3: Troubleshooting Component Enablement</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch3-governance/index.html">3. Governance &amp; Observability</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s1-governance-tiers.html">3.1: Defining Governance Tiers</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s2-rate-limits-quotas.html">3.2: Rate Limits and Quotas</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch3-governance/s3-chargeback-lab.html">3.3: Lab - Observability &amp; Automated Chargeback</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch4-model-deployment/index.html">4. Deploying Models to the MaaS Catalog</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s1-serving-runtimes.html">4.1: Serving Runtimes &amp; Distributed Inference</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s2-publishing-lab.html">4.2: Lab - Publishing as a MaaS Endpoint</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch4-model-deployment/s3-access-update-lab.html">4.3: Lab - Updating Access Dynamically</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="../ch5-api-integration/index.html">5. API Integration &amp; Consumer Experience</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s1-developer-dashboard.html">5.1: The Developer Dashboard</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s2-openai-api-lab.html">5.2: Lab - Consuming the OpenAI-Compatible API</a>
-  </li>
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="../ch5-api-integration/s3-error-handling-lab.html">5.3: Lab - Error Handling &amp; Application Patterns</a>
-  </li>
-</ul>
-  </li>
-</ul>
-  </li>
-  <li class="nav-item" data-depth="0">
-<ul class="nav-list">
-  <li class="nav-item" data-depth="1">
-    <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="index.html">Workshop Home</a>
-<ul class="nav-list">
-  <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="01-overview.html">Workshop Overview</a>
-  </li>
-  <li class="nav-item" data-depth="2">
     <a class="nav-link" href="02-details.html">Workshop Details</a>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Architecture</span>
+    <a class="nav-link" href="03-module-00-architecture.html">MaaS Architecture</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-01-architecture.html">Module 1: The shift to utility AI and architecture foundation</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-01-architecture.html">1.1: Understanding the GPU silo crisis</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-02-architecture.html">Exercise 2: The MaaS architecture stack</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-02-architecture.html">1.2: The MaaS architecture stack</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="03-module-03-architecture.html">Exercise 3: Hardware and platform prerequisites</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="03-module-03-architecture.html">1.3: Enabling MaaS on your OpenShift AI platform</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a>
+    <a class="nav-link" href="04-module-01-platform-admin.html">Access Control &amp; Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a>
   </li>
-  <li class="nav-item is-current-page" data-depth="3">
-    <a class="nav-link" href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a>
+  <li class="nav-item is-current-page" data-depth="2">
+    <a class="nav-link" href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <span class="nav-text">Model Deploymemnt</span>
+    <a class="nav-link" href="05-module-01-model-deployment.html">Model Deployment</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-01-model-deployment.html">Module 3: Deploying models to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05a-model-selection-strategy.html">3.1a: Choosing the right model for your workload</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05a-model-selection-strategy.html">Exercise 1: Choosing the Right Model</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-02-model-deployment.html">3.1: Understanding serving runtimes and distributed inference</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-02-model-deployment.html">Exercise 1: Understanding serving runtimes and distributed inference</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-03-model-deployment.html">3.4: Publish model to the MaaS catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-03-model-deployment.html">Exercise 4: Publish model to the MaaS catalog</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05-module-04-model-deployment.html">3.5: Deploy a second model for multi-model catalog</a>
   </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05-module-04-model-deployment.html">Exercise 5: Deploy a second model for multi-model catalog</a>
-  </li>
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="05b-lifecycle-management-gitops.html">Exercise 6: Production Lifecycle Management</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="05b-lifecycle-management-gitops.html">3.6: Production lifecycle management and GitOps</a>
   </li>
 </ul>
   </li>
-  <li class="nav-item" data-depth="2">
+  <li class="nav-item" data-depth="1">
     <button class="nav-item-toggle"></button>
-    <a class="nav-link" href="06-module-04-governance.html">Module 4: Governance, Observability, and Chargeback</a>
+    <a class="nav-link" href="06-module-00-governance.html">MaaS Governance</a>
 <ul class="nav-list">
-  <li class="nav-item" data-depth="3">
-    <a class="nav-link" href="06a-security-hardening.html">Exercise 6: Production Security Hardening</a>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-01-governance.html">4.1: Understanding MaaS governance tiers</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-02-governance.html">4.2: Create OpenShift groups for ChocoTech departments</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-03-governance.html">4.4: Deploy Grafana for observability</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-04-governance.html">4.5: Generate chargeback reports</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06a-security-hardening.html">4.6: Production security hardening</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="06-module-05-governance.html">Troubleshooting</a>
   </li>
 </ul>
   </li>
+  <li class="nav-item" data-depth="1">
+    <button class="nav-item-toggle"></button>
+    <a class="nav-link" href="07-module-00-api-integration.html">Developer Experience - API Integration</a>
+<ul class="nav-list">
   <li class="nav-item" data-depth="2">
-    <a class="nav-link" href="07-module-05-api-integration.html">Module 5: API Integration and Consumer Experience</a>
+    <a class="nav-link" href="07-module-01-api-integration.html">5.1: Generate API tokens in Gen AI Studio</a>
   </li>
   <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-02-api-integration.html">5.2: Consume models via OpenAI-compatible API</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-03-api-integration.html">5.3: Implement retry logic for rate limiting</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-04-api-integration.html">5.4: OpenAI API compatibility and migration patterns</a>
+  </li>
+  <li class="nav-item" data-depth="2">
+    <a class="nav-link" href="07-module-05-api-integration.html">Troubleshooting</a>
+  </li>
+</ul>
+  </li>
+  <li class="nav-item" data-depth="1">
     <a class="nav-link" href="08-conclusion.html">Conclusion</a>
-  </li>
-</ul>
   </li>
 </ul>
   </li>
@@ -260,9 +182,8 @@
 <nav class="breadcrumbs" aria-label="breadcrumbs">
   <ul>
     <li><a href="../index.html">Red Hat OpenShift AI - Models as a Service</a></li>
-    <li><a href="index.html">Workshop Home</a></li>
-    <li><a href="04-module-01-platform-admin.html">Module 2: Administering the MaaS platform</a></li>
-    <li><a href="04-module-03-platform-admin.html">Exercise 2: Enable Gen AI Studio dashboard</a></li>
+    <li><a href="04-module-01-platform-admin.html">Access Control &amp; Governance</a></li>
+    <li><a href="04-module-03-platform-admin.html">2.2: Configuring API access with ServiceAccounts and RBAC</a></li>
   </ul>
 </nav>
 </div>
@@ -271,163 +192,183 @@
   <div class="toc-menu"></div>
 </aside>
 <article class="doc">
-<h1 class="page">Exercise 2: Enable Gen AI Studio dashboard</h1>
+<h1 class="page">2.2: Configuring API access with ServiceAccounts and RBAC</h1>
 <div id="preamble">
 <div class="sectionbody">
 <div class="paragraph">
-<p>Now that the MaaS backend is deployed, you need to activate the dashboard interface so users can discover models and generate API tokens.</p>
+<p>With organizational structure in place, the next step is to enable programmatic API access for applications. Marketing&#8217;s sentiment analysis application needs to access models without requiring human credentials.</p>
 </div>
 <div class="paragraph">
-<p>The <code>OdhDashboardConfig</code> CRD controls which features appear in the OpenShift AI web console.</p>
+<p>This section covers ServiceAccount-based authentication using JWT tokens and RBAC (Role-Based Access Control) for authorizing model access.</p>
 </div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_understanding_the_dashboard_configuration"><a class="anchor" href="#_understanding_the_dashboard_configuration"></a>Understanding the dashboard configuration</h3>
-<div class="paragraph">
-<p>The OdhDashboardConfig enables or disables UI features:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>genAiStudio</code> - Gen AI Studio menu item and model catalog UI</p>
-</li>
-<li>
-<p><code>modelAsService</code> - MaaS-specific dashboard pages (tier management, usage metrics)</p>
-</li>
-<li>
-<p><code>modelServing</code> - Traditional KServe model serving UI</p>
-</li>
-<li>
-<p>Other features like Data Science Projects, Workbenches, Pipelines</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_check_current_dashboard_configuration"><a class="anchor" href="#_check_current_dashboard_configuration"></a>Check current dashboard configuration</h3>
-<div class="paragraph">
-<p>View the current OdhDashboardConfig:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get odhdashboardconfig odh-dashboard-config -o yaml</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Look for the <code>dashboardConfig</code> section:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>spec:
-  dashboardConfig:
-    genAiStudio: false
-    modelAsService: false
-    disableModelServing: false</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Note that both <code>genAiStudio</code> and <code>modelAsService</code> are currently false.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_enable_gen_ai_studio_features"><a class="anchor" href="#_enable_gen_ai_studio_features"></a>Enable Gen AI Studio features</h3>
-<div class="paragraph">
-<p>Edit the OdhDashboardConfig:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc edit odhdashboardconfig odh-dashboard-config</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Update the <code>dashboardConfig</code> section:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>spec:
-  dashboardConfig:
-    genAiStudio: true           # Enable Gen AI Studio menu
-    modelAsService: true         # Enable MaaS dashboard pages
-    disableModelServing: false   # Keep traditional model serving enabled</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Save and exit the editor.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_monitor_dashboard_restart"><a class="anchor" href="#_monitor_dashboard_restart"></a>Monitor dashboard restart</h3>
-<div class="paragraph">
-<p>The dashboard pod needs to restart to pick up the new configuration:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get pods -n redhat-ods-applications | grep rhods-dashboard</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>You may see the pod restarting:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>rhods-dashboard-xxx   0/1     Terminating        0          10m
-rhods-dashboard-yyy   0/1     ContainerCreating  0          5s</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Wait for the new pod to reach Running state:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc wait --for=condition=ready pod -l app=rhods-dashboard -n redhat-ods-applications --timeout=300s</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Expected output:</p>
-</div>
-<div class="listingblock">
-<div class="content">
-<pre>pod/rhods-dashboard-xxx condition met</pre>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h3>
-<div class="paragraph">
-<p>Confirm dashboard configuration:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>OdhDashboardConfig shows <code>genAiStudio: true</code> and <code>modelAsService: true</code></p>
-</li>
-<li>
-<p>Dashboard pod has restarted and is Running</p>
-</li>
-<li>
-<p>Dashboard service is accessible</p>
-</li>
-</ul>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_exercise_3_verify_gateway_api_components"><a class="anchor" href="#_exercise_3_verify_gateway_api_components"></a>Exercise 3: Verify Gateway API components</h2>
+<h2 id="_understanding_serviceaccount_based_authentication"><a class="anchor" href="#_understanding_serviceaccount_based_authentication"></a>Understanding ServiceAccount-based authentication</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>With MaaS enabled, verify that Gateway API resources are configured correctly for model inference routing.</p>
-</div>
-<div class="paragraph">
-<p>Gateway API provides the ingress layer for MaaS, exposing a single endpoint for all models.</p>
+<p>OpenShift provides two types of identities for accessing resources: User accounts and ServiceAccounts.</p>
 </div>
 <div class="sect2">
-<h3 id="_check_gateway_resource"><a class="anchor" href="#_check_gateway_resource"></a>Check Gateway resource</h3>
+<h3 id="_user_accounts_vs_serviceaccounts"><a class="anchor" href="#_user_accounts_vs_serviceaccounts"></a>User accounts vs. ServiceAccounts</h3>
+<table class="tableblock frame-all grid-all stretch">
+<colgroup>
+<col style="width: 20%;">
+<col style="width: 40%;">
+<col style="width: 40%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top">Identity Type</th>
+<th class="tableblock halign-left valign-top">Intended For</th>
+<th class="tableblock halign-left valign-top">Use Case</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">User account</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Humans (interactive login)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Developer logs into OpenShift AI dashboard, deploys models manually</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">ServiceAccount</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Applications (programmatic access)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Marketing&#8217;s sentiment analysis app calls MaaS API to classify customer feedback</p></td>
+</tr>
+</tbody>
+</table>
 <div class="paragraph">
-<p>List Gateways in the redhat-ods-applications namespace:</p>
+<p>The Marketing team&#8217;s sentiment analysis application needs a ServiceAccount because:</p>
 </div>
+<div class="ulist">
+<ul>
+<li>
+<p>The application runs in a container and cannot perform interactive login</p>
+</li>
+<li>
+<p>User credentials should not be embedded in application code or container images</p>
+</li>
+<li>
+<p>Tokens can be rotated without redeploying the application</p>
+</li>
+<li>
+<p>ServiceAccount tokens provide audit trails (which application accessed which model)</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_the_authentication_flow"><a class="anchor" href="#_the_authentication_flow"></a>The authentication flow</h3>
+<div class="paragraph">
+<p>When an application makes an API request to the MaaS Gateway, the request flows through multiple authentication and authorization layers:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Application
+  ↓ (includes Bearer token in Authorization header)
+Gateway (maas-default-gateway)
+  ↓ (routes to Authorino for authentication)
+Authorino
+  ↓ (validates JWT token signature with Kubernetes API server)
+Token Validation
+  ↓ (extracts ServiceAccount identity from token)
+RBAC Check (verifies ServiceAccount has required permissions)
+  ↓ (authorized request forwarded to backend)
+MaaS API
+  ↓ (routes to specific model)
+Model (LLMInferenceService)</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If any step fails (invalid token, expired token, insufficient permissions), the request is rejected with HTTP 401 Unauthorized or 403 Forbidden.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_jwt_tokens_vs_permanent_credentials"><a class="anchor" href="#_jwt_tokens_vs_permanent_credentials"></a>JWT tokens vs. permanent credentials</h3>
+<div class="paragraph">
+<p>MaaS uses JWT (JSON Web Token) tokens for authentication:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Time-limited</strong>: Tokens expire after a configured duration (1 hour, 24 hours, etc.)</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Reduces risk if a token is leaked (it expires automatically)</p>
+</li>
+<li>
+<p>Forces applications to rotate tokens periodically</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Revocable</strong>: Delete the ServiceAccount to immediately revoke all its tokens</p>
+<div class="ulist">
+<ul>
+<li>
+<p>No need to change passwords or regenerate credentials</p>
+</li>
+<li>
+<p>Instant revocation across all applications using that ServiceAccount</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Auditable</strong>: Every API request includes the ServiceAccount identity</p>
+<div class="ulist">
+<ul>
+<li>
+<p>OpenShift audit logs track which ServiceAccount made which requests</p>
+</li>
+<li>
+<p>Authorino and MaaS API logs provide detailed request histories</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>For detailed information on ServiceAccount authentication patterns, see the official Red Hat documentation:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><a href="../../../reference/Distributed_Inference-en-US/full-document.md#making-authenticated-inference-requests">Distributed Inference Guide - Section 2.7: Making Authenticated Requests</a></p>
+</li>
+<li>
+<p><a href="../../../reference/Deploying_models-en-US/full-document.md#token-authentication">Deploying Models Guide - Section 4.1-4.4: Token Authentication</a></p>
+</li>
+</ul>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_serviceaccounts"><a class="anchor" href="#_creating_serviceaccounts"></a>Creating ServiceAccounts</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Create a ServiceAccount for the Marketing team&#8217;s sentiment analysis application.</p>
+</div>
+<div class="sect2">
+<h3 id="_exercise_1_create_serviceaccount_for_api_access"><a class="anchor" href="#_exercise_1_create_serviceaccount_for_api_access"></a>Exercise 1: Create ServiceAccount for API access</h3>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get gateway -n redhat-ods-applications</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">oc create serviceaccount marketing-sentiment-app -n chocotech-models</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -435,46 +376,15 @@ rhods-dashboard-yyy   0/1     ContainerCreating  0          5s</pre>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>NAME                   CLASS   ADDRESS                                          PROGRAMMED   AGE
-maas-default-gateway   istio   maas-default-gateway.apps.{cluster_domain}      True         10m</pre>
+<pre>serviceaccount/marketing-sentiment-app created</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>The <code>PROGRAMMED=True</code> status indicates the Gateway is configured correctly.</p>
-</div>
-<div class="paragraph">
-<p>Inspect the Gateway details:</p>
+<p>Verify the ServiceAccount was created:</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc describe gateway maas-default-gateway -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Look for:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p><code>Status: Programmed: True</code> - Gateway is ready to accept traffic</p>
-</li>
-<li>
-<p><code>Listeners</code> section showing HTTP/HTTPS configuration</p>
-</li>
-<li>
-<p><code>Addresses</code> showing the external hostname</p>
-</li>
-</ul>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_check_httproute_resources"><a class="anchor" href="#_check_httproute_resources"></a>Check HTTPRoute resources</h3>
-<div class="paragraph">
-<p>HTTPRoutes define path-based routing rules for the Gateway:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get httproute -n redhat-ods-applications</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">oc get serviceaccount marketing-sentiment-app -n chocotech-models</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -482,90 +392,772 @@ maas-default-gateway   istio   maas-default-gateway.apps.{cluster_domain}      T
 </div>
 <div class="listingblock">
 <div class="content">
-<pre>NAME                  HOSTNAMES                        AGE
-maas-api-route        ["maas-default-gateway..."]     10m</pre>
+<pre>NAME                       SECRETS   AGE
+marketing-sentiment-app    0         15s</pre>
 </div>
 </div>
+</div>
+<div class="sect2">
+<h3 id="_what_was_created"><a class="anchor" href="#_what_was_created"></a>What was created?</h3>
 <div class="paragraph">
-<p>Describe the HTTPRoute:</p>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc describe httproute maas-api-route -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Look for:</p>
+<p>The <code>oc create serviceaccount</code> command created:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p><code>Parent Refs</code> pointing to maas-default-gateway</p>
+<p>A <strong>ServiceAccount</strong> resource in the <code>chocotech-models</code> namespace</p>
 </li>
 <li>
-<p><code>Rules</code> section showing <code>/v1/models</code> and <code>/v1/chat/completions</code> paths</p>
+<p>An identity that can be used to generate JWT tokens</p>
 </li>
 <li>
-<p><code>Backend Refs</code> pointing to maas-api service</p>
+<p>A principal that can be granted RBAC permissions</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The ServiceAccount exists but currently has no permissions. You&#8217;ll grant permissions in the next section using RBAC.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_creating_rbac_roles"><a class="anchor" href="#_creating_rbac_roles"></a>Creating RBAC roles</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>RBAC (Role-Based Access Control) defines which actions a ServiceAccount can perform on which resources.</p>
+</div>
+<div class="sect2">
+<h3 id="_exercise_2_create_role_for_model_inference_access"><a class="anchor" href="#_exercise_2_create_role_for_model_inference_access"></a>Exercise 2: Create Role for model inference access</h3>
+<div class="paragraph">
+<p>The Marketing team&#8217;s application needs to discover available models and send inference requests. This requires <code>get</code> and <code>list</code> permissions on <code>LLMInferenceService</code> resources.</p>
+</div>
+<div class="paragraph">
+<p>Create a Role that grants read-only access to LLMInferenceService resources:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc apply -f - &lt;&lt;EOF
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: llm-inference-viewer
+  namespace: chocotech-models
+rules:
+- apiGroups: ["serving.kserve.io"]
+  resources: ["llminferenceservices"]
+  verbs: ["get", "list"]
+- apiGroups: ["serving.kserve.io"]
+  resources: ["llminferenceservices/status"]
+  verbs: ["get"]
+EOF</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>role.rbac.authorization.k8s.io/llm-inference-viewer created</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_understanding_the_rbac_role"><a class="anchor" href="#_understanding_the_rbac_role"></a>Understanding the RBAC role</h3>
+<div class="paragraph">
+<p>Let&#8217;s break down the Role definition:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><code>apiGroups: ["serving.kserve.io"]</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The API group for KServe resources</p>
+</li>
+<li>
+<p>LLMInferenceService is a custom resource provided by KServe</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>resources: ["llminferenceservices"]</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>The specific resource type this Role grants access to</p>
+</li>
+<li>
+<p>Corresponds to deployed models in the namespace</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>verbs: ["get", "list"]</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p><code>get</code>: Retrieve a specific LLMInferenceService by name</p>
+</li>
+<li>
+<p><code>list</code>: List all LLMInferenceService resources in the namespace</p>
+</li>
+<li>
+<p>Notably <strong>excludes</strong> <code>create</code>, <code>update</code>, <code>delete</code> (read-only access)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><code>resources: ["llminferenceservices/status"]</code></p>
+<div class="ulist">
+<ul>
+<li>
+<p>Access to the status subresource</p>
+</li>
+<li>
+<p>Allows checking model deployment status (ready, loading, error)</p>
+</li>
+</ul>
+</div>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>This Role grants the <strong>minimum permissions</strong> required for model inference. It does NOT grant:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Model deployment permissions (<code>create</code>, <code>update</code>, <code>delete</code> verbs)</p>
+</li>
+<li>
+<p>Access to other resource types (pods, services, secrets)</p>
+</li>
+<li>
+<p>Access to other namespaces (Role is namespace-scoped)</p>
+</li>
+<li>
+<p>Cluster-wide permissions (ClusterRole would be required)</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_verify_kuadrant_policy_resources"><a class="anchor" href="#_verify_kuadrant_policy_resources"></a>Verify Kuadrant policy resources</h3>
+<h3 id="_exercise_3_create_rolebinding_to_connect_serviceaccount_to_role"><a class="anchor" href="#_exercise_3_create_rolebinding_to_connect_serviceaccount_to_role"></a>Exercise 3: Create RoleBinding to connect ServiceAccount to Role</h3>
 <div class="paragraph">
-<p>Check that Kuadrant policies are configured (these will be populated when governance is configured in Module 4):</p>
+<p>A Role defines permissions, but doesn&#8217;t grant them to anyone. A RoleBinding connects a ServiceAccount to a Role.</p>
 </div>
 <div class="listingblock execute">
 <div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get authpolicy -n redhat-ods-applications</code></pre>
-</div>
-</div>
-<div class="listingblock execute">
-<div class="content">
-<pre class="highlightjs highlight"><code class="language-none hljs">oc get ratelimitpolicy -n redhat-ods-applications</code></pre>
+<pre class="highlightjs highlight"><code class="language-none hljs">oc create rolebinding marketing-sentiment-app-binding \
+  --role=llm-inference-viewer \
+  --serviceaccount=chocotech-models:marketing-sentiment-app \
+  -n chocotech-models</code></pre>
 </div>
 </div>
 <div class="paragraph">
-<p>These may show "No resources found" initially, which is expected before governance configuration.</p>
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>rolebinding.rbac.authorization.k8s.io/marketing-sentiment-app-binding created</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Verify the RoleBinding:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">oc describe rolebinding marketing-sentiment-app-binding -n chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Name:         marketing-sentiment-app-binding
+Namespace:    chocotech-models
+Labels:       &lt;none&gt;
+Annotations:  &lt;none&gt;
+Role:
+  Kind:  Role
+  Name:  llm-inference-viewer
+Subjects:
+  Kind            Name                      Namespace
+  ----            ----                      ---------
+  ServiceAccount  marketing-sentiment-app   chocotech-models</pre>
+</div>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_verification_2"><a class="anchor" href="#_verification_2"></a>Verification</h3>
+<h3 id="_the_rbac_authorization_chain"><a class="anchor" href="#_the_rbac_authorization_chain"></a>The RBAC authorization chain</h3>
 <div class="paragraph">
-<p>Confirm Gateway API setup:</p>
+<p>The complete authorization chain is now:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>ServiceAccount: marketing-sentiment-app
+  ↓ (bound via RoleBinding)
+RoleBinding: marketing-sentiment-app-binding
+  ↓ (references)
+Role: llm-inference-viewer
+  ↓ (grants permissions)
+Permissions: get/list LLMInferenceService resources</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>When the MaaS API receives a request with a JWT token from <code>marketing-sentiment-app</code>, Kubernetes RBAC checks:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Is the token valid and not expired?</p>
+</li>
+<li>
+<p>Which ServiceAccount does this token belong to?</p>
+</li>
+<li>
+<p>Which RoleBindings reference this ServiceAccount?</p>
+</li>
+<li>
+<p>Which Roles do those RoleBindings grant?</p>
+</li>
+<li>
+<p>Do those Roles include the requested permission (e.g., <code>get llminferenceservices</code>)?</p>
+</li>
+</ol>
+</div>
+<div class="paragraph">
+<p>If all checks pass, the request is authorized.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_generating_and_testing_api_tokens"><a class="anchor" href="#_generating_and_testing_api_tokens"></a>Generating and testing API tokens</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>With RBAC configured, generate a JWT token from the ServiceAccount and test authentication against the MaaS Gateway.</p>
+</div>
+<div class="sect2">
+<h3 id="_exercise_4_generate_jwt_token_from_serviceaccount"><a class="anchor" href="#_exercise_4_generate_jwt_token_from_serviceaccount"></a>Exercise 4: Generate JWT token from ServiceAccount</h3>
+<div class="paragraph">
+<p>Generate a 1-hour JWT token:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">TOKEN=$(oc create token marketing-sentiment-app -n chocotech-models --duration=1h)</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Display the first 50 characters of the token:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">echo $TOKEN | cut -c1-50</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>eyJhbGciOiJSUzI1NiIsImtpZCI6IjRHN3BzeXQ3bkw5Ny1pZ</pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_understanding_jwt_token_properties"><a class="anchor" href="#_understanding_jwt_token_properties"></a>Understanding JWT token properties</h3>
+<div class="paragraph">
+<p>The generated token has these properties:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Gateway resource exists with PROGRAMMED=True status</p>
+<p><strong>Format</strong>: JWT (JSON Web Token) - a cryptographically signed JSON payload</p>
 </li>
 <li>
-<p>Gateway has external address assigned (hostname)</p>
+<p><strong>Duration</strong>: 1 hour (configurable: <code>1h</code>, <code>24h</code>, <code>168h</code> for 7 days)</p>
 </li>
 <li>
-<p>HTTPRoute exists and references the Gateway</p>
+<p><strong>Encoding</strong>: Base64-encoded JSON with three parts: header, payload, signature</p>
 </li>
 <li>
-<p>HTTPRoute defines API paths for model inference</p>
+<p><strong>Signature</strong>: Signed by the Kubernetes API server&#8217;s private key</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Authorino validates the signature using the API server&#8217;s public key</p>
 </li>
 <li>
-<p>Kuadrant components (authorino, limitador) are running</p>
+<p>Tampered tokens are rejected (signature verification fails)</p>
 </li>
 </ul>
 </div>
-<div class="imageblock unresolved">
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>The token includes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>ServiceAccount identity (<code>system:serviceaccount:chocotech-models:marketing-sentiment-app</code>)</p>
+</li>
+<li>
+<p>Expiration timestamp (<code>exp</code> claim)</p>
+</li>
+<li>
+<p>Issuer (<code>kubernetes/serviceaccount</code>)</p>
+</li>
+<li>
+<p>Audience (<code>aud</code> claim - who the token is intended for)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Never log or display full tokens in production. Treat tokens like passwords. The <code>cut -c1-50</code> command is for lab verification only.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_exercise_5_test_token_authentication"><a class="anchor" href="#_exercise_5_test_token_authentication"></a>Exercise 5: Test token authentication</h3>
+<div class="paragraph">
+<p>Test the token by calling the MaaS Gateway&#8217;s <code>/v1/models</code> endpoint:</p>
+</div>
+<div class="paragraph">
+<p>First, get the Gateway hostname:</p>
+</div>
+<div class="listingblock execute">
 <div class="content">
-<a class="image" href="gateway-api-status.png" target="blank"><img src="gateway-api-status.png" alt="Gateway API resource showing PROGRAMMED=True status and external address" width="700"></a>
+<pre class="highlightjs highlight"><code class="language-none hljs">GATEWAY_HOST=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+echo "Gateway host: $GATEWAY_HOST"</code></pre>
 </div>
-<div class="title">Figure 1. Gateway API Configuration Status</div>
 </div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>Gateway host: maas-default-gateway-redhat-ods-applications.apps.cluster.example.com</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Test authentication with the token:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">curl -s -w "\nHTTP Status: %{http_code}\n" \
+  https://$GATEWAY_HOST/v1/models \
+  -H "Authorization: Bearer $TOKEN" \
+  -k</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-json hljs" data-lang="json">{
+  "object": "list",
+  "data": []
+}
+HTTP Status: 200</code></pre>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_understanding_the_test_results"><a class="anchor" href="#_understanding_the_test_results"></a>Understanding the test results</h3>
+<div class="paragraph">
+<p>Success indicators:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>HTTP 200 status</strong>: Authentication successful</p>
+<div class="ulist">
+<ul>
+<li>
+<p>Token was valid and not expired</p>
+</li>
+<li>
+<p>Token signature verified by Authorino</p>
+</li>
+<li>
+<p>ServiceAccount authorized via RBAC</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>Empty <code>data</code> array</strong>: No models deployed yet</p>
+<div class="ulist">
+<ul>
+<li>
+<p>This is expected - models will be deployed in Module 3</p>
+</li>
+<li>
+<p>The endpoint is working correctly (authentication passed)</p>
+</li>
+</ul>
+</div>
+</li>
+<li>
+<p><strong>No "401 Unauthorized" error</strong>: Authentication succeeded</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If you see <code>HTTP Status: 401</code>, this indicates an authentication failure. Common causes:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>Token expired (regenerate with <code>oc create token</code>)</p>
+</li>
+<li>
+<p>RBAC not configured correctly (verify RoleBinding exists)</p>
+</li>
+<li>
+<p>Authorino not processing tokens (check in Section 2.3)</p>
+</li>
+</ul>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>The <code>-k</code> flag tells curl to accept self-signed certificates (common in lab environments). In production with valid TLS certificates, omit the <code>-k</code> flag.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_token_security_best_practices"><a class="anchor" href="#_token_security_best_practices"></a>Token security best practices</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>When using ServiceAccount tokens in production applications, follow these security guidelines:</p>
+</div>
+<div class="sect2">
+<h3 id="_short_lived_tokens"><a class="anchor" href="#_short_lived_tokens"></a>Short-lived tokens</h3>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Testing/development</strong>: 1-hour duration (<code>--duration=1h</code>)</p>
+</li>
+<li>
+<p><strong>Production applications</strong>: 24-hour duration (<code>--duration=24h</code>)</p>
+</li>
+<li>
+<p><strong>Never</strong>: Infinite duration tokens (tokens should always expire)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Shorter durations reduce the window of opportunity if a token is compromised.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_scoped_permissions"><a class="anchor" href="#_scoped_permissions"></a>Scoped permissions</h3>
+<div class="paragraph">
+<p>Grant the minimum required permissions:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Read-only inference</strong>: <code>get</code> and <code>list</code> verbs only (like the <code>llm-inference-viewer</code> Role)</p>
+</li>
+<li>
+<p><strong>Model deployment</strong>: Add <code>create</code>, <code>update</code>, <code>delete</code> verbs only if needed</p>
+</li>
+<li>
+<p><strong>Namespace-scoped</strong>: Use Role (not ClusterRole) to limit access to a single namespace</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Never grant <code>cluster-admin</code> or <code>*</code> permissions to ServiceAccounts used for model inference.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_token_rotation"><a class="anchor" href="#_token_rotation"></a>Token rotation</h3>
+<div class="paragraph">
+<p>Regenerate tokens periodically rather than reusing the same token indefinitely:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Application startup</strong>: Generate a new token when the application starts</p>
+</li>
+<li>
+<p><strong>Periodic rotation</strong>: Regenerate tokens every 24 hours</p>
+</li>
+<li>
+<p><strong>Never hardcode</strong>: Don&#8217;t embed tokens in source code or container images</p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_audit_trails"><a class="anchor" href="#_audit_trails"></a>Audit trails</h3>
+<div class="paragraph">
+<p>All token usage is logged:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>OpenShift audit logs</strong>: Track ServiceAccount token generation (<code>oc create token</code>)</p>
+</li>
+<li>
+<p><strong>Authorino logs</strong>: Log authentication attempts (successes and failures)</p>
+</li>
+<li>
+<p><strong>MaaS API logs</strong>: Log inference requests with ServiceAccount identity</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Use these logs to detect unusual access patterns or compromised tokens.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_token_revocation"><a class="anchor" href="#_token_revocation"></a>Token revocation</h3>
+<div class="paragraph">
+<p>To immediately revoke all tokens for a ServiceAccount:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Delete the ServiceAccount (revokes all tokens instantly)
+oc delete serviceaccount marketing-sentiment-app -n chocotech-models
+
+# Recreate the ServiceAccount (old tokens are now invalid)
+oc create serviceaccount marketing-sentiment-app -n chocotech-models
+
+# Recreate the RoleBinding
+oc create rolebinding marketing-sentiment-app-binding \
+  --role=llm-inference-viewer \
+  --serviceaccount=chocotech-models:marketing-sentiment-app \
+  -n chocotech-models</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All previously generated tokens for the old ServiceAccount are immediately invalid (signature verification fails).</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_storing_tokens_in_production"><a class="anchor" href="#_storing_tokens_in_production"></a>Storing tokens in production</h3>
+<div class="paragraph">
+<p>For production applications running in Kubernetes, store tokens in Secrets and mount them into pods:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-bash hljs" data-lang="bash"># Generate 24-hour token for production application
+oc create token marketing-sentiment-app -n chocotech-models --duration=24h &gt; /tmp/maas-token.txt
+
+# Store token in a Kubernetes Secret
+oc create secret generic marketing-api-token \
+  --from-file=token=/tmp/maas-token.txt \
+  -n chocotech-models
+
+# Clean up temporary file
+rm /tmp/maas-token.txt</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In your application Deployment, mount the Secret as a volume:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-yaml hljs" data-lang="yaml">apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment-analyzer
+spec:
+  template:
+    spec:
+      containers:
+      - name: app
+        image: quay.io/chocotech/sentiment-analyzer:latest
+        volumeMounts:
+        - name: maas-token
+          mountPath: /var/run/secrets/maas
+          readOnly: true
+      volumes:
+      - name: maas-token
+        secret:
+          secretName: marketing-api-token</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The application reads the token from <code>/var/run/secrets/maas/token</code> at runtime.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_verification"><a class="anchor" href="#_verification"></a>Verification</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Confirm all RBAC and authentication components are configured correctly.</p>
+</div>
+<div class="sect2">
+<h3 id="_verification_checklist"><a class="anchor" href="#_verification_checklist"></a>Verification checklist</h3>
+<div class="ulist checklist">
+<ul class="checklist">
+<li>
+<p><i class="fa fa-square-o"></i> ServiceAccount <code>marketing-sentiment-app</code> created in <code>chocotech-models</code> namespace</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Role <code>llm-inference-viewer</code> grants LLMInferenceService get/list permissions</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> RoleBinding connects ServiceAccount to Role</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> JWT token generated from ServiceAccount</p>
+</li>
+<li>
+<p><i class="fa fa-square-o"></i> Token authentication tested against Gateway (HTTP 200 status)</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>Run this comprehensive verification:</p>
+</div>
+<div class="listingblock execute">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-none hljs">echo "=== ServiceAccount ===" &amp;&amp; \
+oc get serviceaccount marketing-sentiment-app -n chocotech-models &amp;&amp; \
+echo "=== Role ===" &amp;&amp; \
+oc get role llm-inference-viewer -n chocotech-models &amp;&amp; \
+echo "=== RoleBinding ===" &amp;&amp; \
+oc describe rolebinding marketing-sentiment-app-binding -n chocotech-models | grep -E "Name:|Role:|ServiceAccount" &amp;&amp; \
+echo "=== Token Test ===" &amp;&amp; \
+TOKEN=$(oc create token marketing-sentiment-app -n chocotech-models --duration=1h) &amp;&amp; \
+GATEWAY_HOST=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}') &amp;&amp; \
+curl -s -w "HTTP Status: %{http_code}\n" https://$GATEWAY_HOST/v1/models -H "Authorization: Bearer $TOKEN" -k | tail -1</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Expected output:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre>=== ServiceAccount ===
+NAME                       SECRETS   AGE
+marketing-sentiment-app    0         15m
+=== Role ===
+NAME                    CREATED AT
+llm-inference-viewer    2024-01-15T10:30:00Z
+=== RoleBinding ===
+Name:         marketing-sentiment-app-binding
+  Name:  llm-inference-viewer
+  ServiceAccount  marketing-sentiment-app   chocotech-models
+=== Token Test ===
+HTTP Status: 200</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>All checkboxes should be complete.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_business_value"><a class="anchor" href="#_business_value"></a>Business value</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>By configuring ServiceAccount-based RBAC, you&#8217;ve enabled:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p><strong>Programmatic access</strong>: Marketing team can deploy their sentiment analysis application with API token authentication</p>
+</li>
+<li>
+<p><strong>Application identity</strong>: Applications access models without human credentials or shared passwords</p>
+</li>
+<li>
+<p><strong>Audit trail</strong>: Every API request is traceable to a specific ServiceAccount and namespace</p>
+</li>
+<li>
+<p><strong>Security</strong>: Tokens are time-limited, revocable, and follow principle of least privilege</p>
+</li>
+<li>
+<p><strong>Scalability</strong>: Create ServiceAccounts for each application without creating OpenShift user accounts</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>When the Marketing team asks "How do we authenticate our sentiment analysis app?", you can provide them with a ServiceAccount token that grants read-only model access with full audit logging.</p>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_knowledge_check"><a class="anchor" href="#_knowledge_check"></a>Knowledge check</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>Test your understanding before moving to the next section:</p>
+</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>What is the difference between a ServiceAccount and a User account in OpenShift?</strong></p>
+<div class="paragraph">
+<p>User accounts are for humans performing interactive login (e.g., dashboard access). ServiceAccounts are for applications performing programmatic access (e.g., API calls from containers). ServiceAccounts use JWT tokens; user accounts use passwords or SSO.</p>
+</div>
+</li>
+<li>
+<p><strong>Why use time-limited tokens instead of permanent API keys?</strong></p>
+<div class="paragraph">
+<p>Time-limited tokens automatically expire, reducing the risk if a token is leaked. They force periodic rotation, provide natural audit checkpoints, and can be revoked without changing the ServiceAccount itself.</p>
+</div>
+</li>
+<li>
+<p><strong>What RBAC verbs does the <code>llm-inference-viewer</code> Role grant, and which verbs are intentionally excluded?</strong></p>
+<div class="paragraph">
+<p>Grants: <code>get</code> and <code>list</code> (read-only access to discover and query models). Excluded: <code>create</code>, <code>update</code>, <code>delete</code> (no model deployment permissions). This follows the principle of least privilege.</p>
+</div>
+</li>
+</ol>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_whats_next"><a class="anchor" href="#_whats_next"></a>What&#8217;s next</h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>You&#8217;ve configured authentication and authorization for programmatic API access. In the next section, you&#8217;ll deploy tier-based governance policies (Gold, Silver, Bronze) with rate limits and quotas, then verify all governance components are operational before model deployment in Module 3.</p>
 </div>
 </div>
 </div>
 <nav class="pagination">
-  <span class="prev"><a href="04-module-02-platform-admin.html">Exercise 1: Enable MaaS in DataScienceCluster</a></span>
-  <span class="next"><a href="04-module-04-platform-admin.html">Exercise 4: Access the OpenShift AI dashboard</a></span>
+  <span class="prev"><a href="04-module-02-platform-admin.html">2.1: Creating organizational structure and tier architecture</a></span>
+  <span class="next"><a href="04-module-04-platform-admin.html">2.3: Deploying governance tier policies and verifying readiness</a></span>
 </nav>
 </article>
   </div>
