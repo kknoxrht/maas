@@ -1,0 +1,226 @@
+= 1.3: Hardware and platform prerequisites
+
+Before enabling MaaS, verify that the foundational GPU and platform components are configured correctly.
+
+MaaS builds on top of generic GPU enablement. If GPU drivers, operators, and hardware certification aren't in place, model serving will fail.
+
+=== Verify GPU nodes and drivers
+
+Check that GPU nodes are detected and labeled:
+
+[source,role="execute"]
+----
+oc get nodes -l nvidia.com/gpu.present=true
+----
+
+Expected output:
+
+----
+NAME                           STATUS   ROLES                  AGE   VERSION
+master-0.example.com           Ready    control-plane,master,worker   5d    v1.27.6+b49f9d1
+----
+
+Check GPU operator pods are running:
+
+[source,role="execute"]
+----
+oc get pods -n nvidia-gpu-operator
+----
+
+Expected output (all pods Running):
+
+----
+gpu-feature-discovery-xxx     1/1     Running
+nvidia-container-toolkit-xxx  1/1     Running
+nvidia-dcgm-exporter-xxx      1/1     Running
+nvidia-device-plugin-xxx      1/1     Running
+nvidia-driver-daemonset-xxx   1/1     Running
+nvidia-operator-validator-xxx 1/1     Running
+----
+
+Verify GPU capacity on nodes:
+
+[source,role="execute"]
+----
+oc describe node -l nvidia.com/gpu.present=true | grep -A 10 "Capacity:"
+----
+
+Expected output (shows GPU count and memory):
+
+----
+Capacity:
+  cpu:                16
+  memory:             64Gi
+  nvidia.com/gpu:     2
+  nvidia.com/gpu.memory: 49152
+  pods:               250
+----
+
+This shows the node has 2 NVIDIA GPUs with 24GB memory each (49152MB total).
+
+=== Verify OpenShift AI operator and components
+
+Check OpenShift AI operator installation:
+
+[source,role="execute"]
+----
+oc get csv -n redhat-ods-operator | grep rhods
+----
+
+Expected output:
+
+----
+rhods-operator.{rhoai_version}   Red Hat OpenShift AI   {rhoai_version}   Succeeded
+----
+
+Check DataScienceCluster custom resource (enables MaaS components):
+
+[source,role="execute"]
+----
+oc get datasciencecluster
+----
+
+Expected output:
+
+----
+NAME      AGE
+default-dsc   5d
+----
+
+Verify KServe is enabled in the DataScienceCluster:
+
+[source,role="execute"]
+----
+oc get datasciencecluster default-dsc -o jsonpath='{.spec.components.kserve.managementState}'
+----
+
+Expected output:
+
+----
+Managed
+----
+
+If output is `Removed`, KServe is not enabled and MaaS will not function.
+
+=== Verify Service Mesh prerequisite
+
+MaaS requires OpenShift Service Mesh for Gateway API functionality.
+
+Check Service Mesh operator:
+
+[source,role="execute"]
+----
+oc get csv -n openshift-operators | grep servicemesh
+----
+
+Expected output:
+
+----
+servicemeshoperator.v2.x.x   Red Hat OpenShift Service Mesh   2.x.x   Succeeded
+----
+
+Check Service Mesh control plane:
+
+[source,role="execute"]
+----
+oc get servicemeshcontrolplane -n istio-system
+----
+
+Expected output:
+
+----
+NAME     READY   STATUS            PROFILES      VERSION   AGE
+basic    10/10   ComponentsReady   ["default"]   2.x.x     5d
+----
+
+=== Verification
+
+Confirm all prerequisites are satisfied:
+
+* GPU nodes are labeled with `nvidia.com/gpu.present=true`
+* NVIDIA GPU operator pods are Running in nvidia-gpu-operator namespace
+* Node capacity shows available GPUs (nvidia.com/gpu count)
+* OpenShift AI operator is installed with Succeeded status
+* DataScienceCluster exists with KServe managementState=Managed
+* Service Mesh operator and control plane are healthy
+
+Without these prerequisites, MaaS configuration in Module 2 will fail. These components provide the foundation for model serving infrastructure.
+
+== Troubleshooting
+
+**Issue**: KServe controller pods not found in redhat-ods-applications namespace
+
+**Solution**:
+
+. Check DataScienceCluster KServe management state: `oc get datasciencecluster default-dsc -o yaml | grep -A 3 kserve`
+. If `managementState: Removed`, KServe is disabled
+. Module 2 will cover enabling KServe through the DataScienceCluster
+
+**Issue**: Kuadrant pods not found in kuadrant-system namespace
+
+**Solution**:
+
+. Kuadrant is deployed when MaaS is enabled in DataScienceCluster
+. This is expected if MaaS hasn't been configured yet
+. Module 2 covers enabling the MaaS component
+
+**Issue**: GPU nodes not showing in `oc get nodes` output
+
+**Solution**:
+
+. Verify GPU operator installation: `oc get pods -n nvidia-gpu-operator`
+. Check node labels manually: `oc get nodes --show-labels | grep nvidia`
+. Ensure GPU hardware is properly installed and detected by the host OS
+
+**Issue**: Gateway resource returns "PROGRAMMED=False"
+
+**Solution**:
+
+. Check Gateway status for error messages: `oc describe gateway -n redhat-ods-applications`
+. Verify Istio Service Mesh control plane is healthy: `oc get pods -n istio-system`
+. Common cause: Service Mesh operator not installed or control plane not deployed
+
+**Issue**: Service Mesh control plane shows "ComponentsNotReady"
+
+**Solution**:
+
+. Check Service Mesh operator logs: `oc logs -n openshift-operators deployment/istio-operator`
+. Verify ServiceMeshControlPlane resource: `oc get smcp -n istio-system -o yaml`
+. Ensure required network policies and security constraints are configured
+
+== Learning outcomes
+
+By completing this module, you should now understand:
+
+* ✓ How the GPU silo crisis creates simultaneous under-utilization and resource contention
+* ✓ The business value MaaS provides through centralized model serving and governance
+* ✓ The three-layer architecture (Gateway API, Kuadrant, KServe) and separation of concerns
+* ✓ The complete request flow from API client through routing, policy, and serving layers
+* ✓ Hardware and platform prerequisites required before enabling MaaS
+* ✓ How to verify that foundational components (GPU operators, OpenShift AI, Service Mesh) are healthy
+
+== Module summary
+
+You've explored the business problem ChocoTech Industries faces with fragmented GPU infrastructure and learned how Models as a Service transforms hardware management into token delivery.
+
+**What you accomplished for ChocoTech**:
+
+* Identified specific operational pain points created by siloed GPU infrastructure
+* Mapped the technical architecture that enables centralized model serving with governance
+* Verified that foundational components (GPUs, OpenShift AI, Service Mesh) are installed and healthy
+* Understood how each layer (Gateway, Kuadrant, KServe) contributes to the complete solution
+
+**Business impact potential**:
+
+* **Eliminated waste**: Centralized catalog prevents redundant model deployments
+* **Fair allocation**: Policy enforcement ensures balanced resource access across teams
+* **Audit compliance**: Complete request logging satisfies security and regulatory requirements
+* **Accurate billing**: Token-based tracking enables Finance to perform chargeback
+
+**Your journey progress**:
+
+You now understand the MaaS value proposition and architecture. With this foundation, you're ready to configure the platform.
+
+**Next steps**:
+
+Module 2 will guide you through configuring the MaaS platform by updating OpenShift AI Custom Resource Definitions, enabling the MaaS component, and activating the dashboard interface for self-service model access.

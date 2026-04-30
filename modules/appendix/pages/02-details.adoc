@@ -1,19 +1,20 @@
-= QuickCourse details
+= Course details
 
-:toc:
-:toc-placement: preamble
-:icons: font
 
 == Timing and schedule
 
-=== Full QuickCourse (3-4 hours)
-
-* **Module 1**: The shift to utility AI and architecture foundation (30 minutes)
-* **Module 2**: Administering the MaaS platform (40 minutes)
-* **Module 3**: Deploying models to the MaaS catalog (55 minutes)
-* **Module 4**: Governance, observability, and chargeback (50 minutes)
-* **Module 5**: API integration and consumer experience (40 minutes)
-* **Break time**: 10 minutes between modules recommended
+**Module 1**::
+MaaS Architecture (30 minutes)
+**Module 2**::
+MaaS Configuration (40 minutes)
+**Module 3**::
+Model Deployment to the MaaS catalog (55 minutes)
+**Module 4**::
+MaaS Governance, observability, and chargeback (50 minutes)
+**Module 5**::
+API integration and consumer experience (40 minutes)
+**Break time**::
+10 minutes between modules recommended
 
 
 == Technical requirements
@@ -21,19 +22,19 @@
 === Software versions
 
 * Red Hat OpenShift 4.20 or later
-* Red Hat OpenShift AI 3.3} or later
+* Red Hat OpenShift AI 3.3 or later
 * OpenShift AI operator channel: `stable-3.x`
 * NVIDIA GPU operator (latest/stable)
 * OpenShift Service Mesh operator (required for Gateway API)
 * Web browser (Chrome, Firefox, Safari, Edge)
 
-=== Hardware requirements
+=== Lab Environemnt Suggestions
 
-**Critical**: This lab suggests a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
+**Lab Env**: A Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs:
 
 * **Minimum GPU configuration**: 1x NVIDIA GPU with 24GB VRAM
 * **Recommended GPU configuration**: 2x NVIDIA GPUs with 24GB+ VRAM each
-* **GPU models supported**: A100, L40S, L4, H100 (NVIDIA certified accelerators)
+* **GPU models supported**: A10, A100, L40S, L4, H100 (NVIDIA certified accelerators)
 * **Purpose**: Deploy multiple models simultaneously (Llama Stack, Nemotron) with distributed inference
 
 **Why multiple GPUs matter for this lab**:
@@ -151,7 +152,9 @@ oc get pods -n redhat-ods-applications | grep kserve
 
 == Authors and contributors
 
-**Primary Author**: Karlos KNox - Content Service Architect
+**Primary Author**::
+Karlos Knox +
+Content Service Architect
 
 **Last Updated**: April 2026
 

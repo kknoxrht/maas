@@ -1,162 +1,812 @@
-= Exercise 4: Access the OpenShift AI dashboard
+= 2.3: Deploying governance tier policies and verifying readiness
 
-Now that MaaS is enabled and the dashboard is configured, access the web console to verify the Gen AI Studio interface is available.
+With organizational structure and authentication in place, the final step is to deploy tier-based governance policies that enforce rate limits and quotas across ChocoTech's business units.
 
-The dashboard provides the self-service interface for discovering models, generating API tokens, and viewing usage metrics.
+This section covers creating MaaSTier custom resources, verifying governance components, and completing a comprehensive pre-deployment readiness checklist.
 
-=== Get the dashboard URL
+== Understanding MaaS tier governance
 
-Find the OpenShift AI dashboard route:
+Tier governance ensures fair resource allocation and prevents any single business unit from monopolizing GPU resources.
+
+=== What are MaaSTier custom resources?
+
+MaaSTier is a custom resource definition (CRD) provided by the Red Hat OpenShift AI MaaS operator. Each MaaSTier resource defines:
+
+* *Tier properties*: Display name, priority level
+* *Rate limits*: Maximum requests per minute
+* *Quotas*: Maximum tokens per hour for LLM inference
+* *Group mapping*: Which OpenShift groups belong to this tier
+
+When you deploy a model in Module 3, you'll annotate it with tier names. The MaaS platform enforces the tier's rate limits and quotas on all requests to that model.
+
+=== Why tier policies matter
+
+Without tier governance:
+
+* Bronze tier users (Marketing's exploratory experiments) could consume all available GPU capacity
+* Gold tier users (Quality Control's production defect detection) would be blocked waiting for resources
+* No mechanism exists to track or limit costs per business unit
+
+With tier governance:
+
+* *Prioritized request processing*: Gold tier requests are processed first during peak demand
+* *Fair resource allocation*: Rate limits prevent Bronze tier from consuming all capacity
+* *Cost control*: Quotas cap token consumption (and thus GPU costs) per tier
+* *Chargeback reporting*: Track AI infrastructure costs by tier and business unit
+
+=== The tier enforcement flow
+
+When an application makes an inference request, the request flows through multiple governance layers:
+
+----
+API Request (with Bearer token)
+  ↓
+Gateway (maas-default-gateway)
+  ↓
+Authorino (validates token, extracts ServiceAccount identity)
+  ↓
+Authorino (determines which group/tier the ServiceAccount belongs to)
+  ↓
+Limitador (checks tier rate limit: has this tier exceeded requests/minute?)
+  ↓ (if rate limit OK)
+MaaS API (checks tier quota: has this tier exceeded tokens/hour?)
+  ↓ (if quota OK)
+Model (LLMInferenceService processes the request)
+----
+
+If rate limit is exceeded: HTTP 429 Too Many Requests
+If quota is exceeded: HTTP 429 with quota exhaustion message
+
+=== ChocoTech's tier requirements
+
+Based on the CIO's requirements document:
+
+[cols="1,2,1,1,1",options="header"]
+|===
+|Tier
+|Business Unit
+|Requests/Minute
+|Tokens/Hour
+|Priority
+
+|Gold
+|Quality Control
+|100
+|50,000
+|High (100)
+
+|Silver
+|R&D
+|50
+|25,000
+|Medium (50)
+
+|Bronze
+|Marketing
+|20
+|10,000
+|Low (10)
+|===
+
+These limits ensure:
+
+* Quality Control's production workloads get guaranteed throughput
+* R&D has sufficient capacity for development without impacting production
+* Marketing can experiment without consuming resources needed by other teams
+
+== Creating MaaSTier custom resources
+
+Deploy tier policies for Gold, Silver, and Bronze tiers.
+
+=== Exercise 1: Deploy Gold tier policy
+
+Create the Gold tier policy for Quality Control:
 
 [source,role="execute"]
 ----
-oc get route rhods-dashboard -n redhat-ods-applications -o jsonpath='{.spec.host}'
+oc apply -f - <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: gold
+spec:
+  displayName: "Gold Tier - Production Workloads"
+  priority: 100
+  rateLimit:
+    requestsPerMinute: 100
+  quota:
+    tokensPerHour: 50000
+  groups:
+  - chocotech-quality-control
+EOF
 ----
 
 Expected output:
 
 ----
-rhods-dashboard-redhat-ods-applications.apps.{cluster_domain}
+maastier.maas.opendatahub.io/gold created
 ----
 
-Or use the attribute placeholder directly: {rhoai_dashboard_url}
+=== Understanding the Gold tier definition
 
-=== Log into the dashboard
+* `priority: 100`: Highest priority level for request processing
+** During peak demand, Gold tier requests are processed before Silver and Bronze
+** Ensures Quality Control's production defect detection system gets guaranteed resources
 
-. Open a web browser (or use the Showroom "OpenShift AI" tab)
-. Navigate to the dashboard URL
-. Log in with your OpenShift credentials:
-  * Username: {user}
-  * Password: {password}
+* `rateLimit.requestsPerMinute: 100`: Maximum 100 inference requests per minute
+** Prevents excessive burst traffic that could overwhelm GPU resources
+** Allows steady production throughput
 
-You should see the OpenShift AI dashboard home page.
+* `quota.tokensPerHour: 50000`: Maximum 50,000 LLM tokens per hour
+** Tokens = input tokens + output tokens for all requests in the past hour
+** For context: GPT-3.5 level model processes ~500 tokens per request
+** 50,000 tokens ≈ 100 requests of 500 tokens each
 
-=== Navigate to Gen AI Studio
+* `groups: [chocotech-quality-control]`: Maps this tier to the OpenShift group
+** Members of `chocotech-quality-control` group automatically belong to Gold tier
+** When they generate tokens from ServiceAccounts, requests count against Gold tier limits
 
-After logging in:
+=== Exercise 2: Deploy Silver tier policy
 
-. Look for "Gen AI Studio" in the left navigation menu
-. Click on "Gen AI Studio"
-. You should see the Gen AI Studio interface with:
-  * "Models" tab - Model catalog (currently empty until Module 3)
-  * "API tokens" tab - Token generation interface
-  * "Usage" tab - Consumption metrics (populated after API calls)
+Create the Silver tier policy for R&D:
 
-// TODO: Add screenshot of Gen AI Studio interface
-image::genai-studio-interface.png[Gen AI Studio dashboard showing Models, API tokens, and Usage tabs,link=self,window=blank,width=800,title="Gen AI Studio Interface in OpenShift AI Dashboard"]
+[source,role="execute"]
+----
+oc apply -f - <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: silver
+spec:
+  displayName: "Silver Tier - Development Workloads"
+  priority: 50
+  rateLimit:
+    requestsPerMinute: 50
+  quota:
+    tokensPerHour: 25000
+  groups:
+  - chocotech-rd
+EOF
+----
 
-=== Explore the interface
+Expected output:
 
-Take a moment to explore the Gen AI Studio interface:
+----
+maastier.maas.opendatahub.io/silver created
+----
 
-* **Models tab**: Will display the model catalog once models are deployed (Module 3)
-* **API tokens tab**: Where users generate Bearer tokens for API authentication
-* **Usage tab**: Shows token consumption, request counts, and cost metrics
+The Silver tier provides balanced resources:
 
-Note: The Models tab will be empty until you deploy models in Module 3.
+* Half the rate limit of Gold tier (50 vs 100 requests/minute)
+* Half the quota of Gold tier (25,000 vs 50,000 tokens/hour)
+* Medium priority (50) - processed after Gold, before Bronze
 
-=== Verification
+This allocation is appropriate for R&D's recipe optimization work, which is important but not production-critical.
 
-Confirm dashboard access:
+=== Exercise 3: Deploy Bronze tier policy
 
-* Successfully logged into OpenShift AI dashboard
-* Gen AI Studio menu item is visible in left navigation
-* Gen AI Studio interface loads without errors
-* Models, API tokens, and Usage tabs are present
-* No error messages about missing components
+Create the Bronze tier policy for Marketing:
 
-== Troubleshooting
+[source,role="execute"]
+----
+oc apply -f - <<EOF
+apiVersion: maas.opendatahub.io/v1alpha1
+kind: MaaSTier
+metadata:
+  name: bronze
+spec:
+  displayName: "Bronze Tier - Exploratory Workloads"
+  priority: 10
+  rateLimit:
+    requestsPerMinute: 20
+  quota:
+    tokensPerHour: 10000
+  groups:
+  - chocotech-marketing
+EOF
+----
 
-**Issue**: MaaS API pod stuck in ContainerCreating
+Expected output:
 
-**Solution**:
+----
+maastier.maas.opendatahub.io/bronze created
+----
 
-. Check pod events: `oc describe pod -l app=maas-api -n redhat-ods-applications`
-. Common causes:
-  * Image pull issues - verify network connectivity to quay.io
-  * Resource constraints - check node capacity
-  * PVC binding issues - verify storage class availability
-. Check operator logs for reconciliation errors: `oc logs -n redhat-ods-operator deployment/rhods-operator`
+The Bronze tier provides cost-controlled resources:
 
-**Issue**: Gateway shows PROGRAMMED=False
+* Conservative rate limit (20 requests/minute) for exploratory work
+* Lower quota (10,000 tokens/hour) to control costs
+* Lowest priority (10) - processed after Gold and Silver tiers
 
-**Solution**:
+This allocation is appropriate for Marketing's sentiment analysis experiments, which are exploratory and cost-sensitive.
 
-. Describe Gateway for error messages: `oc describe gateway maas-default-gateway -n redhat-ods-applications`
-. Verify Service Mesh control plane is healthy: `oc get smcp -n istio-system`
-. Check Istio operator logs: `oc logs -n openshift-operators deployment/istio-operator`
-. Common cause: Service Mesh not installed or control plane not ready
+=== Exercise 4: Verify tier policies
 
-**Issue**: Gen AI Studio menu item not visible after enabling
+List all deployed MaaSTier resources:
 
-**Solution**:
+[source,role="execute"]
+----
+oc get maastier
+----
 
-. Verify OdhDashboardConfig was updated: `oc get odhdashboardconfig odh-dashboard-config -o jsonpath='{.spec.dashboardConfig.genAiStudio}'` should return `true`
-. Force dashboard pod restart: `oc delete pod -l app=rhods-dashboard -n redhat-ods-applications`
-. Clear browser cache and refresh dashboard
-. Check dashboard pod logs for configuration errors: `oc logs -l app=rhods-dashboard -n redhat-ods-applications`
+Expected output:
 
-**Issue**: Dashboard returns 503 Service Unavailable
+----
+NAME     DISPLAY NAME                        PRIORITY   AGE
+bronze   Bronze Tier - Exploratory Workloads 10         30s
+gold     Gold Tier - Production Workloads    100        2m
+silver   Silver Tier - Development Workloads 50         1m
+----
 
-**Solution**:
+Describe the Gold tier to see full details:
 
-. Verify dashboard pod is Running: `oc get pods -l app=rhods-dashboard -n redhat-ods-applications`
-. Check dashboard service exists: `oc get svc rhods-dashboard -n redhat-ods-applications`
-. Verify route is configured: `oc get route rhods-dashboard -n redhat-ods-applications`
-. Check for NetworkPolicy blocking traffic
+[source,role="execute"]
+----
+oc describe maastier gold
+----
 
-**Issue**: Kuadrant pods not deploying after MaaS enablement
+Expected output:
 
-**Solution**:
+----
+Name:         gold
+Namespace:
+Labels:       <none>
+Annotations:  <none>
+API Version:  maas.opendatahub.io/v1alpha1
+Kind:         MaaSTier
+Metadata:
+  ...
+Spec:
+  Display Name:  Gold Tier - Production Workloads
+  Groups:
+    chocotech-quality-control
+  Priority:  100
+  Quota:
+    Tokens Per Hour:  50000
+  Rate Limit:
+    Requests Per Minute:  100
+...
+----
 
-. Check DataScienceCluster status for errors: `oc get datasciencecluster default-dsc -o yaml | grep -A 10 conditions`
-. Verify Kuadrant operator is installed: `oc get csv -n openshift-operators | grep kuadrant`
-. If Kuadrant operator is missing, it should be installed automatically by OpenShift AI operator
-. Check OpenShift AI operator logs: `oc logs -n redhat-ods-operator deployment/rhods-operator | grep -i kuadrant`
+All three tiers should be present with correct configuration.
 
-**Issue**: HTTPRoute not routing traffic to MaaS API
+== Configuring Authorino authentication policies
 
-**Solution**:
+Authorino validates JWT tokens and enforces authentication policies. Verify the MaaS operator created the necessary AuthConfig resources.
 
-. Verify HTTPRoute exists and is attached to Gateway: `oc get httproute -n redhat-ods-applications`
-. Check HTTPRoute status: `oc describe httproute maas-api-route -n redhat-ods-applications`
-. Verify backend service is healthy: `oc get svc maas-api -n redhat-ods-applications`
-. Test service directly: `oc port-forward svc/maas-api 8080:8080 -n redhat-ods-applications` then `curl localhost:8080/v1/models`
+=== Exercise 5: Verify Authorino AuthConfig
 
-== Learning outcomes
+The MaaS operator should have created an AuthConfig for token authentication when you enabled MaaS in Module 1. Verify it exists:
 
-By completing this module, you should now understand:
+[source,role="execute"]
+----
+oc get authconfig -n redhat-ods-applications
+----
 
-* ✓ How to enable MaaS by updating the DataScienceCluster CRD managementState
-* ✓ The declarative configuration model used by OpenShift AI operator
-* ✓ How to activate Gen AI Studio dashboard features through OdhDashboardConfig
-* ✓ The relationship between Gateway API, HTTPRoutes, and backend services
-* ✓ How to verify component health using `oc get pods`, `oc describe`, and resource status
-* ✓ Common troubleshooting approaches for operator-managed component deployment
+Expected output:
+
+----
+NAME        AGE
+maas-auth   15m
+----
+
+Describe the AuthConfig to see its configuration:
+
+[source,role="execute"]
+----
+oc describe authconfig maas-auth -n redhat-ods-applications
+----
+
+Expected output (partial):
+
+----
+Name:         maas-auth
+Namespace:    redhat-ods-applications
+Spec:
+  Hosts:
+    maas-default-gateway-redhat-ods-applications.apps.cluster.example.com
+  Authentication:
+    k8s-service-account-tokens:
+      Kubernetes Token Review:
+        Audiences:
+          https://kubernetes.default.svc
+  Authorization:
+    k8s-rbac:
+      Kubernetes Subject Access Review:
+        User:
+          Selector:  auth.identity.user.username
+----
+
+=== Understanding the AuthConfig
+
+This AuthConfig provides:
+
+* *Host binding*: Applies to requests sent to the MaaS Gateway hostname
+* *Token validation*: Uses Kubernetes TokenReview API to validate JWT signatures
+** Ensures tokens are signed by the Kubernetes API server
+** Rejects tampered or forged tokens
+
+* *ServiceAccount extraction*: Extracts ServiceAccount identity from validated tokens
+* *RBAC authorization*: Checks if the ServiceAccount has required permissions
+** Uses Kubernetes SubjectAccessReview API
+** Enforces the RBAC Roles and RoleBindings you created in Section 2.2
+
+=== What if AuthConfig is missing?
+
+If the `oc get authconfig` command returns "No resources found", the MaaS operator may not have created it automatically. Recreate it manually:
+
+[WARNING]
+====
+In most cases, the AuthConfig should exist. Only recreate if it's genuinely missing.
+====
+
+[source,role="execute"]
+----
+# Only run this if AuthConfig does not exist
+oc apply -f - <<EOF
+apiVersion: authorino.kuadrant.io/v1beta2
+kind: AuthConfig
+metadata:
+  name: maas-auth
+  namespace: redhat-ods-applications
+spec:
+  hosts:
+  - maas-default-gateway-redhat-ods-applications.apps.cluster.example.com
+  authentication:
+    "k8s-service-account-tokens":
+      kubernetesTokenReview:
+        audiences:
+        - https://kubernetes.default.svc
+  authorization:
+    "k8s-rbac":
+      kubernetesSubjectAccessReview:
+        user:
+          selector: auth.identity.user.username
+EOF
+----
+
+Replace `cluster.example.com` with your actual cluster domain.
+
+== Verifying governance component health
+
+Verify all governance components (Kuadrant, Authorino, Limitador) are deployed and healthy.
+
+=== Exercise 6: Verify Kuadrant components
+
+Check Authorino pods (authentication):
+
+[source,role="execute"]
+----
+oc get pods -n redhat-ods-applications | grep authorino
+----
+
+Expected output:
+
+----
+authorino-abc123                 2/2     Running   0          20m
+----
+
+Check Limitador pods (rate limiting):
+
+[source,role="execute"]
+----
+oc get pods -n redhat-ods-applications | grep limitador
+----
+
+Expected output:
+
+----
+limitador-xyz789                 1/1     Running   0          20m
+----
+
+Check Kuadrant operator:
+
+[source,role="execute"]
+----
+oc get pods -n openshift-operators | grep kuadrant
+----
+
+Expected output:
+
+----
+kuadrant-operator-controller-manager-def456   2/2     Running   0          25m
+----
+
+All pods should show `Running` status with all containers ready (`2/2` or `1/1`).
+
+=== What if pods are not Running?
+
+If any pod shows `CrashLoopBackOff`, `ImagePullBackOff`, or `Pending`:
+
+1. Check pod events:
++
+[source,bash]
+----
+oc describe pod <pod-name> -n <namespace>
+----
+
+2. Check pod logs:
++
+[source,bash]
+----
+oc logs <pod-name> -n <namespace>
+----
+
+3. Common issues:
+** *Image pull errors*: Network connectivity to quay.io
+** *Resource constraints*: Insufficient CPU or memory on nodes
+** *Configuration errors*: Invalid AuthConfig or Kuadrant resources
+
+=== Exercise 7: Verify Gateway integration
+
+Check Gateway status:
+
+[source,role="execute"]
+----
+oc get gateway maas-default-gateway -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME                   CLASS   ADDRESS                                                      PROGRAMMED   AGE
+maas-default-gateway   istio   maas-default-gateway-redhat-ods-applications.apps.cluster... True         30m
+----
+
+The `PROGRAMMED=True` status indicates the Gateway is configured and operational.
+
+Verify Gateway has AuthPolicy attached:
+
+[source,role="execute"]
+----
+oc get authpolicy -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+NAME              READY   STATUS
+maas-auth-policy  True    AuthScheme ready
+----
+
+If no AuthPolicy exists, this is expected - the MaaS operator will create it when models are deployed. The important verification is that Authorino and the AuthConfig exist.
+
+== Pre-deployment readiness checklist
+
+Before proceeding to Module 3 (model deployment), verify all governance components are in place.
+
+=== Complete the readiness checklist
+
+Work through each section and confirm all items:
+
+==== Organizational Structure
+
+* [ ] Three business unit groups created (`chocotech-quality-control`, `chocotech-rd`, `chocotech-marketing`)
+* [ ] Current user is member of a business unit group
+* [ ] `chocotech-models` namespace exists and is labeled for MaaS (`maas.opendatahub.io/managed=true`)
+
+==== RBAC Configuration
+
+* [ ] ServiceAccount `marketing-sentiment-app` created for API access
+* [ ] Role `llm-inference-viewer` grants LLMInferenceService get/list permissions
+* [ ] RoleBinding connects ServiceAccount to Role
+
+==== Authentication
+
+* [ ] JWT token generated from ServiceAccount
+* [ ] Token authentication tested successfully against Gateway (HTTP 200)
+* [ ] Authorino AuthConfig exists and references Gateway hostname
+
+==== Governance Policies
+
+* [ ] Three MaaSTier resources deployed (gold, silver, bronze)
+* [ ] Each tier has rate limit (requestsPerMinute) defined
+* [ ] Each tier has quota (tokensPerHour) defined
+* [ ] Each tier is mapped to a business unit group
+
+==== Infrastructure Health
+
+* [ ] Kuadrant operator pod Running in `openshift-operators` namespace
+* [ ] Authorino pods Running (2/2 containers) in `redhat-ods-applications` namespace
+* [ ] Limitador pods Running (1/1 containers) in `redhat-ods-applications` namespace
+* [ ] Gateway shows `PROGRAMMED=True` status
+* [ ] AuthConfig exists in `redhat-ods-applications` namespace
+
+==== Dashboard Access
+
+* [ ] Gen AI Studio accessible via OpenShift AI dashboard
+* [ ] API tokens tab visible (even if model list is empty)
+
+=== Comprehensive verification command
+
+Run this command to verify all components:
+
+[source,role="execute"]
+----
+echo "=== Groups ===" && \
+oc get groups | grep chocotech && \
+echo "=== Namespace ===" && \
+oc get namespace chocotech-models --show-labels | grep maas && \
+echo "=== ServiceAccount ===" && \
+oc get sa -n chocotech-models | grep marketing && \
+echo "=== RBAC ===" && \
+oc get role,rolebinding -n chocotech-models && \
+echo "=== Tiers ===" && \
+oc get maastier && \
+echo "=== Governance Pods ===" && \
+oc get pods -n redhat-ods-applications | grep -E "authorino|limitador" && \
+echo "=== Gateway ===" && \
+oc get gateway -n redhat-ods-applications && \
+echo "=== AuthConfig ===" && \
+oc get authconfig -n redhat-ods-applications
+----
+
+Expected output:
+
+----
+=== Groups ===
+chocotech-marketing
+chocotech-quality-control
+chocotech-rd
+=== Namespace ===
+chocotech-models   Active   30m   maas.opendatahub.io/managed=true,...
+=== ServiceAccount ===
+marketing-sentiment-app    0         20m
+=== RBAC ===
+NAME                                  CREATED AT
+role.rbac.authorization.k8s.io/llm-inference-viewer   2024-01-15T10:45:00Z
+NAME                                                          ROLE                          AGE
+rolebinding.rbac.authorization.k8s.io/marketing-sentiment-app-binding   Role/llm-inference-viewer   20m
+=== Tiers ===
+NAME     DISPLAY NAME                        PRIORITY   AGE
+bronze   Bronze Tier - Exploratory Workloads 10         15m
+gold     Gold Tier - Production Workloads    100        15m
+silver   Silver Tier - Development Workloads 50         15m
+=== Governance Pods ===
+authorino-abc123                 2/2     Running   0          25m
+limitador-xyz789                 1/1     Running   0          25m
+=== Gateway ===
+NAME                   CLASS   ADDRESS                                   PROGRAMMED   AGE
+maas-default-gateway   istio   maas-default-gateway-...apps.cluster...   True         30m
+=== AuthConfig ===
+NAME        AGE
+maas-auth   25m
+----
+
+All items should be present and healthy.
+
+== Understanding what's ready for Module 3
+
+You've established a complete governance foundation. Here's what's in place and what's still missing.
+
+=== What you've established
+
+[cols="1,3",options="header"]
+|===
+|Layer
+|Status
+
+|Identity layer
+|✅ OpenShift groups represent business units (Quality Control, R&D, Marketing)
+
+|Authentication layer
+|✅ ServiceAccounts + JWT tokens for API access (tested with HTTP 200)
+
+|Authorization layer
+|✅ RBAC Roles control who can access models (get/list permissions)
+
+|Policy layer
+|✅ MaaSTier CRDs define rate limits and quotas (100/50/20 requests/min)
+
+|Enforcement layer
+|✅ Authorino validates tokens, Limitador enforces rate limits (pods Running)
+|===
+
+The governance architecture is complete and operational.
+
+=== What's missing (Module 3 will add)
+
+The following components are intentionally absent because no models have been deployed yet:
+
+* *No models in catalog*: The `/v1/models` endpoint returns an empty array
+** Module 3 will deploy `llama3-8b` and `nemotron-8b` models
+** Models will appear in the Gen AI Studio catalog
+
+* *No tier annotations on models*: No models exist to annotate
+** Module 3 will annotate models with tier names during deployment
+** Example: `alpha.maas.opendatahub.io/tiers: '["bronze", "silver", "gold"]'`
+
+* *No rate limiting triggered*: No inference traffic exists to limit
+** Module 3 will send inference requests and verify rate limits are enforced
+** You'll see HTTP 429 responses when exceeding tier limits
+
+* *No usage metrics*: No token consumption to track
+** Module 3 will generate usage metrics visible in the Gen AI Studio dashboard
+** Metrics will show token consumption per tier
+
+**The governance architecture is ready. Module 3 will deploy models that inherit these policies automatically.**
+
+== Business value
+
+You've established ChocoTech's governance foundation that meets all the CIO's requirements:
+
+[cols="1,2,2",options="header"]
+|===
+|CIO Requirement
+|Implementation
+|Business Impact
+
+|Production-grade access for Quality Control
+|Gold tier: 100 requests/min, 50,000 tokens/hour, priority 100
+|Guaranteed resources for production defect detection
+
+|Development access for R&D
+|Silver tier: 50 requests/min, 25,000 tokens/hour, priority 50
+|Balanced capacity for recipe optimization
+
+|Exploratory access for Marketing
+|Bronze tier: 20 requests/min, 10,000 tokens/hour, priority 10
+|Cost-controlled sentiment analysis experiments
+
+|API token authentication
+|ServiceAccounts + JWT tokens with RBAC
+|Audit trails for all model access
+
+|Prevent resource monopolization
+|Tier rate limits and quotas enforced by Limitador
+|Fair allocation across business units
+|===
+
+All requirements are met before a single model is deployed. When the CIO asks "Are we ready for governed AI deployment?", the answer is yes.
 
 == Module summary
 
-You've successfully configured the MaaS platform on OpenShift AI and activated the Gen AI Studio dashboard interface.
+In this module, you transformed ChocoTech's MaaS platform from infrastructure-only to governance-ready:
 
-**What you accomplished for ChocoTech**:
+=== What you accomplished
 
-* Enabled MaaS components through DataScienceCluster CRD, triggering operator deployment
-* Configured dashboard to expose Gen AI Studio interface for self-service access
-* Verified Gateway API resources are programmed and ready to route traffic
-* Confirmed Kuadrant policy enforcement components are deployed
-* Accessed the Gen AI Studio dashboard and explored the interface
+* *Organizational structure*: Created OpenShift groups for business units and mapped them to access tiers
+* *Authentication*: Configured ServiceAccounts and JWT token-based API authentication with RBAC
+* *Tier policies*: Deployed Gold, Silver, and Bronze tier policies with rate limits and quotas
+* *Component health*: Verified all governance components (Kuadrant, Authorino, Limitador) are operational
+* *End-to-end testing*: Tested authentication flow from token generation to Gateway validation
 
-**Technical capabilities unlocked**:
+=== Key technical capabilities unlocked
 
-* **Operator-driven deployment**: Declarative CRD updates rather than imperative kubectl commands
-* **Gateway API ingress**: Single endpoint for all model serving traffic
-* **Dashboard self-service**: Users can discover models and generate API tokens without CLI access
-* **Policy framework ready**: Kuadrant components deployed and ready for governance configuration
+* *Identity management*: Business units represented as OpenShift groups, not individual users
+* *Programmatic access*: Applications can authenticate via ServiceAccount tokens (no human credentials)
+* *Least privilege RBAC*: ServiceAccounts have read-only model access (get/list only)
+* *Tier enforcement*: Rate limits and quotas automatically applied based on group membership
+* *Audit trails*: All requests traceable to ServiceAccounts and business unit groups
 
-**Your journey progress**:
+=== What's next: Module 3
 
-The MaaS platform infrastructure is now configured and ready. The next step is to deploy actual generative AI models to the catalog.
+The platform is now ready for governed model deployment. Module 3 will guide you through:
 
-**Next steps**:
+1. *Deploying llama3-8b*: Meta's 8B parameter model for all tiers (Quality Control, R&D, Marketing can access)
+2. *Deploying nemotron-8b*: NVIDIA's 8B parameter model for Bronze and Silver only (demonstrates selective tier access)
+3. *Publishing to catalog*: Models appear in Gen AI Studio with tier annotations
+4. *Testing tier access control*: Verify Gold users see all models, Bronze users see subset
+5. *Verifying rate limits*: Send high-volume requests to trigger HTTP 429 responses
 
-Module 3 will guide you through deploying models using llm-d and vLLM serving runtimes, configuring distributed inference with LeaderWorkerSet for multi-GPU models, and publishing models to the catalog for ChocoTech's teams to consume.
+By the end of Module 3, ChocoTech's teams will have self-service access to governed AI models through the Gen AI Studio dashboard and API endpoints.
+
+== Knowledge check
+
+Test your understanding of tier governance:
+
+1. *Why are MaaSTier policies created before model deployment, rather than after?*
++
+MaaSTier policies must exist before deployment so the MaaS operator can enforce rate limits and quotas from the first inference request. Creating policies after deployment would allow a window of uncontrolled access.
+
+2. *What happens if a Bronze tier user tries to exceed 20 requests/minute?*
++
+Limitador tracks requests per tier and rejects requests exceeding the rate limit with HTTP 429 Too Many Requests. The user must wait until the next minute window to send more requests.
+
+3. *How does Authorino know which tier a user belongs to?*
++
+Authorino validates the JWT token and extracts the ServiceAccount identity. It then checks which OpenShift groups that ServiceAccount's user belongs to. The MaaSTier resources map groups to tiers (e.g., `chocotech-quality-control` → Gold tier).
+
+== Troubleshooting
+
+If you encounter issues with governance components:
+
+=== AuthConfig not found
+
+**Issue**: `oc get authconfig -n redhat-ods-applications` returns "No resources found"
+
+**Solution**:
+
+1. Verify MaaS was enabled in Module 1:
++
+[source,bash]
+----
+oc get datasciencecluster default-dsc -o jsonpath='{.spec.components.modelsAsService.managementState}'
+----
++
+Should return: `Managed`
+
+2. Check MaaS operator logs:
++
+[source,bash]
+----
+oc logs -n redhat-ods-operator deployment/rhods-operator | grep -i authorino
+----
+
+3. Recreate AuthConfig manually using the command in Exercise 5
+
+=== Authorino pods not Running
+
+**Issue**: Authorino pods show `CrashLoopBackOff` or `Pending`
+
+**Solution**:
+
+1. Check pod events:
++
+[source,bash]
+----
+oc describe pod -l app=authorino -n redhat-ods-applications
+----
+
+2. Common causes:
+** *Insufficient resources*: Check node CPU/memory capacity
+** *Image pull errors*: Verify network connectivity to quay.io
+** *Kuadrant operator not installed*: Check Kuadrant operator in `openshift-operators`
+
+=== Token authentication returns 401 Unauthorized
+
+**Issue**: `curl` with Bearer token returns HTTP 401 instead of HTTP 200
+
+**Solution**:
+
+1. Verify token is valid and not expired:
++
+[source,bash]
+----
+# Regenerate token
+TOKEN=$(oc create token marketing-sentiment-app -n chocotech-models --duration=1h)
+----
+
+2. Verify RBAC is configured:
++
+[source,bash]
+----
+oc get role llm-inference-viewer -n chocotech-models
+oc get rolebinding marketing-sentiment-app-binding -n chocotech-models
+----
+
+3. Check Authorino logs for authentication errors:
++
+[source,bash]
+----
+oc logs -l app=authorino -n redhat-ods-applications
+----
+
+=== MaaSTier resources not created
+
+**Issue**: `oc get maastier` returns "error: the server doesn't have a resource type 'maastier'"
+
+**Solution**:
+
+1. Verify MaaS CRDs are installed:
++
+[source,bash]
+----
+oc get crd | grep maas
+----
++
+Should show: `maastiers.maas.opendatahub.io`
+
+2. If CRD is missing, verify MaaS is enabled:
++
+[source,bash]
+----
+oc get datasciencecluster default-dsc -o jsonpath='{.spec.components.modelsAsService.managementState}'
+----
+
+3. Check OpenShift AI operator logs:
++
+[source,bash]
+----
+oc logs -n redhat-ods-operator deployment/rhods-operator | grep -i maastier
+----

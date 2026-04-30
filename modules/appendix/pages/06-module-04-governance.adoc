@@ -1,4 +1,4 @@
-= Exercise 5: Generate chargeback reports
+= 4.5: Generate chargeback reports
 
 Now that governance and observability are configured, you can generate chargeback reports for Finance showing token consumption by department.
 

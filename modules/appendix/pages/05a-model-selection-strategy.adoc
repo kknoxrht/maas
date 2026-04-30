@@ -1,4 +1,4 @@
-= Exercise 1: Choosing the right model for your workload
+= 3.1a: Choosing the right model for your workload
 
 Before deploying models to the MaaS platform, you need to understand which model architectures and capabilities match specific business requirements.
 

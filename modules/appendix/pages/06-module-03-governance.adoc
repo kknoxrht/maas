@@ -1,4 +1,4 @@
-= Exercise 4: Deploy Grafana for observability
+= 4.4: Deploy Grafana for observability
 
 ChocoTech's Finance department needs visibility into model usage for chargeback. You'll deploy Grafana dashboards to monitor token consumption and GPU utilization.
 

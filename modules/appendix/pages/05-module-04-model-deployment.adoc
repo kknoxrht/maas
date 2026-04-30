@@ -1,4 +1,4 @@
-= Exercise 5: Deploy a second model for multi-model catalog
+= 3.5: Deploy a second model for multi-model catalog
 
 ChocoTech's Marketing team requests access to a smaller, faster model for sentiment analysis. Deploy a second model to demonstrate multi-model catalog management.
 

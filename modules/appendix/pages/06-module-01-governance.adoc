@@ -1,4 +1,4 @@
-= Exercise 1: Understanding MaaS governance tiers
+= 4.1: Understanding MaaS governance tiers
 
 Before configuring governance, you need to understand how tier-based access control works and why it's critical for multi-tenant model serving.
 

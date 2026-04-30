@@ -1,4 +1,4 @@
-= Exercise 2: Create OpenShift groups for ChocoTech departments
+= 4.2: Create OpenShift groups for ChocoTech departments
 
 You'll create OpenShift groups representing ChocoTech's four departments and assign users to them.
 

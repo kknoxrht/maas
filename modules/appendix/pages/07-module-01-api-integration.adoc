@@ -1,4 +1,4 @@
-= Exercise 1: Generate API tokens in Gen AI Studio
+= 5.1: Generate API tokens in Gen AI Studio
 
 Before making API calls, developers need to generate Bearer tokens for authentication. Gen AI Studio provides a self-service interface for token generation.
 

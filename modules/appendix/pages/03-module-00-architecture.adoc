@@ -1,0 +1,23 @@
+= Module 1: The shift to centralized model serving
+
+:source-highlighter: rouge
+:toc: macro
+:toclevels: 1
+
+The CIO at ChocoTech Industries just called an emergency meeting. "We've invested over $500,000 in GPU infrastructure across four teams," she says, reviewing the quarterly report. "Yet our R&D team is waiting three weeks for capacity while Quality Control's GPUs sit idle 60% of the time. This doesn't make sense."
+
+ChocoTech needs to transform their fragmented GPU infrastructure into a centralized, governed platform where all business units can access AI models efficiently. You've been tasked with implementing Models as a Service (MaaS) on Red Hat OpenShift AI to solve this challenge.
+
+In this module, you'll understand the business problem MaaS solves and explore the technical architecture that makes centralized model serving possible.
+
+toc::[]
+
+== Learning objectives
+
+By the end of this module, you'll be able to:
+
+* Articulate the business and operational problems created by the GPU silo crisis
+* Explain how MaaS transforms GPU infrastructure from hardware management to token delivery
+* Map the three-layer MaaS architecture (KServe, Kuadrant, Gateway API) and their responsibilities
+* Verify that the foundational components are installed and healthy in your OpenShift cluster
+* Understand the complete request flow from API client through Gateway, policy enforcement, to model serving

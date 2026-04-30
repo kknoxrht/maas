@@ -1,4 +1,4 @@
-= Exercise 4: OpenAI API compatibility and migration patterns
+= 5.4: OpenAI API compatibility and migration patterns
 
 MaaS uses the OpenAI-compatible API format, making it easy to migrate existing applications from OpenAI to self-hosted models.
 

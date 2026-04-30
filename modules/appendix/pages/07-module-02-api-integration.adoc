@@ -1,4 +1,4 @@
-= Exercise 2: Consume models via OpenAI-compatible API
+= 5.2: Consume models via OpenAI-compatible API
 
 Now that you have a Bearer token, you'll make REST API calls to list models and generate chat completions.
 

@@ -1,188 +1,545 @@
-= Exercise 2: Enable Gen AI Studio dashboard
+= 2.2: Configuring API access with ServiceAccounts and RBAC
 
-Now that the MaaS backend is deployed, you need to activate the dashboard interface so users can discover models and generate API tokens.
+With organizational structure in place, the next step is to enable programmatic API access for applications. Marketing's sentiment analysis application needs to access models without requiring human credentials.
 
-The `OdhDashboardConfig` CRD controls which features appear in the OpenShift AI web console.
+This section covers ServiceAccount-based authentication using JWT tokens and RBAC (Role-Based Access Control) for authorizing model access.
 
-=== Understanding the dashboard configuration
+== Understanding ServiceAccount-based authentication
 
-The OdhDashboardConfig enables or disables UI features:
+OpenShift provides two types of identities for accessing resources: User accounts and ServiceAccounts.
 
-* `genAiStudio` - Gen AI Studio menu item and model catalog UI
-* `modelAsService` - MaaS-specific dashboard pages (tier management, usage metrics)
-* `modelServing` - Traditional KServe model serving UI
-* Other features like Data Science Projects, Workbenches, Pipelines
+=== User accounts vs. ServiceAccounts
 
-=== Check current dashboard configuration
+[cols="1,2,2",options="header"]
+|===
+|Identity Type
+|Intended For
+|Use Case
 
-View the current OdhDashboardConfig:
+|User account
+|Humans (interactive login)
+|Developer logs into OpenShift AI dashboard, deploys models manually
+
+|ServiceAccount
+|Applications (programmatic access)
+|Marketing's sentiment analysis app calls MaaS API to classify customer feedback
+|===
+
+The Marketing team's sentiment analysis application needs a ServiceAccount because:
+
+* The application runs in a container and cannot perform interactive login
+* User credentials should not be embedded in application code or container images
+* Tokens can be rotated without redeploying the application
+* ServiceAccount tokens provide audit trails (which application accessed which model)
+
+=== The authentication flow
+
+When an application makes an API request to the MaaS Gateway, the request flows through multiple authentication and authorization layers:
+
+----
+Application
+  ↓ (includes Bearer token in Authorization header)
+Gateway (maas-default-gateway)
+  ↓ (routes to Authorino for authentication)
+Authorino
+  ↓ (validates JWT token signature with Kubernetes API server)
+Token Validation
+  ↓ (extracts ServiceAccount identity from token)
+RBAC Check (verifies ServiceAccount has required permissions)
+  ↓ (authorized request forwarded to backend)
+MaaS API
+  ↓ (routes to specific model)
+Model (LLMInferenceService)
+----
+
+If any step fails (invalid token, expired token, insufficient permissions), the request is rejected with HTTP 401 Unauthorized or 403 Forbidden.
+
+=== JWT tokens vs. permanent credentials
+
+MaaS uses JWT (JSON Web Token) tokens for authentication:
+
+* *Time-limited*: Tokens expire after a configured duration (1 hour, 24 hours, etc.)
+** Reduces risk if a token is leaked (it expires automatically)
+** Forces applications to rotate tokens periodically
+
+* *Revocable*: Delete the ServiceAccount to immediately revoke all its tokens
+** No need to change passwords or regenerate credentials
+** Instant revocation across all applications using that ServiceAccount
+
+* *Auditable*: Every API request includes the ServiceAccount identity
+** OpenShift audit logs track which ServiceAccount made which requests
+** Authorino and MaaS API logs provide detailed request histories
+
+[NOTE]
+====
+For detailed information on ServiceAccount authentication patterns, see the official Red Hat documentation:
+
+* link:../../../reference/Distributed_Inference-en-US/full-document.md#making-authenticated-inference-requests[Distributed Inference Guide - Section 2.7: Making Authenticated Requests]
+* link:../../../reference/Deploying_models-en-US/full-document.md#token-authentication[Deploying Models Guide - Section 4.1-4.4: Token Authentication]
+====
+
+== Creating ServiceAccounts
+
+Create a ServiceAccount for the Marketing team's sentiment analysis application.
+
+=== Exercise 1: Create ServiceAccount for API access
 
 [source,role="execute"]
 ----
-oc get odhdashboardconfig odh-dashboard-config -o yaml
+oc create serviceaccount marketing-sentiment-app -n chocotech-models
 ----
 
-Look for the `dashboardConfig` section:
+Expected output:
 
 ----
+serviceaccount/marketing-sentiment-app created
+----
+
+Verify the ServiceAccount was created:
+
+[source,role="execute"]
+----
+oc get serviceaccount marketing-sentiment-app -n chocotech-models
+----
+
+Expected output:
+
+----
+NAME                       SECRETS   AGE
+marketing-sentiment-app    0         15s
+----
+
+=== What was created?
+
+The `oc create serviceaccount` command created:
+
+* A *ServiceAccount* resource in the `chocotech-models` namespace
+* An identity that can be used to generate JWT tokens
+* A principal that can be granted RBAC permissions
+
+The ServiceAccount exists but currently has no permissions. You'll grant permissions in the next section using RBAC.
+
+== Creating RBAC roles
+
+RBAC (Role-Based Access Control) defines which actions a ServiceAccount can perform on which resources.
+
+=== Exercise 2: Create Role for model inference access
+
+The Marketing team's application needs to discover available models and send inference requests. This requires `get` and `list` permissions on `LLMInferenceService` resources.
+
+Create a Role that grants read-only access to LLMInferenceService resources:
+
+[source,role="execute"]
+----
+oc apply -f - <<EOF
+apiVersion: rbac.authorization.k8s.io/v1
+kind: Role
+metadata:
+  name: llm-inference-viewer
+  namespace: chocotech-models
+rules:
+- apiGroups: ["serving.kserve.io"]
+  resources: ["llminferenceservices"]
+  verbs: ["get", "list"]
+- apiGroups: ["serving.kserve.io"]
+  resources: ["llminferenceservices/status"]
+  verbs: ["get"]
+EOF
+----
+
+Expected output:
+
+----
+role.rbac.authorization.k8s.io/llm-inference-viewer created
+----
+
+=== Understanding the RBAC role
+
+Let's break down the Role definition:
+
+* `apiGroups: ["serving.kserve.io"]`
+** The API group for KServe resources
+** LLMInferenceService is a custom resource provided by KServe
+
+* `resources: ["llminferenceservices"]`
+** The specific resource type this Role grants access to
+** Corresponds to deployed models in the namespace
+
+* `verbs: ["get", "list"]`
+** `get`: Retrieve a specific LLMInferenceService by name
+** `list`: List all LLMInferenceService resources in the namespace
+** Notably *excludes* `create`, `update`, `delete` (read-only access)
+
+* `resources: ["llminferenceservices/status"]`
+** Access to the status subresource
+** Allows checking model deployment status (ready, loading, error)
+
+This Role grants the *minimum permissions* required for model inference. It does NOT grant:
+
+* Model deployment permissions (`create`, `update`, `delete` verbs)
+* Access to other resource types (pods, services, secrets)
+* Access to other namespaces (Role is namespace-scoped)
+* Cluster-wide permissions (ClusterRole would be required)
+
+=== Exercise 3: Create RoleBinding to connect ServiceAccount to Role
+
+A Role defines permissions, but doesn't grant them to anyone. A RoleBinding connects a ServiceAccount to a Role.
+
+[source,role="execute"]
+----
+oc create rolebinding marketing-sentiment-app-binding \
+  --role=llm-inference-viewer \
+  --serviceaccount=chocotech-models:marketing-sentiment-app \
+  -n chocotech-models
+----
+
+Expected output:
+
+----
+rolebinding.rbac.authorization.k8s.io/marketing-sentiment-app-binding created
+----
+
+Verify the RoleBinding:
+
+[source,role="execute"]
+----
+oc describe rolebinding marketing-sentiment-app-binding -n chocotech-models
+----
+
+Expected output:
+
+----
+Name:         marketing-sentiment-app-binding
+Namespace:    chocotech-models
+Labels:       <none>
+Annotations:  <none>
+Role:
+  Kind:  Role
+  Name:  llm-inference-viewer
+Subjects:
+  Kind            Name                      Namespace
+  ----            ----                      ---------
+  ServiceAccount  marketing-sentiment-app   chocotech-models
+----
+
+=== The RBAC authorization chain
+
+The complete authorization chain is now:
+
+----
+ServiceAccount: marketing-sentiment-app
+  ↓ (bound via RoleBinding)
+RoleBinding: marketing-sentiment-app-binding
+  ↓ (references)
+Role: llm-inference-viewer
+  ↓ (grants permissions)
+Permissions: get/list LLMInferenceService resources
+----
+
+When the MaaS API receives a request with a JWT token from `marketing-sentiment-app`, Kubernetes RBAC checks:
+
+1. Is the token valid and not expired?
+2. Which ServiceAccount does this token belong to?
+3. Which RoleBindings reference this ServiceAccount?
+4. Which Roles do those RoleBindings grant?
+5. Do those Roles include the requested permission (e.g., `get llminferenceservices`)?
+
+If all checks pass, the request is authorized.
+
+== Generating and testing API tokens
+
+With RBAC configured, generate a JWT token from the ServiceAccount and test authentication against the MaaS Gateway.
+
+=== Exercise 4: Generate JWT token from ServiceAccount
+
+Generate a 1-hour JWT token:
+
+[source,role="execute"]
+----
+TOKEN=$(oc create token marketing-sentiment-app -n chocotech-models --duration=1h)
+----
+
+Display the first 50 characters of the token:
+
+[source,role="execute"]
+----
+echo $TOKEN | cut -c1-50
+----
+
+Expected output:
+
+----
+eyJhbGciOiJSUzI1NiIsImtpZCI6IjRHN3BzeXQ3bkw5Ny1pZ
+----
+
+=== Understanding JWT token properties
+
+The generated token has these properties:
+
+* *Format*: JWT (JSON Web Token) - a cryptographically signed JSON payload
+* *Duration*: 1 hour (configurable: `1h`, `24h`, `168h` for 7 days)
+* *Encoding*: Base64-encoded JSON with three parts: header, payload, signature
+* *Signature*: Signed by the Kubernetes API server's private key
+** Authorino validates the signature using the API server's public key
+** Tampered tokens are rejected (signature verification fails)
+
+The token includes:
+
+* ServiceAccount identity (`system:serviceaccount:chocotech-models:marketing-sentiment-app`)
+* Expiration timestamp (`exp` claim)
+* Issuer (`kubernetes/serviceaccount`)
+* Audience (`aud` claim - who the token is intended for)
+
+[WARNING]
+====
+Never log or display full tokens in production. Treat tokens like passwords. The `cut -c1-50` command is for lab verification only.
+====
+
+=== Exercise 5: Test token authentication
+
+Test the token by calling the MaaS Gateway's `/v1/models` endpoint:
+
+First, get the Gateway hostname:
+
+[source,role="execute"]
+----
+GATEWAY_HOST=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}')
+echo "Gateway host: $GATEWAY_HOST"
+----
+
+Expected output:
+
+----
+Gateway host: maas-default-gateway-redhat-ods-applications.apps.cluster.example.com
+----
+
+Test authentication with the token:
+
+[source,role="execute"]
+----
+curl -s -w "\nHTTP Status: %{http_code}\n" \
+  https://$GATEWAY_HOST/v1/models \
+  -H "Authorization: Bearer $TOKEN" \
+  -k
+----
+
+Expected output:
+
+[source,json]
+----
+{
+  "object": "list",
+  "data": []
+}
+HTTP Status: 200
+----
+
+=== Understanding the test results
+
+Success indicators:
+
+* *HTTP 200 status*: Authentication successful
+** Token was valid and not expired
+** Token signature verified by Authorino
+** ServiceAccount authorized via RBAC
+
+* *Empty `data` array*: No models deployed yet
+** This is expected - models will be deployed in Module 3
+** The endpoint is working correctly (authentication passed)
+
+* *No "401 Unauthorized" error*: Authentication succeeded
+
+If you see `HTTP Status: 401`, this indicates an authentication failure. Common causes:
+
+* Token expired (regenerate with `oc create token`)
+* RBAC not configured correctly (verify RoleBinding exists)
+* Authorino not processing tokens (check in Section 2.3)
+
+[TIP]
+====
+The `-k` flag tells curl to accept self-signed certificates (common in lab environments). In production with valid TLS certificates, omit the `-k` flag.
+====
+
+== Token security best practices
+
+When using ServiceAccount tokens in production applications, follow these security guidelines:
+
+=== Short-lived tokens
+
+* *Testing/development*: 1-hour duration (`--duration=1h`)
+* *Production applications*: 24-hour duration (`--duration=24h`)
+* *Never*: Infinite duration tokens (tokens should always expire)
+
+Shorter durations reduce the window of opportunity if a token is compromised.
+
+=== Scoped permissions
+
+Grant the minimum required permissions:
+
+* *Read-only inference*: `get` and `list` verbs only (like the `llm-inference-viewer` Role)
+* *Model deployment*: Add `create`, `update`, `delete` verbs only if needed
+* *Namespace-scoped*: Use Role (not ClusterRole) to limit access to a single namespace
+
+Never grant `cluster-admin` or `*` permissions to ServiceAccounts used for model inference.
+
+=== Token rotation
+
+Regenerate tokens periodically rather than reusing the same token indefinitely:
+
+* *Application startup*: Generate a new token when the application starts
+* *Periodic rotation*: Regenerate tokens every 24 hours
+* *Never hardcode*: Don't embed tokens in source code or container images
+
+=== Audit trails
+
+All token usage is logged:
+
+* *OpenShift audit logs*: Track ServiceAccount token generation (`oc create token`)
+* *Authorino logs*: Log authentication attempts (successes and failures)
+* *MaaS API logs*: Log inference requests with ServiceAccount identity
+
+Use these logs to detect unusual access patterns or compromised tokens.
+
+=== Token revocation
+
+To immediately revoke all tokens for a ServiceAccount:
+
+[source,bash]
+----
+# Delete the ServiceAccount (revokes all tokens instantly)
+oc delete serviceaccount marketing-sentiment-app -n chocotech-models
+
+# Recreate the ServiceAccount (old tokens are now invalid)
+oc create serviceaccount marketing-sentiment-app -n chocotech-models
+
+# Recreate the RoleBinding
+oc create rolebinding marketing-sentiment-app-binding \
+  --role=llm-inference-viewer \
+  --serviceaccount=chocotech-models:marketing-sentiment-app \
+  -n chocotech-models
+----
+
+All previously generated tokens for the old ServiceAccount are immediately invalid (signature verification fails).
+
+=== Storing tokens in production
+
+For production applications running in Kubernetes, store tokens in Secrets and mount them into pods:
+
+[source,bash]
+----
+# Generate 24-hour token for production application
+oc create token marketing-sentiment-app -n chocotech-models --duration=24h > /tmp/maas-token.txt
+
+# Store token in a Kubernetes Secret
+oc create secret generic marketing-api-token \
+  --from-file=token=/tmp/maas-token.txt \
+  -n chocotech-models
+
+# Clean up temporary file
+rm /tmp/maas-token.txt
+----
+
+In your application Deployment, mount the Secret as a volume:
+
+[source,yaml]
+----
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sentiment-analyzer
 spec:
-  dashboardConfig:
-    genAiStudio: false
-    modelAsService: false
-    disableModelServing: false
+  template:
+    spec:
+      containers:
+      - name: app
+        image: quay.io/chocotech/sentiment-analyzer:latest
+        volumeMounts:
+        - name: maas-token
+          mountPath: /var/run/secrets/maas
+          readOnly: true
+      volumes:
+      - name: maas-token
+        secret:
+          secretName: marketing-api-token
 ----
 
-Note that both `genAiStudio` and `modelAsService` are currently false.
+The application reads the token from `/var/run/secrets/maas/token` at runtime.
 
-=== Enable Gen AI Studio features
+== Verification
 
-Edit the OdhDashboardConfig:
+Confirm all RBAC and authentication components are configured correctly.
+
+=== Verification checklist
+
+* [ ] ServiceAccount `marketing-sentiment-app` created in `chocotech-models` namespace
+* [ ] Role `llm-inference-viewer` grants LLMInferenceService get/list permissions
+* [ ] RoleBinding connects ServiceAccount to Role
+* [ ] JWT token generated from ServiceAccount
+* [ ] Token authentication tested against Gateway (HTTP 200 status)
+
+Run this comprehensive verification:
 
 [source,role="execute"]
 ----
-oc edit odhdashboardconfig odh-dashboard-config
-----
-
-Update the `dashboardConfig` section:
-
-----
-spec:
-  dashboardConfig:
-    genAiStudio: true           # Enable Gen AI Studio menu
-    modelAsService: true         # Enable MaaS dashboard pages
-    disableModelServing: false   # Keep traditional model serving enabled
-----
-
-Save and exit the editor.
-
-=== Monitor dashboard restart
-
-The dashboard pod needs to restart to pick up the new configuration:
-
-[source,role="execute"]
-----
-oc get pods -n redhat-ods-applications | grep rhods-dashboard
-----
-
-You may see the pod restarting:
-
-----
-rhods-dashboard-xxx   0/1     Terminating        0          10m
-rhods-dashboard-yyy   0/1     ContainerCreating  0          5s
-----
-
-Wait for the new pod to reach Running state:
-
-[source,role="execute"]
-----
-oc wait --for=condition=ready pod -l app=rhods-dashboard -n redhat-ods-applications --timeout=300s
+echo "=== ServiceAccount ===" && \
+oc get serviceaccount marketing-sentiment-app -n chocotech-models && \
+echo "=== Role ===" && \
+oc get role llm-inference-viewer -n chocotech-models && \
+echo "=== RoleBinding ===" && \
+oc describe rolebinding marketing-sentiment-app-binding -n chocotech-models | grep -E "Name:|Role:|ServiceAccount" && \
+echo "=== Token Test ===" && \
+TOKEN=$(oc create token marketing-sentiment-app -n chocotech-models --duration=1h) && \
+GATEWAY_HOST=$(oc get gateway maas-default-gateway -n redhat-ods-applications -o jsonpath='{.status.addresses[0].value}') && \
+curl -s -w "HTTP Status: %{http_code}\n" https://$GATEWAY_HOST/v1/models -H "Authorization: Bearer $TOKEN" -k | tail -1
 ----
 
 Expected output:
 
 ----
-pod/rhods-dashboard-xxx condition met
+=== ServiceAccount ===
+NAME                       SECRETS   AGE
+marketing-sentiment-app    0         15m
+=== Role ===
+NAME                    CREATED AT
+llm-inference-viewer    2024-01-15T10:30:00Z
+=== RoleBinding ===
+Name:         marketing-sentiment-app-binding
+  Name:  llm-inference-viewer
+  ServiceAccount  marketing-sentiment-app   chocotech-models
+=== Token Test ===
+HTTP Status: 200
 ----
 
-=== Verification
+All checkboxes should be complete.
 
-Confirm dashboard configuration:
+== Business value
 
-* OdhDashboardConfig shows `genAiStudio: true` and `modelAsService: true`
-* Dashboard pod has restarted and is Running
-* Dashboard service is accessible
+By configuring ServiceAccount-based RBAC, you've enabled:
 
-== Exercise 3: Verify Gateway API components
+* *Programmatic access*: Marketing team can deploy their sentiment analysis application with API token authentication
+* *Application identity*: Applications access models without human credentials or shared passwords
+* *Audit trail*: Every API request is traceable to a specific ServiceAccount and namespace
+* *Security*: Tokens are time-limited, revocable, and follow principle of least privilege
+* *Scalability*: Create ServiceAccounts for each application without creating OpenShift user accounts
 
-With MaaS enabled, verify that Gateway API resources are configured correctly for model inference routing.
+When the Marketing team asks "How do we authenticate our sentiment analysis app?", you can provide them with a ServiceAccount token that grants read-only model access with full audit logging.
 
-Gateway API provides the ingress layer for MaaS, exposing a single endpoint for all models.
+== Knowledge check
 
-=== Check Gateway resource
+Test your understanding before moving to the next section:
 
-List Gateways in the redhat-ods-applications namespace:
+1. *What is the difference between a ServiceAccount and a User account in OpenShift?*
++
+User accounts are for humans performing interactive login (e.g., dashboard access). ServiceAccounts are for applications performing programmatic access (e.g., API calls from containers). ServiceAccounts use JWT tokens; user accounts use passwords or SSO.
 
-[source,role="execute"]
-----
-oc get gateway -n redhat-ods-applications
-----
+2. *Why use time-limited tokens instead of permanent API keys?*
++
+Time-limited tokens automatically expire, reducing the risk if a token is leaked. They force periodic rotation, provide natural audit checkpoints, and can be revoked without changing the ServiceAccount itself.
 
-Expected output:
+3. *What RBAC verbs does the `llm-inference-viewer` Role grant, and which verbs are intentionally excluded?*
++
+Grants: `get` and `list` (read-only access to discover and query models). Excluded: `create`, `update`, `delete` (no model deployment permissions). This follows the principle of least privilege.
 
-----
-NAME                   CLASS   ADDRESS                                          PROGRAMMED   AGE
-maas-default-gateway   istio   maas-default-gateway.apps.{cluster_domain}      True         10m
-----
+== What's next
 
-The `PROGRAMMED=True` status indicates the Gateway is configured correctly.
-
-Inspect the Gateway details:
-
-[source,role="execute"]
-----
-oc describe gateway maas-default-gateway -n redhat-ods-applications
-----
-
-Look for:
-
-* `Status: Programmed: True` - Gateway is ready to accept traffic
-* `Listeners` section showing HTTP/HTTPS configuration
-* `Addresses` showing the external hostname
-
-=== Check HTTPRoute resources
-
-HTTPRoutes define path-based routing rules for the Gateway:
-
-[source,role="execute"]
-----
-oc get httproute -n redhat-ods-applications
-----
-
-Expected output:
-
-----
-NAME                  HOSTNAMES                        AGE
-maas-api-route        ["maas-default-gateway..."]     10m
-----
-
-Describe the HTTPRoute:
-
-[source,role="execute"]
-----
-oc describe httproute maas-api-route -n redhat-ods-applications
-----
-
-Look for:
-
-* `Parent Refs` pointing to maas-default-gateway
-* `Rules` section showing `/v1/models` and `/v1/chat/completions` paths
-* `Backend Refs` pointing to maas-api service
-
-=== Verify Kuadrant policy resources
-
-Check that Kuadrant policies are configured (these will be populated when governance is configured in Module 4):
-
-[source,role="execute"]
-----
-oc get authpolicy -n redhat-ods-applications
-----
-
-[source,role="execute"]
-----
-oc get ratelimitpolicy -n redhat-ods-applications
-----
-
-These may show "No resources found" initially, which is expected before governance configuration.
-
-=== Verification
-
-Confirm Gateway API setup:
-
-* Gateway resource exists with PROGRAMMED=True status
-* Gateway has external address assigned (hostname)
-* HTTPRoute exists and references the Gateway
-* HTTPRoute defines API paths for model inference
-* Kuadrant components (authorino, limitador) are running
-
-// TODO: Add screenshot of Gateway status
-image::gateway-api-status.png[Gateway API resource showing PROGRAMMED=True status and external address,link=self,window=blank,width=700,title="Gateway API Configuration Status"]
+You've configured authentication and authorization for programmatic API access. In the next section, you'll deploy tier-based governance policies (Gold, Silver, Bronze) with rate limits and quotas, then verify all governance components are operational before model deployment in Module 3.

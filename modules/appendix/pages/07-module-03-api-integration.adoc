@@ -1,4 +1,4 @@
-= Exercise 3: Implement retry logic for rate limiting
+= 5.3: Implement retry logic for rate limiting
 
 Production applications must handle rate limiting responses (429 status) gracefully using exponential backoff retry logic.
 

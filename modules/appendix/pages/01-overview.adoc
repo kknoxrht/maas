@@ -1,8 +1,8 @@
-= QuickCourse overview
+= ChocoTech Industries
 
 == Your role and mission
 
-You're a Platform Engineer at ChocoTech Industries, a modern chocolate manufacturing company, and you've been assigned to solve a critical infrastructure challenge affecting multiple business units.
+In this course, you will perform the role of a Platform Engineer at ChocoTech Industries, a modern chocolate manufacturing company, and you've been assigned to solve a critical infrastructure challenge affecting multiple business units.
 
 ChocoTech has teams across Quality Control, R&D, Marketing, and Supply Chain all trying to leverage AI for their operations. However, each team purchased their own GPU infrastructure, leading to the "GPU Silo Crisis."
 
@@ -24,23 +24,6 @@ By the end of this QuickCourse, you'll have practical MaaS implementation skills
 **Technical outcome**: You'll have hands-on experience deploying and operating a production-ready MaaS platform that solves real business challenges.
 
 **Business benefit**: Centralized model catalog with governed access that reduces costs, improves compliance, and accelerates AI application development.
-
-== Target audience
-This QuickCourse is designed for:
-
-* Platform Engineers responsible for GPU infrastructure and AI platform operations
-* AI/ML Platform Administrators managing model serving and governance
-* Developers building agentic applications that consume AI models
-* Technical professionals evaluating MaaS adoption for enterprise AI initiatives
-
-== What you need to succeed
-You should have:
-
-* Red Hat OpenShift administration experience - you've managed clusters and operators
-* Kubernetes fundamentals - you understand pods, services, and custom resources
-* Basic GPU concepts - you know why AI workloads need accelerators
-* API integration knowledge - you've worked with REST APIs and authentication tokens
-* Access to a computer with internet connectivity and SSH client
 
 == ChocoTech Industries' GPU infrastructure challenges
 
@@ -80,7 +63,7 @@ If MaaS implementation succeeds for ChocoTech, here's the potential impact:
 
 * **Accurate chargeback**: Token-based consumption tracking enables Finance to bill departments based on actual usage → justify infrastructure investments
 * **Centralized catalog governance**: Platform team controls which models are available, preventing "Shadow AI" deployments → standardization and security
-* **Better resource utilization**: Autoscaling and distributed inference maximize GPU efficiency → infrastructure costs reduced by 40-50%
+* **Better resource utilization**: Intelligent routing and centralized inference maximize GPU efficiency → infrastructure costs reduced by 40-50%
 * **Accelerated innovation**: Developers focus on building applications instead of managing infrastructure → increased team productivity and business agility
 
 **Success metric**: ChocoTech can demonstrate to leadership that MaaS reduced GPU infrastructure costs, improved compliance posture, and accelerated AI application delivery across all business units.

@@ -1,10 +1,16 @@
-= Module 2: Administering the MaaS platform
+= Module 2: Setting Up Access Control and Governance
 
-After presenting the MaaS architecture to ChocoTech's leadership team, you've received approval to proceed with implementation. "This could solve our GPU allocation problems," the CIO says, "but I need to see it actually working in our environment."
+After enabling the MaaS platform in Module 1, the CIO calls you into a meeting. "The infrastructure is ready," she says, "but before we deploy any models, I need to know how we're going to control access and manage costs across business units."
 
-Your next task is to configure the MaaS platform on the existing OpenShift AI deployment. This involves updating Custom Resource Definitions (CRDs) to enable components and activating the dashboard interface for self-service access.
+She hands you a requirements document:
 
-In this module, you'll configure MaaS through the OpenShift AI operator, enable the Gen AI Studio dashboard, and verify that all components are healthy and accessible.
+* *Quality Control* needs production-grade access with guaranteed availability (Gold tier)
+* *R&D* needs development access with moderate throughput (Silver tier)
+* *Marketing* needs exploratory access for sentiment analysis (Bronze tier)
+* All access must be authenticated with API tokens for audit trails
+* Rate limits must prevent any single team from monopolizing GPU resources
+
+Your task is to establish the governance foundation before deploying models in Module 3.
 
 toc::[]
 
@@ -12,8 +18,22 @@ toc::[]
 
 By the end of this module, you'll be able to:
 
-* Configure the DataScienceCluster CRD to enable MaaS components
-* Update the OdhDashboardConfig to activate Gen AI Studio interface
-* Verify that Gateway API, Kuadrant, and MaaS API components are deployed and healthy
-* Access the OpenShift AI dashboard and navigate to the Gen AI Studio
-* Troubleshoot common component enablement issues using operator logs and resource status
+* Create OpenShift groups representing ChocoTech business units and map them to access tiers
+* Configure ServiceAccounts, Roles, and RoleBindings for API-based model access with RBAC
+* Generate and test JWT tokens for authenticated model inference requests
+* Define and deploy MaaSTier custom resources with rate limits and quotas for Gold, Silver, and Bronze tiers
+* Verify governance readiness before model deployment using a comprehensive pre-deployment checklist
+
+== Module roadmap
+
+In this module, you'll create business unit groups, configure RBAC for API access, generate authentication tokens, and deploy tier-based governance policies that will control model access in Module 3.
+
+The journey follows three key phases:
+
+1. *Organizational Structure*: Create OpenShift groups for ChocoTech's business units (Quality Control, R&D, Marketing) and prepare the namespace for governed model serving
+
+2. *Authentication & Authorization*: Configure ServiceAccounts for programmatic API access, define RBAC roles for model access, and test JWT token-based authentication
+
+3. *Governance Policies*: Deploy tier-based policies (Gold, Silver, Bronze) with rate limits and quotas, then verify all governance components are operational
+
+By the end of this module, the MaaS platform will be ready for governed model deployment with tier-based access control, authentication, and resource limits in place.

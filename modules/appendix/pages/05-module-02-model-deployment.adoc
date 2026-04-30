@@ -1,4 +1,4 @@
-= Exercise 1: Understanding serving runtimes and distributed inference
+= 3.1: Understanding serving runtimes and distributed inference
 
 Before deploying a model, you need to understand the difference between standalone KServe deployment and MaaS-integrated deployment.
 

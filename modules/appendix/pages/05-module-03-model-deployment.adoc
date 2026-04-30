@@ -1,4 +1,4 @@
-= Exercise 4: Publish model to the MaaS catalog
+= 3.4: Publish model to the MaaS catalog
 
 Now that the model is deployed, verify it appears in the Gen AI Studio catalog and is accessible through the MaaS gateway.
 

@@ -1,4 +1,4 @@
-= Exercise 6: Production security hardening
+= 4.6: Production security hardening
 
 ChocoTech's Chief Information Security Officer (CISO) schedules an urgent meeting before the MaaS platform goes to production. "We need to ensure this AI infrastructure meets our security and compliance requirements," she explains. "We're subject to food safety regulations, and AI systems that impact quality control must be auditable and secure."
 

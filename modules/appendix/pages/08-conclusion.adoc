@@ -1,9 +1,4 @@
 = Conclusion
-include::partial$_attributes.adoc[]
-
-:toc:
-:toc-placement: preamble
-:icons: font
 
 == Workshop recap
 
@@ -198,7 +193,7 @@ This workshop was built using official Red Hat OpenShift AI documentation and SM
 
 * link:https://access.redhat.com/articles/rhoai-supported-configs[Red Hat OpenShift AI Supported Configurations^]
 * link:https://www.redhat.com/en/technologies/cloud-computing/openshift/openshift-ai[Red Hat OpenShift AI Product Page^]
-* link:https://developers.redhat.com/products/openshift-ai/overview[Red Hat Developer - OpenShift AI Resources^]
+* link:https://developers.redhat.com/products/red-hat-ai[Red Hat Developer - OpenShift AI Resources^]
 
 **Component documentation**:
 

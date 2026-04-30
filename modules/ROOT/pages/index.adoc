@@ -33,7 +33,7 @@ Before starting this QuickCourse, you should have:
 
 == QuickCourse environment
 
-Your lab environment includes a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs (minimum 48GB) pre-configured with:
+The recommended lab environment is a Single Node OpenShift (SNO) cluster with multiple NVIDIA GPUs (minimum 48GB - (2x24Gb) pre-configured with:
 
 * Red Hat OpenShift 4.20 or later
 * Red Hat OpenShift AI 3.3.2 or later (operator installed)

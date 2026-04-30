@@ -1,34 +1,8 @@
-= Module 1: The shift to utility AI and architecture foundation
-
-:source-highlighter: rouge
-:toc: macro
-:toclevels: 1
-
-The CIO at ChocoTech Industries just called an emergency meeting. "We've invested over $500,000 in GPU infrastructure across four teams," she says, reviewing the quarterly report. "Yet our R&D team is waiting three weeks for capacity while Quality Control's GPUs sit idle 60% of the time. This doesn't make sense."
-
-ChocoTech needs to transform their fragmented GPU infrastructure into a centralized, governed platform where all business units can access AI models efficiently. You've been tasked with implementing Models as a Service (MaaS) on Red Hat OpenShift AI to solve this challenge.
-
-In this module, you'll understand the business problem MaaS solves and explore the technical architecture that makes centralized model serving possible.
-
-toc::[]
-
-== Learning objectives
-
-By the end of this module, you'll be able to:
-
-* Articulate the business and operational problems created by the GPU silo crisis
-* Explain how MaaS transforms GPU infrastructure from hardware management to token delivery
-* Map the three-layer MaaS architecture (KServe, Kuadrant, Gateway API) and their responsibilities
-* Verify that the foundational components are installed and healthy in your OpenShift cluster
-* Understand the complete request flow from API client through Gateway, policy enforcement, to model serving
-
-== Exercise 1: Understanding the GPU silo crisis
+= 1.1: Understanding the GPU silo crisis
 
 ChocoTech Industries has four teams independently managing GPU infrastructure. Let's examine the operational pain points this creates.
 
 You begin by reviewing the current state of GPU allocations across ChocoTech's business units.
-
-=== The problem with dedicated accelerators
 
 **Current state at ChocoTech**:
 
@@ -37,39 +11,41 @@ You begin by reviewing the current state of GPU allocations across ChocoTech's b
 * **Marketing**: 2x NVIDIA L4 GPUs for sentiment analysis
 * **Supply Chain**: 2x NVIDIA L40S GPUs for inventory prediction
 
-**Operational pain points identified**:
+== **Operational pain points identified**:
 
-**GPU under-utilization and over-provisioning**:
+The problem with dedicated accelerators:
+
+=== **GPU under-utilization and over-provisioning**
 
 Teams request and manage their own dedicated GPUs, leading to expensive hardware sitting under-utilized while other high-priority projects may be stalled or additional hardware is provisioned unnecessarily.
 
-*ChocoTech example*: Quality Control's A100 GPUs process defect images only during production shifts (8 hours/day), leaving $120,000 of hardware idle 67% of the time. Meanwhile, R&D waits three weeks for GPU capacity to test new flavor prediction models.
+*ChocoTech example*: _Quality Control's A100 GPUs process defect images only during production shifts (8 hours/day), leaving $120,000 of hardware idle 67% of the time. Meanwhile, R&D waits three weeks for GPU capacity to test new flavor prediction models._
 
-**Misallocation of engineer and data science expertise**:
+=== **Misallocation of engineer and data science expertise**
 
-Data scientists spend more time debugging CUDA drivers, Docker containers, and Kubernetes manifests than actually tuning models or analyzing data.
+Developers and Data scientists spend more time debugging CUDA drivers, Docker containers, and Kubernetes manifests than actually tuning models or analyzing data.
 
-*ChocoTech example*: Marketing's data science team spent 40 hours last quarter troubleshooting vLLM container startup issues instead of improving their customer sentiment models.
+*ChocoTech example*: _Marketing's data science team spent 40 hours last quarter troubleshooting vLLM container startup issues instead of improving their customer sentiment models._
 
-**Redundant model deployments**:
+=== **Redundant model deployments**
 
 Four different teams download and deploy the same generative AI model, leading to overall waste and duplication when they could be sharing resources efficiently.
 
-*ChocoTech example*: All four teams independently deployed Llama-3 8B for different use cases, consuming 128GB of storage (4 x 32GB) and wasting GPU memory with duplicate model weights.
+*ChocoTech example*: _All four teams independently deployed Llama-3 8B for different use cases, consuming 128GB of storage (4 x 32GB) and wasting GPU memory with duplicate model weights._
 
-**Security "black boxes"**:
+=== **Security "black boxes"**
 
 Without a centralized API gateway, there is zero visibility into who is sending what data to which model, making audit logs and PII filtering nearly impossible to enforce.
 
-*ChocoTech example*: Marketing's sentiment analysis application processes customer feedback containing personally identifiable information (PII), but there's no way to audit which users accessed which models or implement PII filtering policies.
+*ChocoTech example*: _Marketing's sentiment analysis application processes customer feedback containing personally identifiable information (PII), but there's no way to audit which users accessed which models or implement PII filtering policies._
 
-**No way to track usage or forecast needs**:
+=== **No way to track usage or forecast needs**
 
 Without the ability to track model usage across users, applications, and different models, there is no way to forecast compute needs accurately.
 
-*ChocoTech example*: Finance cannot justify GPU infrastructure expansion requests because there's no data showing which teams are consuming capacity, which models are heavily used, or whether existing hardware is properly utilized.
+*ChocoTech example*: _Finance cannot justify GPU infrastructure expansion requests because there's no data showing which teams are consuming capacity, which models are heavily used, or whether existing hardware is properly utilized._
 
-=== The solution - Centralized model hub with MaaS
+== The solution - Centralized model hub with MaaS
 
 Models as a Service (MaaS) transforms GPU infrastructure from dedicated, single-team clusters into a consumable model backplane.
 
@@ -87,7 +63,7 @@ Configure tiers, rate limits, quotas, and observability dashboards. Ensure fair 
 **Developers**::
 Integrate models via OpenAI-compatible APIs without worrying about GPU drivers, Kubernetes manifests, or model serving runtimes.
 
-**Business impact realized**:
+== **Business impact realized**:
 
 **Without MaaS**:
 

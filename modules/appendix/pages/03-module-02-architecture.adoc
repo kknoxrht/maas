@@ -1,4 +1,4 @@
-= Exercise 2: The MaaS architecture stack
+= 1.2: The MaaS architecture stack
 
 Now that you understand the business problem, let's explore the technical architecture that makes MaaS possible.
 
@@ -49,11 +49,15 @@ KServe provides the foundation for serving generative AI models on OpenShift.
 **Model deployment**::
 Packages models in containers with serving runtimes (vLLM, llm-d, Hugging Face TGI). Abstracts complexity of GPU allocation and CUDA drivers.
 
-**Distributed inference with LeaderWorkerSet**::
-Splits large models across multiple GPUs using tensor parallelism. Critical for models exceeding single GPU memory capacity (70B+ parameter models).
+**Multi-Node Orchestration (LeaderWorkerSet):**::
+Manages distributed inference for ultra-large models (e.g., 405B+ parameters) that exceed the VRAM of a single physical node. LWS ensures the "Leader" and "Worker" pods are scheduled and lifecycle-managed as a single atomic unit.
 
 **Autoscaling**::
-Scales model replicas based on request load. Scales to zero when idle to conserve GPU resources. Scales up when inference demand increases.
+Scales model replicas based on request load. While KServe supports "Scale-to-Zero" via Knative, this exercise focuses on RawDeployments.
+
+ * Predictable Performance: RawDeployments use standard Kubernetes Deployments/HPA, avoiding the "cold start" delay of loading weights from disk to GPU.
+
+ * Resource Guardrails: Scales model replicas based on request load (HPA) but maintains a minimum of at least one active replica to ensure immediate availability.
 
 **Health checks and readiness**::
 Monitors model container health with liveness and readiness probes. Ensures requests only route to healthy model instances.
@@ -88,7 +92,7 @@ Kuadrant adds governance and policy enforcement on top of KServe model serving.
 * Includes `Retry-After` header for client backoff logic
 * Provides metrics for chargeback and capacity planning
 
-**Why Kuadrant is critical for enterprise AI**:
+**Why Kuadrant is important for enterprise AI**:
 
 Without Kuadrant, any user with cluster access could consume unlimited GPU resources, monopolize capacity, and prevent other teams from accessing models. Kuadrant enforces fair resource allocation and provides the audit trail required for compliance.
 
@@ -158,8 +162,6 @@ Here's what happens when a developer at ChocoTech queries a model from their sen
     - Status: 200 OK
 ----
 
-This layered approach ensures that every request is authenticated, authorized, rate-limited, audited, and routed to the correct model serving infrastructure.
-
 ////
 
 === Verify the architecture layers
@@ -225,17 +227,21 @@ istio-ingressgateway-xxx      1/1     Running
 
 ////
 
+// TODO: Add architecture diagram showing three layers and request flow
+image::maas-layers.png[MaaS three-layer architecture showing Gateway API, Kuadrant, and KServe components,link=self,window=blank,width=800,title="MaaS Architecture: Three Layers of Model Serving Infrastructure"]
+
+This layered approach ensures that every request is authenticated, authorized, rate-limited, audited, and routed to the correct model serving infrastructure.
+
+---
+
 === Verification
 
 Confirm that all three layers are healthy:
 
 * KServe controller pods are Running in redhat-ods-applications namespace
-* Kuadrant pods (authorino, limitador) are Running in __fix_me__ namespace
+* Kuadrant pods (authorino, limitador) are Running in openshift-operators namespace
 * Gateway resource exists with PROGRAMMED=True status
 * Istio control plane pods are Running in istio-system namespace
 
 If any components are missing or unhealthy, the MaaS platform cannot function correctly. Each layer depends on the others for complete end-to-end model serving with governance.
-
-// TODO: Add architecture diagram showing three layers and request flow
-image::maas-architecture-layers.png[MaaS three-layer architecture showing Gateway API, Kuadrant, and KServe components,link=self,window=blank,width=800,title="MaaS Architecture: Three Layers of Model Serving Infrastructure"]
 

@@ -1,130 +1,334 @@
-= Exercise 1: Enable MaaS in DataScienceCluster
+= 2.1: Creating organizational structure and tier architecture
 
-The `DataScienceCluster` custom resource controls which OpenShift AI components are active. You'll update this CRD to enable MaaS.
+Before deploying AI models, you need to establish how ChocoTech's business units will access the MaaS platform. This starts with creating OpenShift groups that represent organizational structure and mapping them to access tiers.
 
-OpenShift AI uses a declarative configuration model. You declare desired state in CRDs, and the operator reconciles actual state to match. This differs from imperative deployment where you manually create pods, services, and configurations.
+== Understanding tier-based governance
 
-=== Understanding the DataScienceCluster CRD
+Tier-based governance provides fair resource allocation across business units while preventing any single team from monopolizing GPU resources.
 
-The DataScienceCluster CRD has a `components` section listing all available features:
+=== The three-tier model
 
-* `kserve` - Model serving infrastructure (prerequisite for MaaS)
-* `modelsAsService` - MaaS API, governance, and Gateway integration
-* `dashboard` - OpenShift AI web console
-* Other components like Pipelines, Workbenches, Model Registry
+MaaS uses a three-tier model for resource allocation:
 
-Each component has a `managementState` field:
+* *Gold tier*: Production workloads with highest priority and guaranteed resources
+** Intended for mission-critical applications
+** Premium rate limits and quotas
+** Highest request processing priority
 
-* `Managed` - Operator deploys and maintains the component
-* `Removed` - Operator does not deploy the component
+* *Silver tier*: Development and moderate usage workloads with balanced resources
+** Intended for development and staging environments
+** Moderate rate limits and quotas
+** Medium request processing priority
 
-=== Check current DataScienceCluster state
+* *Bronze tier*: Exploratory and low-priority workloads with shared resources
+** Intended for experimentation and testing
+** Conservative rate limits and quotas
+** Lower request processing priority
 
-View the current configuration:
+=== Why tiers matter for MaaS
 
-[source,role="execute"]
-----
-oc get datasciencecluster default-dsc -o yaml
-----
+Tier-based governance provides several critical capabilities:
 
-Look for the `components` section. You'll likely see:
+* *Fair resource allocation*: Prevents Bronze tier users from consuming resources needed by Gold tier production workloads
+* *Cost control*: Rate limits and quotas cap resource consumption per tier
+* *Chargeback reporting*: Track and allocate AI infrastructure costs by tier and business unit
+* *Quality of service*: Gold tier gets higher priority during peak demand
 
-----
-spec:
-  components:
-    kserve:
-      managementState: Managed
-    modelsAsService:
-      managementState: Removed
-    dashboard:
-      managementState: Managed
-----
+Without tiers, the first team to use the platform could monopolize all available GPU resources, blocking other business units.
 
-Note that `modelsAsService` is currently `Removed`, meaning MaaS is not deployed.
+=== ChocoTech's business unit mapping
 
-=== Enable MaaS component
+Based on the CIO's requirements document, ChocoTech's business units map to tiers as follows:
 
-Edit the DataScienceCluster:
+[cols="1,1,2,1,2",options="header"]
+|===
+|Business Unit
+|Tier
+|Use Case
+|Priority
+|Models Allowed
 
-[source,role="execute"]
-----
-oc edit datasciencecluster default-dsc
-----
+|Quality Control
+|Gold
+|Defect detection (production)
+|Highest
+|All models
 
-Find the `modelsAsService` section and change `managementState` from `Removed` to `Managed`:
+|R&D
+|Silver
+|Recipe optimization (development)
+|Medium
+|All models
 
-----
-spec:
-  components:
-    modelsAsService:
-      managementState: Managed  # Change this from "Removed" to "Managed"
-    kserve:
-      managementState: Managed  # Ensure this is also Managed
-    dashboard:
-      managementState: Managed
-----
+|Marketing
+|Bronze
+|Sentiment analysis (exploratory)
+|Lower
+|Select models
+|===
 
-Save and exit the editor (`:wq` in vi, or `Ctrl+X` then `Y` in nano).
+In Module 3, you'll deploy two models:
 
-=== Monitor MaaS deployment
+* *llama3-8b*: Accessible to all tiers (Gold, Silver, Bronze)
+* *nemotron-8b*: Accessible to Bronze and Silver only (demonstrating selective tier access)
 
-Watch the operator deploy MaaS components:
+This mapping ensures Quality Control's production defect detection system gets guaranteed resources, while Marketing's exploratory sentiment analysis doesn't impact critical workloads.
 
-[source,role="execute"]
-----
-oc get pods -n redhat-ods-applications -w | grep maas
-----
+== Creating OpenShift groups
 
-You should see pods being created:
+OpenShift groups provide a way to organize users by department or function and assign permissions at the group level rather than individual users.
 
-----
-maas-api-xxx                  0/1     ContainerCreating   0          5s
-maas-default-gateway-xxx      0/1     Init:0/1            0          5s
-----
+=== Why use groups instead of individual users?
 
-After 2-5 minutes, all pods should reach `Running` state:
+Groups provide several advantages over granting permissions to individual users:
 
-----
-maas-api-xxx                  1/1     Running   0          3m
-maas-default-gateway-xxx      1/1     Running   0          3m
-----
+* *Scalability*: Add new team members by adding them to groups, not by creating individual role bindings
+* *Audit trails*: Actions are traceable to business units (e.g., "chocotech-quality-control") rather than individual users
+* *Team collaboration*: All members of a group share the same permissions
+* *Simplified management*: Change group permissions once instead of updating permissions for each user
 
-Press `Ctrl+C` to stop watching.
+=== Exercise 1: Create business unit groups
 
-=== Verify MaaS API deployment
-
-Check that the MaaS API pod is healthy:
+Create groups for each of ChocoTech's business units:
 
 [source,role="execute"]
 ----
-oc get pods -n redhat-ods-applications | grep maas-api
+oc adm groups new chocotech-quality-control
 ----
 
 Expected output:
 
 ----
-maas-api-7c8f9d5b-xxx         1/1     Running   0          5m
+group.user.openshift.io/chocotech-quality-control created
 ----
-
-Check the MaaS API service:
 
 [source,role="execute"]
 ----
-oc get svc -n redhat-ods-applications | grep maas
+oc adm groups new chocotech-rd
 ----
 
 Expected output:
 
 ----
-maas-api                ClusterIP   172.30.xxx.xxx   <none>        8080/TCP   5m
-maas-default-gateway    ClusterIP   172.30.xxx.xxx   <none>        80/TCP     5m
+group.user.openshift.io/chocotech-rd created
 ----
 
-=== Verification
+[source,role="execute"]
+----
+oc adm groups new chocotech-marketing
+----
 
-Confirm MaaS enablement:
+Expected output:
 
-* DataScienceCluster shows `modelsAsService.managementState: Managed`
-* MaaS API pod is Running with 1/1 ready containers
-* MaaS service exists in redhat-ods-applications namespace
-* Gateway pod is Running and ready
+----
+group.user.openshift.io/chocotech-marketing created
+----
+
+You've now created three groups representing ChocoTech's organizational structure.
+
+=== Exercise 2: Add yourself to a group
+
+For this lab, you'll work as a member of the Quality Control team (Gold tier):
+
+[source,role="execute"]
+----
+oc adm groups add-users chocotech-quality-control $(oc whoami)
+----
+
+Expected output:
+
+----
+group.user.openshift.io/chocotech-quality-control added: "user1"
+----
+
+Verify your group membership:
+
+[source,role="execute"]
+----
+oc get group chocotech-quality-control -o yaml
+----
+
+Expected output:
+
+[source,yaml]
+----
+apiVersion: user.openshift.io/v1
+kind: Group
+metadata:
+  name: chocotech-quality-control
+  resourceVersion: "123456"
+  uid: abc123...
+users:
+- user1
+----
+
+You should see your username in the `users` list.
+
+== Preparing the model serving namespace
+
+Models will be deployed in a dedicated namespace with proper labels for MaaS governance.
+
+=== Exercise 3: Create and label the namespace
+
+Create a new namespace (project) for model serving:
+
+[source,role="execute"]
+----
+oc new-project chocotech-models
+----
+
+Expected output:
+
+----
+Now using project "chocotech-models" on server "https://api.cluster.example.com:6443".
+
+You can add applications to this project with the 'new-app' command.
+----
+
+Label the namespace to enable MaaS governance:
+
+[source,role="execute"]
+----
+oc label namespace chocotech-models maas.opendatahub.io/managed=true
+----
+
+Expected output:
+
+----
+namespace/chocotech-models labeled
+----
+
+[source,role="execute"]
+----
+oc label namespace chocotech-models modelmesh-enabled=false
+----
+
+Expected output:
+
+----
+namespace/chocotech-models labeled
+----
+
+=== Understanding namespace labels
+
+These labels serve specific purposes:
+
+* `maas.opendatahub.io/managed=true`: Enables MaaS governance for this namespace
+** MaaS tier policies will apply to models in this namespace
+** Rate limits and quotas will be enforced
+** Models can be published to the Gen AI Studio catalog
+
+* `modelmesh-enabled=false`: Ensures KServe single-model serving (not ModelMesh)
+** MaaS uses KServe with LLMInferenceService for large language models
+** ModelMesh is designed for serving many small models (not LLMs)
+** This label prevents ModelMesh from managing models in this namespace
+
+=== Exercise 4: Grant group access to namespace
+
+Grant the Quality Control group admin access to the namespace:
+
+[source,role="execute"]
+----
+oc create rolebinding chocotech-qc-admin \
+  --clusterrole=admin \
+  --group=chocotech-quality-control \
+  -n chocotech-models
+----
+
+Expected output:
+
+----
+rolebinding.rbac.authorization.k8s.io/chocotech-qc-admin created
+----
+
+This RoleBinding grants members of the `chocotech-quality-control` group (including you) full admin permissions in the `chocotech-models` namespace, including:
+
+* Deploying models (creating LLMInferenceService resources)
+* Managing resources (pods, services, config maps)
+* Viewing logs and metrics
+* Managing RBAC within the namespace
+
+[NOTE]
+====
+In production, you would create separate RoleBindings for each business unit group with appropriate permissions. For this lab, you're working as Quality Control (Gold tier) with admin access.
+====
+
+== Verification
+
+Verify all organizational structure components are in place:
+
+=== Verification checklist
+
+Confirm the following:
+
+* [ ] Three business unit groups created (chocotech-quality-control, chocotech-rd, chocotech-marketing)
+* [ ] Current user is member of chocotech-quality-control group
+* [ ] chocotech-models namespace exists and is labeled for MaaS
+* [ ] RoleBinding grants Quality Control group access to namespace
+
+Run this verification command:
+
+[source,role="execute"]
+----
+echo "=== Groups ===" && \
+oc get groups | grep chocotech && \
+echo "=== Current User ===" && \
+oc whoami && \
+echo "=== Group Membership ===" && \
+oc get group chocotech-quality-control -o jsonpath='{.users[*]}' && echo && \
+echo "=== Namespace ===" && \
+oc get namespace chocotech-models --show-labels && \
+echo "=== RoleBindings ===" && \
+oc get rolebinding -n chocotech-models | grep chocotech
+----
+
+Expected output:
+
+----
+=== Groups ===
+chocotech-marketing
+chocotech-quality-control
+chocotech-rd
+=== Current User ===
+user1
+=== Group Membership ===
+user1
+=== Namespace ===
+NAME                STATUS   AGE   LABELS
+chocotech-models    Active   5m    maas.opendatahub.io/managed=true,modelmesh-enabled=false,...
+=== RoleBindings ===
+chocotech-qc-admin                                        ClusterRole/admin                                         5m
+----
+
+All checkboxes should be complete.
+
+== Business value
+
+By mapping ChocoTech's organizational structure to OpenShift groups and tiers, you've established the foundation for:
+
+* *Department-level access control*: Quality Control team members can collaborate on model deployment without individual permission management
+* *Tier-based resource allocation*: Gold tier will receive priority when governance policies are applied in Section 2.3
+* *Audit trails*: All actions are traceable to business unit groups, not individual users
+* *Scalable onboarding*: New team members can be added to groups without complex RBAC configuration
+
+When the CIO asks "How do we ensure Quality Control's production workloads aren't impacted by Marketing's experiments?", you can now point to the tier-based group structure.
+
+== Knowledge check
+
+Test your understanding before moving to the next section:
+
+1. *Why use OpenShift groups instead of granting access to individual users?*
++
+Groups provide scalability (easy to add new users), audit trails (actions traced to business units), and simplified permission management (change group permissions once instead of per user).
+
+2. *What is the benefit of the `maas.opendatahub.io/managed=true` label?*
++
+This label enables MaaS governance for the namespace, allowing tier policies, rate limits, and quotas to be enforced on models deployed in this namespace.
+
+3. *Which ChocoTech business unit will have the highest priority for model inference requests?*
++
+Quality Control (Gold tier) will have highest priority (priority: 100) to ensure production defect detection workloads get guaranteed resources.
+
+== What's next
+
+You've established ChocoTech's organizational structure with groups and namespace preparation. In the next section, you'll configure API authentication using ServiceAccounts and RBAC so applications can access models programmatically with JWT tokens.

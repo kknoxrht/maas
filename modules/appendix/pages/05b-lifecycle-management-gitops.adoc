@@ -1,4 +1,4 @@
-= Exercise 6: Production lifecycle management and GitOps
+= 3.6: Production lifecycle management and GitOps
 
 ChocoTech's Quality Control team has been successfully using Llama-3 8B for defect analysis for several weeks. Now they want to upgrade to a new version that has been fine-tuned on chocolate manufacturing defects.
 
